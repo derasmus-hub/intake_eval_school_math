@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Panel nauczyciela</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="site-nav">
+            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <div class="nav-links">
+                <a href="index.html">Intake</a>
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="assessment.html">Assessment</a>
+                <a href="games.html">Games</a>
+                <a href="leaderboard.html">Leaderboard</a>
+            </div>
+        </nav>
+
+        <div class="dashboard-header">
+            <div>
+                <h1>Teacher Dashboard</h1>
+                <p class="subtitle">Panel nauczyciela</p>
+            </div>
+            <a href="index.html" class="btn btn-primary btn-sm">+ New Student / Nowy uczeń</a>
+        </div>
+
+        <div id="student-list-section">
+            <h2>Students / Uczniowie</h2>
+            <div id="student-list" class="student-list">
+                <!-- Skeleton loading injected by JS -->
+            </div>
+        </div>
+
+        <!-- Availability Management Panel -->
+        <div id="availability-management-section" class="detail-panel" style="margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                <h2 style="margin:0;">My Availability / Moja dostępność</h2>
+                <button class="btn btn-primary btn-sm" onclick="toggleAvailabilityForm()">+ Add Slot / Dodaj slot</button>
+            </div>
+
+            <!-- Add Availability Form -->
+            <div id="availability-form-wrap" class="hidden" style="background:#f8f9fa;padding:1rem;border-radius:6px;margin-bottom:1rem;">
+                <h3 style="margin:0 0 0.75rem;font-size:0.95rem;">Add Availability Slot / Dodaj slot dostępności</h3>
+                <form id="availability-form" onsubmit="submitAvailabilitySlot(event)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                        <div>
+                            <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;font-weight:600;">Start Time / Początek</label>
+                            <input type="datetime-local" id="avail-start" required style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;">
+                        </div>
+                        <div>
+                            <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;font-weight:600;">End Time / Koniec</label>
+                            <input type="datetime-local" id="avail-end" required style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:4px;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:0.75rem;">
+                        <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;font-weight:600;">
+                            <input type="checkbox" id="avail-recurring"> Repeat Weekly / Powtarzaj tygodniowo
+                        </label>
+                        <div id="recurrence-options" class="hidden" style="margin-top:0.5rem;padding:0.5rem;background:white;border-radius:4px;">
+                            <label style="font-size:0.85rem;font-weight:600;display:block;margin-bottom:0.3rem;">Days / Dni:</label>
+                            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                                <label><input type="checkbox" value="MO"> Mon</label>
+                                <label><input type="checkbox" value="TU"> Tue</label>
+                                <label><input type="checkbox" value="WE"> Wed</label>
+                                <label><input type="checkbox" value="TH"> Thu</label>
+                                <label><input type="checkbox" value="FR"> Fri</label>
+                                <label><input type="checkbox" value="SA"> Sat</label>
+                                <label><input type="checkbox" value="SU"> Sun</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;">
+                        <button type="submit" class="btn btn-primary btn-sm">Save / Zapisz</button>
+                        <button type="button" class="btn btn-sm" onclick="toggleAvailabilityForm()" style="background:#eee;">Cancel / Anuluj</button>
+                    </div>
+                    <div id="avail-status" style="margin-top:0.5rem;font-size:0.85rem;"></div>
+                </form>
+            </div>
+
+            <!-- Availability List -->
+            <div id="availability-list">
+                <p class="meta">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Session Requests Panel -->
+        <div id="session-requests-section" class="detail-panel" style="margin-bottom:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                <h2 style="margin:0;">Session Requests / Prośby o sesję</h2>
+                <button class="btn btn-sm" onclick="loadTeacherSessions()" style="background:#eee;">Refresh</button>
+            </div>
+            <div id="teacher-sessions-list">
+                <!-- Skeleton loading injected by JS -->
+            </div>
+        </div>
+
+        <div id="student-detail" class="hidden">
+            <button onclick="showStudentList()" class="btn btn-sm" style="margin-bottom:1rem;">
+                &larr; Back to list / Powrót do listy
+            </button>
+
+            <div class="detail-panel">
+                <h2 id="detail-student-name">Student Name</h2>
+                <p id="detail-student-meta" class="meta"></p>
+            </div>
+
+            <div class="student-actions" style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
+                <a id="session-link" href="#" class="btn btn-sm btn-primary">Start Session / Rozpocznij sesje</a>
+                <a id="vocab-link" href="#" class="btn btn-sm btn-secondary">Vocabulary / Slownictwo</a>
+                <a id="conversation-link" href="#" class="btn btn-sm btn-secondary">Conversation / Konwersacja</a>
+                <a id="games-link" href="#" class="btn btn-sm btn-secondary">Games / Gry</a>
+                <a id="profile-link" href="#" class="btn btn-sm" style="background:#9b59b6;color:white;">Profile / Profil</a>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">Overview / Przegląd</button>
+                <button class="tab" onclick="switchTab('profile')">Profile / Profil</button>
+                <button class="tab" onclick="switchTab('lessons')">Lessons / Lekcje</button>
+                <button class="tab" onclick="switchTab('progress')">Progress / Postępy</button>
+                <button class="tab" onclick="switchTab('analytics')">Analytics / Analityka</button>
+            </div>
+
+            <div id="tab-overview" class="tab-content active">
+                <div class="detail-panel" id="overview-intake">
+                    <h3>Intake Summary / Podsumowanie</h3>
+                    <div id="overview-intake-content"><p class="meta">Loading...</p></div>
+                </div>
+                <div class="detail-panel" id="overview-assessment" style="margin-top:1rem;">
+                    <h3>Latest Assessment / Ostatnia ocena</h3>
+                    <div id="overview-assessment-content"><p class="meta">Loading...</p></div>
+                </div>
+                <div class="detail-panel" id="overview-progress" style="margin-top:1rem;">
+                    <h3>Recent Progress / Ostatnie postępy</h3>
+                    <div id="overview-progress-content"><p class="meta">Loading...</p></div>
+                </div>
+                <div class="detail-panel" id="overview-activity" style="margin-top:1rem;">
+                    <h3>Recent Activity / Ostatnia aktywność</h3>
+                    <div id="overview-activity-content"><p class="meta">Loading...</p></div>
+                </div>
+            </div>
+
+            <div id="tab-profile" class="tab-content">
+                <div class="detail-panel">
+                    <div id="profile-content">
+                        <p>No diagnostic profile yet.</p>
+                        <button onclick="runDiagnosticFromDashboard()" class="btn btn-secondary btn-sm">
+                            Run Diagnostic / Uruchom diagnostykę
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-lessons" class="tab-content">
+                <div class="detail-panel">
+                    <div style="margin-bottom:1rem;">
+                        <button onclick="generateLesson()" class="btn btn-secondary btn-sm">
+                            Generate Next Lesson / Generuj następną lekcję
+                        </button>
+                    </div>
+                    <div id="lessons-content">
+                        <p>No lessons yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-progress" class="tab-content">
+                <div class="detail-panel">
+                    <div id="progress-content">
+                        <p>No progress data yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-analytics" class="tab-content">
+                <div class="detail-panel">
+                    <div id="analytics-content">
+                        <p>No analytics data yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <a href="index.html">Intake Form / Formularz przyjęcia</a>
+        </footer>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/celebrations.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/charts.js"></script>
+    <script>
+        // Role guard: only teachers allowed here; students go to their own dashboard
+        APP.guardRole(['teacher'], 'student_dashboard.html');
+        AUTH.addAuthLinks(); AUTH.updateNav();
+    </script>
+</body>
+</html>

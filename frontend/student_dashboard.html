@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Moj panel</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="site-nav">
+            <a href="student_dashboard.html" class="nav-brand">IntakeEval</a>
+            <div class="nav-links">
+                <a href="student_dashboard.html" class="active">Dashboard</a>
+                <a href="assessment.html">Assessment</a>
+                <a href="games.html">Games</a>
+                <a href="leaderboard.html">Leaderboard</a>
+                <a href="profile.html">Profile</a>
+            </div>
+        </nav>
+
+        <!-- Loading -->
+        <div id="loading-screen">
+            <div class="loading">Loading your data... / Ladowanie danych...</div>
+        </div>
+
+        <!-- Main content (hidden until loaded) -->
+        <div id="main-content" class="hidden">
+
+            <!-- ── Welcome Bar ───────────────────────────────── -->
+            <div class="sd-welcome">
+                <div class="sd-welcome-left">
+                    <h1 id="welcome-title">My Dashboard</h1>
+                    <p class="sd-welcome-sub" id="last-updated"></p>
+                </div>
+                <div class="sd-welcome-right">
+                    <div id="level-badge" class="sd-level-pill">--</div>
+                    <span class="sd-level-caption" id="level-label">Not assessed yet</span>
+                </div>
+            </div>
+
+            <!-- ── Primary CTA: Schedule a Class ─────────────── -->
+            <div class="sd-cta-card" id="schedule-toggle-wrap">
+                <div class="sd-cta-icon">+</div>
+                <div class="sd-cta-body">
+                    <strong>Schedule an English Class / Umow lekcje angielskiego</strong>
+                    <p>Pick a time, send a request, and your teacher will confirm it.<br>
+                       <em>Wybierz termin, wyslij prosbe, a nauczyciel ja potwierdzi.</em></p>
+                </div>
+                <button class="btn btn-primary" onclick="toggleScheduleForm()" type="button">
+                    Request / Poproś
+                </button>
+            </div>
+
+            <!-- ── Schedule Form (hidden) ─────────────────────── -->
+            <div id="schedule-form-wrap" class="sd-form-card hidden">
+                <h3>Request a Session / Popros o sesje</h3>
+                <div id="sched-success-banner" class="sd-success-banner hidden">
+                    <div class="sd-success-icon">&#10003;</div>
+                    <div>
+                        <strong>Request sent &mdash; we'll confirm soon.</strong><br>
+                        <em>Pro&#347;ba wys&#322;ana &mdash; potwierdzimy wkr&oacute;tce.</em>
+                    </div>
+                </div>
+                <form id="schedule-form" onsubmit="submitSessionRequest(event)">
+                    <!-- Teacher Selection -->
+                    <div class="sd-form-group">
+                        <label for="sched-teacher">Choose Teacher / Wybierz nauczyciela</label>
+                        <select id="sched-teacher" required>
+                            <option value="">Loading teachers... / Ladowanie nauczycieli...</option>
+                        </select>
+                        <div id="teacher-error" class="sd-form-error hidden">
+                            Could not load teachers. Please refresh the page. / Nie mozna zaladowac nauczycieli.
+                        </div>
+                    </div>
+
+                    <!-- Availability Display - Calendar View -->
+                    <div id="availability-section" class="sd-availability-section hidden">
+                        <div class="sd-availability-header">
+                            <strong>Available Times / Dostepne terminy</strong>
+                            <div class="sd-calendar-nav">
+                                <button type="button" class="sd-calendar-nav-btn" id="prev-month" title="Previous month / Poprzedni miesiac">&laquo;</button>
+                                <span class="sd-calendar-month" id="current-month">Loading...</span>
+                                <button type="button" class="sd-calendar-nav-btn" id="next-month" title="Next month / Nastepny miesiac">&raquo;</button>
+                            </div>
+                        </div>
+                        <div id="availability-loading" class="sd-availability-loading">
+                            Loading availability... / Ladowanie dostepnosci...
+                        </div>
+                        <div id="availability-calendar" class="sd-calendar hidden"></div>
+                        <div id="availability-error" class="sd-form-error hidden">
+                            Could not load availability. / Nie mozna zaladowac dostepnosci.
+                        </div>
+                        <!-- Time slot selector (shown when day is clicked) -->
+                        <div id="time-slot-selector" class="sd-time-selector hidden">
+                            <div class="sd-time-selector-header">
+                                <strong id="selected-day-label"></strong>
+                                <button type="button" class="sd-time-selector-close" onclick="closeTimeSelector()">&times;</button>
+                            </div>
+                            <div id="time-slots-list" class="sd-time-slots"></div>
+                        </div>
+                    </div>
+
+                    <div class="sd-form-row">
+                        <div class="sd-form-group">
+                            <label for="sched-date">Date &amp; Time / Data i godzina</label>
+                            <input type="datetime-local" id="sched-date" required>
+                            <div id="datetime-validation-error" class="sd-form-error hidden"></div>
+                        </div>
+                        <div class="sd-form-group">
+                            <label for="sched-duration">Duration / Czas trwania</label>
+                            <select id="sched-duration">
+                                <option value="30">30 min</option>
+                                <option value="45">45 min</option>
+                                <option value="60" selected>60 min (1h)</option>
+                                <option value="90">90 min (1.5h)</option>
+                                <option value="120">120 min (2h)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="sd-form-group">
+                        <label for="sched-notes">Notes / Uwagi <span class="meta">(optional)</span></label>
+                        <textarea id="sched-notes" rows="2" maxlength="500" placeholder="e.g. I want to practice speaking / Chce cwiczycz mowienie"></textarea>
+                        <div class="sd-char-count"><span id="sched-notes-count">0</span>/500</div>
+                    </div>
+                    <div class="sd-form-actions">
+                        <button type="submit" class="btn btn-primary" id="sched-submit-btn">
+                            Send Request / Wyslij prosbe
+                        </button>
+                        <button type="button" class="btn sd-btn-cancel" onclick="toggleScheduleForm()">
+                            Cancel / Anuluj
+                        </button>
+                        <span id="sched-status" class="sd-form-status"></span>
+                    </div>
+                    <div class="sd-form-hint">
+                        <strong>What happens next? / Co dalej?</strong>
+                        Your teacher reviews the request and confirms or suggests another time.<br>
+                        <em>Nauczyciel przejrzy prosbe i potwierdzi lub zaproponuje inny termin.</em>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ── Next Confirmed Session ─────────────────────── -->
+            <div id="next-session-card" class="sd-next-card hidden">
+                <div class="sd-next-label">Next Class / Nastepna lekcja</div>
+                <div id="next-session-info" class="sd-next-body"></div>
+            </div>
+
+            <!-- ── Upcoming class empty state (shown when no confirmed) -->
+            <div id="no-upcoming" class="sd-empty-upcoming hidden">
+                <p>No upcoming classes yet. / Brak nadchodzacych lekcji.</p>
+                <p><em>Request a class above to get started!</em></p>
+            </div>
+
+            <!-- ── Session Requests & History ─────────────────── -->
+            <div class="sd-section">
+                <h2 class="sd-section-title">My Requests &amp; History / Moje prosby i historia</h2>
+                <div id="sessions-list">
+                    <p class="meta" id="sessions-empty">Loading sessions...</p>
+                </div>
+            </div>
+
+            <!-- ── Level & Assessment Summary ─────────────────── -->
+            <div class="detail-panel" id="level-section">
+                <h2>Your Level / Twoj poziom</h2>
+                <div class="sd-level-row">
+                    <div id="assessment-summary" class="sd-assessment-text">
+                        <p id="assessment-info" class="meta">You haven't taken an assessment yet. Take one to see your level!</p>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <a id="take-assessment-btn" href="assessment.html" class="btn btn-primary btn-sm">
+                        Take Assessment / Zrob test
+                    </a>
+                </div>
+            </div>
+
+            <!-- Skills Breakdown (shown after assessment) -->
+            <div id="skills-section" class="detail-panel hidden">
+                <h2>Skills Breakdown / Umiejetnosci</h2>
+                <div id="skills-grid" class="results-grid"></div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="detail-panel">
+                <h2>Quick Actions / Szybkie akcje</h2>
+                <div class="sd-actions-grid">
+                    <a id="session-link" href="session.html" class="sd-action-chip sd-action-primary">
+                        Start Lesson / Rozpocznij lekcje
+                    </a>
+                    <a id="vocab-link" href="vocab.html" class="sd-action-chip">
+                        Vocabulary / Slownictwo
+                    </a>
+                    <a id="conversation-link" href="conversation.html" class="sd-action-chip">
+                        Conversation / Konwersacja
+                    </a>
+                    <a id="games-link" href="games.html" class="sd-action-chip">
+                        Games / Gry
+                    </a>
+                    <a id="recall-link" href="recall.html" class="sd-action-chip sd-action-warm">
+                        Warm-Up Review / Rozgrzewka
+                    </a>
+                </div>
+            </div>
+
+            <!-- Learning Path Summary -->
+            <div id="path-section" class="detail-panel hidden">
+                <h2>Learning Path / Sciezka nauki</h2>
+                <div id="path-content"></div>
+            </div>
+
+            <!-- Weak Areas / Recommendations -->
+            <div id="recommendations-section" class="detail-panel hidden">
+                <h2>Areas to Improve / Obszary do poprawy</h2>
+                <ul id="recommendations-list" class="priority-list"></ul>
+            </div>
+
+        </div>
+
+        <footer>
+            <a href="student_dashboard.html">Dashboard / Panel</a> &middot;
+            <a href="assessment.html">Assessment / Test</a> &middot;
+            <a href="games.html">Games / Gry</a>
+        </footer>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        // Role guard: only students allowed here
+        APP.guardRole(['student'], 'dashboard.html');
+
+        var studentId = STATE.getStudentId();
+        if (!studentId && AUTH.isLoggedIn()) {
+            studentId = parseInt(localStorage.getItem('auth_student_id'), 10) || null;
+        }
+
+        // Set links with student_id
+        function setStudentLinks(id) {
+            if (!id) return;
+            var links = {
+                'session-link': 'session.html?student_id=' + id,
+                'vocab-link': 'vocab.html?student_id=' + id,
+                'conversation-link': 'conversation.html?student_id=' + id,
+                'games-link': 'games.html?student_id=' + id,
+                'recall-link': 'recall.html?student_id=' + id,
+                'take-assessment-btn': 'assessment.html?student_id=' + id,
+            };
+            for (var elId in links) {
+                var el = document.getElementById(elId);
+                if (el) el.href = links[elId];
+            }
+        }
+
+        async function loadDashboard() {
+            if (!studentId) {
+                document.getElementById('loading-screen').innerHTML =
+                    '<p>Not logged in. <a href="login.html">Login</a> to see your dashboard.</p>';
+                return;
+            }
+
+            setStudentLinks(studentId);
+
+            try {
+                // Load student info
+                var studentResp = await apiFetch('/api/intake/' + studentId);
+                if (!studentResp.ok) {
+                    document.getElementById('loading-screen').innerHTML =
+                        '<p>Error loading student data. <a href="login.html">Try logging in again.</a></p>';
+                    return;
+                }
+                var student = await studentResp.json();
+
+                // Update welcome
+                var name = student.name || localStorage.getItem('auth_student_name') || 'Student';
+                document.getElementById('welcome-title').textContent = 'Welcome, ' + name + '!';
+
+                // Timestamp
+                var now = new Date();
+                document.getElementById('last-updated').textContent =
+                    now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) +
+                    ', ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+                // Update level display
+                var level = student.current_level || 'pending';
+                document.getElementById('level-badge').textContent = level === 'pending' ? '--' : level;
+                if (level !== 'pending') {
+                    document.getElementById('level-label').textContent = 'Current Level';
+                    document.getElementById('take-assessment-btn').textContent = 'Retake Assessment / Powtorz test';
+                }
+
+                // Try to load latest assessment
+                await loadAssessmentData(studentId, level);
+
+                // Try to load learning path
+                await loadLearningPath(studentId);
+
+                // Show main content
+                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+
+            } catch (err) {
+                console.error('[student-dashboard] Error:', err);
+                document.getElementById('loading-screen').innerHTML =
+                    '<p>Error: ' + err.message + '. <a href="login.html">Try logging in again.</a></p>';
+            }
+        }
+
+        async function loadAssessmentData(sid, level) {
+            try {
+                var resp = await apiFetch('/api/assessment/' + sid + '/latest');
+                if (!resp.ok) return;
+                var data = await resp.json();
+                if (!data.exists) return;
+
+                if (data.status === 'completed' && data.ai_analysis) {
+                    var analysis = typeof data.ai_analysis === 'string'
+                        ? JSON.parse(data.ai_analysis) : data.ai_analysis;
+
+                    // Assessment info
+                    var confidence = analysis.confidence_score
+                        ? Math.round(analysis.confidence_score * 100) + '%' : 'N/A';
+                    document.getElementById('assessment-info').innerHTML =
+                        'Assessed level: <strong>' + (analysis.determined_level || level) + '</strong>' +
+                        ' (Confidence: ' + confidence + ')' +
+                        '<br><em>Oceniony poziom</em>';
+
+                    // Skills breakdown
+                    var skills = analysis.sub_skill_breakdown || [];
+                    if (skills.length > 0) {
+                        var skillsEl = document.getElementById('skills-grid');
+                        skillsEl.innerHTML = skills.map(function (s) {
+                            var pct = typeof s.score === 'number' ? Math.round(s.score) : 0;
+                            var color = pct >= 70 ? '#27ae60' : pct >= 50 ? '#f39c12' : '#c0392b';
+                            return '<div class="result-card">' +
+                                '<h3>' + escapeHtml(s.skill || '') + '</h3>' +
+                                '<div style="font-size:1.5rem;font-weight:700;color:' + color + ';">' + pct + '%</div>' +
+                                '<p class="meta">' + escapeHtml(s.level || '') + '</p>' +
+                                '<p style="font-size:0.85rem;">' + escapeHtml((s.details || '').substring(0, 120)) + '</p>' +
+                                '</div>';
+                        }).join('');
+                        document.getElementById('skills-section').classList.remove('hidden');
+                    }
+
+                    // Weak areas / recommendations
+                    var recs = analysis.recommendations || [];
+                    var weakAreas = analysis.weak_areas || [];
+                    var combined = weakAreas.concat(recs);
+                    if (combined.length > 0) {
+                        var recList = document.getElementById('recommendations-list');
+                        recList.innerHTML = combined.map(function (r) {
+                            return '<li>' + escapeHtml(r) + '</li>';
+                        }).join('');
+                        document.getElementById('recommendations-section').classList.remove('hidden');
+                    }
+                }
+            } catch (e) {
+                console.warn('[student-dashboard] Could not load assessment:', e);
+            }
+        }
+
+        async function loadLearningPath(sid) {
+            try {
+                var resp = await apiFetch('/api/learning-path/' + sid);
+                if (!resp.ok) return;
+                var data = await resp.json();
+                if (!data.exists) return;
+
+                if (data && data.title) {
+                    var pathContent = document.getElementById('path-content');
+                    pathContent.innerHTML =
+                        '<p><strong>' + escapeHtml(data.title) + '</strong></p>' +
+                        '<p class="meta">' + escapeHtml(data.current_level || '') +
+                        ' &rarr; ' + escapeHtml(data.target_level || '') + '</p>' +
+                        '<p>' + escapeHtml((data.overview || '').substring(0, 200)) + '</p>';
+                    document.getElementById('path-section').classList.remove('hidden');
+                }
+            } catch (e) {
+                console.warn('[student-dashboard] Could not load learning path:', e);
+            }
+        }
+
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
+        }
+
+        // ── Scheduling functions ───────────────────────────────────
+
+        // Global state for teacher availability
+        var teacherAvailability = null;
+        var selectedTeacherId = null;
+        var currentMonth = new Date(); // Current month being displayed
+        var selectedDayDate = null; // Currently selected day for time slots
+
+        async function loadTeachers() {
+            var select = document.getElementById('sched-teacher');
+            var errorEl = document.getElementById('teacher-error');
+
+            try {
+                var resp = await apiFetch('/api/students/teachers');
+                if (!resp.ok) {
+                    throw new Error('Failed to load teachers');
+                }
+                var data = await resp.json();
+                var teachers = data.teachers || [];
+
+                if (teachers.length === 0) {
+                    select.innerHTML = '<option value="">No teachers available / Brak nauczycieli</option>';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+
+                // Populate dropdown
+                select.innerHTML = teachers.map(function(t) {
+                    return '<option value="' + t.id + '">' + escapeHtml(t.display_name) + '</option>';
+                }).join('');
+
+                // Select first teacher by default
+                selectedTeacherId = teachers[0].id;
+                await loadTeacherAvailability(selectedTeacherId);
+
+                errorEl.classList.add('hidden');
+            } catch (err) {
+                console.error('[loadTeachers] Error:', err);
+                select.innerHTML = '<option value="">Error loading teachers / Blad ladowania</option>';
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        async function loadTeacherAvailability(teacherId, month) {
+            var section = document.getElementById('availability-section');
+            var loading = document.getElementById('availability-loading');
+            var calendar = document.getElementById('availability-calendar');
+            var errorEl = document.getElementById('availability-error');
+            var monthLabel = document.getElementById('current-month');
+
+            // Use provided month or default to current month
+            if (month) {
+                currentMonth = new Date(month);
+            }
+
+            // Show section and loading state
+            section.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            calendar.classList.add('hidden');
+            errorEl.classList.add('hidden');
+
+            // Calculate month range
+            var monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            var monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+            var fromStr = monthStart.toISOString().split('T')[0];
+            var toStr = monthEnd.toISOString().split('T')[0];
+
+            // Update month label
+            monthLabel.textContent = currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            try {
+                var resp = await apiFetch('/api/students/teachers/' + teacherId + '/availability?from_date=' + fromStr + '&to_date=' + toStr);
+                if (!resp.ok) {
+                    throw new Error('Failed to load availability');
+                }
+                var data = await resp.json();
+                teacherAvailability = data;
+
+                // Render calendar
+                renderCalendar(data.windows || []);
+
+                loading.classList.add('hidden');
+                calendar.classList.remove('hidden');
+
+            } catch (err) {
+                console.error('[loadTeacherAvailability] Error:', err);
+                loading.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                teacherAvailability = null;
+            }
+        }
+
+        function renderCalendar(windows) {
+            var calendar = document.getElementById('availability-calendar');
+
+            // Group windows by date
+            var windowsByDate = {};
+            windows.forEach(function(w) {
+                if (!windowsByDate[w.date]) {
+                    windowsByDate[w.date] = [];
+                }
+                windowsByDate[w.date].push(w);
+            });
+
+            // Get first day of month and number of days
+            var year = currentMonth.getFullYear();
+            var month = currentMonth.getMonth();
+            var firstDay = new Date(year, month, 1);
+            var lastDay = new Date(year, month + 1, 0);
+            var numDays = lastDay.getDate();
+            var startDayOfWeek = firstDay.getDay(); // 0 = Sunday
+
+            // Calculate days from previous month
+            var prevMonthLastDay = new Date(year, month, 0).getDate();
+            var prevMonthDays = startDayOfWeek;
+
+            // Build calendar HTML
+            var html = '<div class="sd-calendar-grid">';
+
+            // Day headers (Sun-Sat)
+            var dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayHeaders.forEach(function(day) {
+                html += '<div class="sd-calendar-day-header">' + day + '</div>';
+            });
+
+            // Previous month days
+            for (var i = prevMonthDays - 1; i >= 0; i--) {
+                var day = prevMonthLastDay - i;
+                html += '<div class="sd-calendar-day other-month">';
+                html += '<div class="sd-calendar-day-number">' + day + '</div>';
+                html += '</div>';
+            }
+
+            // Current month days
+            var today = new Date();
+            var todayStr = today.toISOString().split('T')[0];
+
+            for (var d = 1; d <= numDays; d++) {
+                var currentDate = new Date(year, month, d);
+                var dateStr = currentDate.toISOString().split('T')[0];
+                var isToday = dateStr === todayStr;
+                var isPast = currentDate < today && !isToday;
+                var hasAvailability = windowsByDate[dateStr] && windowsByDate[dateStr].length > 0;
+                var isSelected = selectedDayDate === dateStr;
+
+                var classes = ['sd-calendar-day'];
+                if (isToday) classes.push('today');
+                if (isPast) classes.push('past');
+                if (hasAvailability) classes.push('available');
+                else classes.push('unavailable');
+                if (isSelected) classes.push('selected');
+
+                html += '<div class="' + classes.join(' ') + '" data-date="' + dateStr + '" onclick="selectDay(\'' + dateStr + '\')">';
+                html += '<div class="sd-calendar-day-number">' + d + '</div>';
+                if (!isPast) {
+                    html += '<div class="sd-calendar-day-indicator"></div>';
+                }
+                html += '</div>';
+            }
+
+            // Next month days (fill remaining cells)
+            var totalCells = prevMonthDays + numDays;
+            var remainingCells = 35 - totalCells; // 5 weeks = 35 cells
+            if (remainingCells < 0) remainingCells += 7; // Need 6 weeks
+
+            for (var n = 1; n <= remainingCells; n++) {
+                html += '<div class="sd-calendar-day other-month">';
+                html += '<div class="sd-calendar-day-number">' + n + '</div>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+            calendar.innerHTML = html;
+        }
+
+        function selectDay(dateStr) {
+            var clickedDay = new Date(dateStr + 'T00:00:00');
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Don't allow selecting past days
+            if (clickedDay < today) {
+                return;
+            }
+
+            selectedDayDate = dateStr;
+
+            // Update calendar visual state
+            document.querySelectorAll('.sd-calendar-day').forEach(function(el) {
+                el.classList.remove('selected');
+            });
+            var selectedEl = document.querySelector('.sd-calendar-day[data-date="' + dateStr + '"]');
+            if (selectedEl) {
+                selectedEl.classList.add('selected');
+            }
+
+            // Show time slots for this day
+            showTimeSlots(dateStr);
+        }
+
+        function showTimeSlots(dateStr) {
+            var selector = document.getElementById('time-slot-selector');
+            var dayLabel = document.getElementById('selected-day-label');
+            var slotsList = document.getElementById('time-slots-list');
+
+            // Get windows for this date
+            var windows = (teacherAvailability && teacherAvailability.windows || []).filter(function(w) {
+                return w.date === dateStr;
+            });
+
+            // Format date for display
+            var date = new Date(dateStr + 'T00:00:00');
+            var dateDisplay = date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            dayLabel.textContent = dateDisplay;
+
+            // Render time slots
+            if (windows.length === 0) {
+                slotsList.innerHTML = '<div class="sd-time-slot-none">No available times on this day / Brak dostepnych terminow</div>';
+            } else {
+                var html = '';
+                windows.forEach(function(w) {
+                    html += '<button type="button" class="sd-time-slot" onclick="selectTimeSlot(\'' + dateStr + '\', \'' + w.start_time + '\')">';
+                    html += w.start_time + ' – ' + w.end_time;
+                    html += '</button>';
+                });
+                slotsList.innerHTML = html;
+            }
+
+            selector.classList.remove('hidden');
+        }
+
+        function selectTimeSlot(dateStr, startTime) {
+            // Prefill the datetime input
+            var datetimeInput = document.getElementById('sched-date');
+            var datetimeStr = dateStr + 'T' + startTime;
+            datetimeInput.value = datetimeStr;
+
+            // Trigger validation
+            validateAvailability();
+
+            // Close time selector
+            closeTimeSelector();
+
+            // Visual feedback
+            datetimeInput.focus();
+        }
+
+        function closeTimeSelector() {
+            var selector = document.getElementById('time-slot-selector');
+            selector.classList.add('hidden');
+        }
+
+        function changeMonth(offset) {
+            currentMonth.setMonth(currentMonth.getMonth() + offset);
+            if (selectedTeacherId) {
+                loadTeacherAvailability(selectedTeacherId, currentMonth);
+            }
+            // Close time selector when changing months
+            closeTimeSelector();
+            selectedDayDate = null;
+        }
+
+        function validateAvailability() {
+            var dateVal = document.getElementById('sched-date').value;
+            var duration = parseInt(document.getElementById('sched-duration').value, 10);
+            var errorEl = document.getElementById('datetime-validation-error');
+
+            // Clear previous error
+            errorEl.classList.add('hidden');
+            errorEl.textContent = '';
+
+            if (!dateVal || !teacherAvailability) {
+                return true; // Can't validate yet
+            }
+
+            // Parse selected datetime
+            var selectedDate = new Date(dateVal);
+            var selectedDateStr = selectedDate.toISOString().split('T')[0];
+            var selectedTimeStr = selectedDate.toTimeString().substring(0, 5); // HH:MM
+
+            // Calculate end time
+            var endDate = new Date(selectedDate.getTime() + duration * 60000);
+            var endTimeStr = endDate.toTimeString().substring(0, 5);
+
+            // Check if selected date has any availability
+            var windows = (teacherAvailability.windows || []).filter(function(w) {
+                return w.date === selectedDateStr;
+            });
+
+            if (windows.length === 0) {
+                errorEl.textContent = 'Teacher not available on this date. / Nauczyciel niedostepny w tym dniu.';
+                errorEl.classList.remove('hidden');
+                return false;
+            }
+
+            // Check if selected time falls within any window
+            var isValid = windows.some(function(w) {
+                var windowStart = w.start_time;
+                var windowEnd = w.end_time;
+
+                // Check if booking fits entirely within window
+                return selectedTimeStr >= windowStart && endTimeStr <= windowEnd;
+            });
+
+            if (!isValid) {
+                errorEl.textContent = 'Selected time not available. Please choose from available windows. / Wybrany czas niedostepny.';
+                errorEl.classList.remove('hidden');
+                return false;
+            }
+
+            return true;
+        }
+
+        function toggleScheduleForm() {
+            var wrap = document.getElementById('schedule-form-wrap');
+            var toggleBtn = document.getElementById('schedule-toggle-wrap');
+            if (wrap.classList.contains('hidden')) {
+                wrap.classList.remove('hidden');
+                toggleBtn.classList.add('hidden');
+                // Set min date to now
+                var now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('sched-date').min = now.toISOString().slice(0, 16);
+                // Load teachers when form opens
+                if (!selectedTeacherId) {
+                    loadTeachers();
+                }
+            } else {
+                wrap.classList.add('hidden');
+                toggleBtn.classList.remove('hidden');
+            }
+        }
+
+        async function submitSessionRequest(e) {
+            e.preventDefault();
+            var btn = document.getElementById('sched-submit-btn');
+            var statusEl = document.getElementById('sched-status');
+            var banner = document.getElementById('sched-success-banner');
+            var form = document.getElementById('schedule-form');
+            var dateVal = document.getElementById('sched-date').value;
+            var duration = parseInt(document.getElementById('sched-duration').value, 10);
+            var notes = document.getElementById('sched-notes').value.trim() || null;
+            var teacherId = parseInt(document.getElementById('sched-teacher').value, 10) || null;
+
+            // Reset status
+            statusEl.textContent = '';
+            statusEl.className = 'sd-form-status';
+            banner.classList.add('hidden');
+
+            // Validate: teacher required
+            if (!teacherId) {
+                statusEl.textContent = 'Please select a teacher. / Wybierz nauczyciela.';
+                statusEl.className = 'sd-form-status sd-status-error';
+                return;
+            }
+
+            // Validate: date required
+            if (!dateVal) {
+                statusEl.textContent = 'Please select a date and time. / Wybierz date i godzine.';
+                statusEl.className = 'sd-form-status sd-status-error';
+                return;
+            }
+
+            // Validate: must be in the future
+            var selectedDate = new Date(dateVal);
+            if (selectedDate <= new Date()) {
+                statusEl.textContent = 'Please choose a future date and time. / Wybierz przyszla date i godzine.';
+                statusEl.className = 'sd-form-status sd-status-error';
+                return;
+            }
+
+            // Validate: availability
+            if (!validateAvailability()) {
+                statusEl.textContent = 'Please choose an available time. / Wybierz dostepny termin.';
+                statusEl.className = 'sd-form-status sd-status-error';
+                return;
+            }
+
+            // Validate: notes max 500 chars
+            if (notes && notes.length > 500) {
+                statusEl.textContent = 'Notes must be 500 characters or fewer. / Uwagi max 500 znakow.';
+                statusEl.className = 'sd-form-status sd-status-error';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending\u2026 / Wysy\u0142anie\u2026';
+
+            try {
+                var resp = await apiFetch('/api/student/me/sessions/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        scheduled_at: selectedDate.toISOString(),
+                        duration_min: duration,
+                        notes: notes,
+                        teacher_id: teacherId
+                    })
+                });
+                if (!resp.ok) {
+                    var errData = await STATE.safeJson(resp);
+                    throw new Error((errData.detail || 'Request failed') + ' (HTTP ' + resp.status + ')');
+                }
+                // Show success banner, hide form fields
+                form.classList.add('hidden');
+                banner.classList.remove('hidden');
+                form.reset();
+                document.getElementById('sched-notes-count').textContent = '0';
+                // Reload sessions list so new Pending session appears
+                await loadSessions();
+                // After delay, collapse the whole form card and show CTA again
+                setTimeout(function() {
+                    toggleScheduleForm();
+                    form.classList.remove('hidden');
+                    banner.classList.add('hidden');
+                }, 3000);
+            } catch (err) {
+                statusEl.textContent = 'Error: ' + err.message;
+                statusEl.className = 'sd-form-status sd-status-error';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Request / Wyslij prosbe';
+            }
+        }
+
+        // ICS Calendar Export
+        function generateICS(session) {
+            var start = new Date(session.scheduled_at);
+            var durationMin = session.duration_min || 60;
+            var end = new Date(start.getTime() + durationMin * 60 * 1000);
+
+            var formatICSDate = function(d) {
+                return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+            };
+
+            var summary = 'English Lesson / Lekcja angielskiego';
+            var description = [
+                session.notes ? 'Notes: ' + session.notes : '',
+                session.teacher_name ? 'Teacher: ' + session.teacher_name : '',
+                'Duration: ' + durationMin + ' minutes'
+            ].filter(Boolean).join('\\n');
+
+            var ics = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//IntakeEval//EN',
+                'CALSCALE:GREGORIAN',
+                'METHOD:PUBLISH',
+                'BEGIN:VEVENT',
+                'UID:session-' + session.id + '@intakeeval',
+                'DTSTAMP:' + formatICSDate(new Date()),
+                'DTSTART:' + formatICSDate(start),
+                'DTEND:' + formatICSDate(end),
+                'SUMMARY:' + summary,
+                'DESCRIPTION:' + description,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            return ics;
+        }
+
+        function downloadICS(session) {
+            var ics = generateICS(session);
+            var blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'lesson-' + session.id + '.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function formatSessionCard(s) {
+            var dt = new Date(s.scheduled_at);
+            var dateStr = dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+            var timeStr = dt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+            // Use unified badge classes
+            var badgeClass = s.status === 'confirmed' ? 'session-badge-confirmed'
+                : s.status === 'requested' ? 'session-badge-requested'
+                : s.status === 'cancelled' ? 'session-badge-cancelled' : '';
+            var statusLabel = s.status === 'confirmed' ? 'Confirmed / Potwierdzona'
+                : s.status === 'requested' ? 'Pending / Oczekująca'
+                : s.status === 'cancelled' ? 'Cancelled / Anulowana'
+                : s.status;
+
+            // Add calendar button for confirmed sessions
+            var calendarBtn = '';
+            if (s.status === 'confirmed') {
+                calendarBtn = '<button class="btn-calendar" onclick=\'downloadICS(' + JSON.stringify(s) + ')\'><span class="btn-calendar-icon"></span> Add to Calendar</button>';
+            }
+
+            return '<div class="sd-session-row">' +
+                '<div class="sd-session-info">' +
+                '<strong>' + dateStr + '</strong> at ' + timeStr +
+                '<br><span class="meta">' + s.duration_min + ' min' +
+                (s.teacher_name ? ' &middot; ' + escapeHtml(s.teacher_name) : '') +
+                (s.notes ? ' &middot; ' + escapeHtml(s.notes) : '') +
+                '</span>' +
+                (calendarBtn ? '<div style="margin-top:0.4rem;">' + calendarBtn + '</div>' : '') +
+                '</div>' +
+                '<span class="session-badge ' + badgeClass + '">' + statusLabel + '</span>' +
+                '</div>';
+        }
+
+        // Skeleton loading helper
+        function renderSessionSkeleton(count) {
+            var html = '';
+            for (var i = 0; i < count; i++) {
+                html += '<div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem;margin-bottom:0.5rem;background:white;border-radius:6px;border:1px solid #eee;">' +
+                    '<div style="flex:1;display:flex;flex-direction:column;gap:0.4rem;">' +
+                    '<div class="skeleton" style="height:18px;width:200px;border-radius:4px;"></div>' +
+                    '<div class="skeleton" style="height:14px;width:120px;border-radius:4px;"></div>' +
+                    '</div>' +
+                    '<div class="skeleton" style="width:70px;height:22px;border-radius:10px;"></div>' +
+                    '</div>';
+            }
+            return html;
+        }
+
+        async function loadSessions() {
+            var listEl = document.getElementById('sessions-list');
+            var nextCard = document.getElementById('next-session-card');
+            var nextInfo = document.getElementById('next-session-info');
+            var noUpcoming = document.getElementById('no-upcoming');
+
+            // Show skeleton loading
+            listEl.innerHTML = renderSessionSkeleton(2);
+
+            try {
+                var resp = await apiFetch('/api/student/me/sessions');
+                if (!resp.ok) {
+                    var errData = await STATE.safeJson(resp);
+                    listEl.innerHTML = '<p class="meta">Could not load sessions: ' + escapeHtml(errData.detail || 'unknown error') + '</p>';
+                    return;
+                }
+                var data = await resp.json();
+                var sessions = data.sessions || [];
+
+                // Find next confirmed session (earliest confirmed session in the future)
+                var now = new Date();
+                var nextSession = null;
+                for (var i = 0; i < sessions.length; i++) {
+                    var s = sessions[i];
+                    if (s.status === 'confirmed' && new Date(s.scheduled_at) > now) {
+                        if (!nextSession || new Date(s.scheduled_at) < new Date(nextSession.scheduled_at)) {
+                            nextSession = s;
+                        }
+                    }
+                }
+
+                // Show next confirmed session highlight with calendar button
+                if (nextSession) {
+                    var ndt = new Date(nextSession.scheduled_at);
+                    var nDate = ndt.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                    var nTime = ndt.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                    nextInfo.innerHTML =
+                        '<div class="sd-next-date">' + nDate + ' at ' + nTime + '</div>' +
+                        '<div class="meta">' + nextSession.duration_min + ' min' +
+                        (nextSession.teacher_name ? ' &middot; Teacher: ' + escapeHtml(nextSession.teacher_name) : '') +
+                        '</div>' +
+                        (nextSession.notes ? '<div class="meta" style="font-style:italic;margin-top:0.25rem;">' + escapeHtml(nextSession.notes) + '</div>' : '') +
+                        '<div style="margin-top:0.5rem;"><button class="btn-calendar" onclick=\'downloadICS(' + JSON.stringify(nextSession) + ')\'><span class="btn-calendar-icon"></span> Add to Calendar</button></div>';
+                    nextCard.classList.remove('hidden');
+                    noUpcoming.classList.add('hidden');
+                } else {
+                    nextCard.classList.add('hidden');
+                    noUpcoming.classList.remove('hidden');
+                }
+
+                if (sessions.length === 0) {
+                    listEl.innerHTML = '<div class="empty-state">' +
+                        '<div class="empty-state-icon">📅</div>' +
+                        '<h3>No sessions yet</h3>' +
+                        '<p>Brak sesji</p>' +
+                        '<p class="empty-state-hint">Use the form above to request your first lesson!</p>' +
+                        '</div>';
+                    return;
+                }
+
+                listEl.innerHTML = sessions.map(formatSessionCard).join('');
+            } catch (err) {
+                console.warn('[student-dashboard] Could not load sessions:', err);
+                listEl.innerHTML = '<p class="meta">Could not load sessions. Check your connection.</p>';
+            }
+        }
+
+        // Character counter for notes field
+        document.getElementById('sched-notes').addEventListener('input', function() {
+            document.getElementById('sched-notes-count').textContent = this.value.length;
+        });
+
+        // Teacher selection change - load availability
+        document.getElementById('sched-teacher').addEventListener('change', function() {
+            var teacherId = parseInt(this.value, 10);
+            if (teacherId) {
+                selectedTeacherId = teacherId;
+                loadTeacherAvailability(teacherId);
+                // Re-validate current date/time if selected
+                if (document.getElementById('sched-date').value) {
+                    validateAvailability();
+                }
+            }
+        });
+
+        // Date/time change - validate availability
+        document.getElementById('sched-date').addEventListener('change', function() {
+            validateAvailability();
+        });
+
+        // Duration change - re-validate availability
+        document.getElementById('sched-duration').addEventListener('change', function() {
+            if (document.getElementById('sched-date').value) {
+                validateAvailability();
+            }
+        });
+
+        // Month navigation
+        document.getElementById('prev-month').addEventListener('click', function() {
+            changeMonth(-1);
+        });
+
+        document.getElementById('next-month').addEventListener('click', function() {
+            changeMonth(1);
+        });
+
+        loadDashboard();
+        // Load sessions independently
+        if (studentId) loadSessions();
+    </script>
+</body>
+</html>

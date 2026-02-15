@@ -1,0 +1,35 @@
+services:
+  intake_eval:
+    build: .
+    container_name: intake_eval_school
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      DEV_RELOAD: "0"
+      IN_DOCKER: "1"
+      # Required secrets (change in production!)
+      JWT_SECRET: "IO5/7S4B1DUzqZW+iD3fkYSXiMT+Kal4XUwHoKi3QRJCI9jCOnS5cvCBJRiPDpyQet5HrSPTS86JFGSGzjkNWg=="
+      ADMIN_SECRET: "5ZPP/Zf3Zww30GYBAzR3XSzgmZN6f/vCLRNjDTAZkhY="
+      # Database path inside container
+      DATABASE_PATH: "/app/data/intake_eval.db"
+      # Pass-through from .env (keeps secrets out of this file)
+      OPENAI_API_KEY: ${API_KEY}
+    volumes:
+      # Persist SQLite database
+      - intake_eval_data:/app/data
+      # Bind mount for development (code changes reflect immediately)
+      # Uncomment for dev: - .:/app:ro
+    working_dir: /app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  intake_eval_data:
