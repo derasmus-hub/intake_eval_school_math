@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS students (
     additional_notes TEXT,
     email TEXT UNIQUE,
     password_hash TEXT,
+    exam_target TEXT,
     total_xp INTEGER DEFAULT 0,
     xp_level INTEGER DEFAULT 1,
     streak INTEGER DEFAULT 0,
@@ -41,6 +42,7 @@ CREATE TABLE IF NOT EXISTS lessons (
     objective TEXT,
     content TEXT,
     difficulty TEXT,
+    math_domain TEXT,
     status TEXT DEFAULT 'generated',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(id)
@@ -105,12 +107,14 @@ CREATE TABLE IF NOT EXISTS achievements (
     FOREIGN KEY (student_id) REFERENCES students(id)
 );
 
-CREATE TABLE IF NOT EXISTS vocabulary_cards (
+CREATE TABLE IF NOT EXISTS math_concept_cards (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     student_id INTEGER NOT NULL,
-    word TEXT NOT NULL,
-    translation TEXT NOT NULL,
+    concept TEXT NOT NULL,
+    formula TEXT,
+    explanation TEXT NOT NULL,
     example TEXT,
+    math_domain TEXT DEFAULT 'arytmetyka',
     ease_factor REAL DEFAULT 2.5,
     interval_days INTEGER DEFAULT 0,
     repetitions INTEGER DEFAULT 0,
@@ -126,8 +130,9 @@ CREATE TABLE IF NOT EXISTS learning_points (
     lesson_id INTEGER NOT NULL,
     point_type TEXT NOT NULL,
     content TEXT NOT NULL,
-    polish_explanation TEXT,
-    example_sentence TEXT,
+    explanation TEXT,
+    example_problem TEXT,
+    math_domain TEXT,
     importance_weight INTEGER DEFAULT 3,
     ease_factor REAL DEFAULT 2.5,
     interval_days INTEGER DEFAULT 0,

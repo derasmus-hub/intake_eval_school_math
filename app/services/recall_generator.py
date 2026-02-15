@@ -38,8 +38,8 @@ async def get_points_due_for_review(student_id: int) -> list[dict]:
                 "lesson_id": row["lesson_id"],
                 "point_type": row["point_type"],
                 "content": row["content"],
-                "polish_explanation": row["polish_explanation"],
-                "example_sentence": row["example_sentence"],
+                "explanation": row["explanation"],
+                "example_problem": row["example_problem"],
                 "importance_weight": row["importance_weight"],
                 "times_reviewed": row["times_reviewed"],
                 "last_recall_score": row["last_recall_score"],
@@ -59,10 +59,10 @@ async def generate_recall_questions(points: list[dict], student_level: str) -> d
     points_text = ""
     for p in points:
         points_text += f"- ID: {p['id']}, Type: {p['point_type']}, Content: {p['content']}"
-        if p.get("polish_explanation"):
-            points_text += f", Polish: {p['polish_explanation']}"
-        if p.get("example_sentence"):
-            points_text += f", Example: {p['example_sentence']}"
+        if p.get("explanation"):
+            points_text += f", Explanation: {p['explanation']}"
+        if p.get("example_problem"):
+            points_text += f", Example Problem: {p['example_problem']}"
         points_text += "\n"
 
     user_message = user_template.format(

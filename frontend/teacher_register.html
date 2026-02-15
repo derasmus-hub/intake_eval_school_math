@@ -1,68 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Registration - Rejestracja nauczyciela</title>
+    <title>Rejestracja Nauczyciela</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="login.html" class="nav-brand">IntakeEval</a>
+            <a href="login.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
-                <a href="login.html">Login</a>
-                <a href="register.html">Register</a>
+                <a href="login.html">Logowanie</a>
+                <a href="register.html">Rejestracja</a>
             </div>
         </nav>
 
         <div class="form-section" style="max-width:400px;margin:2rem auto;">
-            <h2>Teacher Registration / Rejestracja nauczyciela</h2>
-            <p class="section-desc">Register as a teacher using your invite token. / Zarejestruj sie jako nauczyciel uzywajac tokenu zaproszenia.</p>
+            <h2>Rejestracja nauczyciela</h2>
+            <p class="section-desc">Zarejestruj się jako nauczyciel używając tokenu zaproszenia.</p>
 
             <div id="error-message" class="error-banner hidden"></div>
             <div id="success-message" class="success-banner hidden"></div>
 
             <form id="teacher-register-form">
                 <div class="form-group">
-                    <label for="name">Name / Imie *</label>
-                    <input type="text" id="name" required placeholder="Your name">
+                    <label for="name">Imię *</label>
+                    <input type="text" id="name" required placeholder="Twoje imię">
                 </div>
                 <div class="form-group">
                     <label for="email">Email *</label>
                     <input type="email" id="email" required placeholder="your@email.com">
-                    <small class="form-hint">Must match the invited email address / Musi pasowac do zaproszonego adresu email</small>
+                    <small class="form-hint">Musi pasować do zaproszonego adresu email</small>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password / Haslo *</label>
-                    <input type="password" id="password" required placeholder="Min 8 characters" minlength="8">
+                    <label for="password">Hasło *</label>
+                    <input type="password" id="password" required placeholder="Min. 8 znaków" minlength="8">
                 </div>
                 <div class="form-group">
-                    <label for="password-confirm">Confirm Password / Potwierdz haslo *</label>
-                    <input type="password" id="password-confirm" required placeholder="Repeat password" minlength="8">
+                    <label for="password-confirm">Potwierdź hasło *</label>
+                    <input type="password" id="password-confirm" required placeholder="Powtórz hasło" minlength="8">
                 </div>
                 <div class="form-group">
-                    <label for="invite-token">Invite Token / Token zaproszenia *</label>
-                    <input type="text" id="invite-token" required placeholder="Paste your invite token">
-                    <small class="form-hint">Provided by administrator / Dostarczony przez administratora</small>
+                    <label for="invite-token">Token zaproszenia *</label>
+                    <input type="text" id="invite-token" required placeholder="Wklej token zaproszenia">
+                    <small class="form-hint">Dostarczony przez administratora</small>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="register-btn">Register as Teacher / Zarejestruj jako nauczyciel</button>
+                    <button type="submit" class="btn btn-primary" id="register-btn">Zarejestruj jako nauczyciel</button>
                 </div>
             </form>
 
             <p style="text-align:center;margin-top:1rem;">
-                Not a teacher? / Nie jestes nauczycielem?
-                <a href="register.html">Student Registration / Rejestracja ucznia</a>
+                Nie jesteś nauczycielem?
+                <a href="register.html">Rejestracja ucznia</a>
             </p>
             <p style="text-align:center;margin-top:0.5rem;">
-                Already have an account? / Masz juz konto?
-                <a href="login.html">Login / Zaloguj sie</a>
+                Masz już konto?
+                <a href="login.html">Zaloguj się</a>
             </p>
         </div>
 
         <footer>
-            <a href="index.html">Intake Form</a> | <a href="dashboard.html">Dashboard</a>
+            <a href="index.html">Formularz</a> | <a href="dashboard.html">Panel</a>
         </footer>
     </div>
 
@@ -99,7 +99,7 @@
             const errEl = document.getElementById('error-message');
             const successEl = document.getElementById('success-message');
             btn.disabled = true;
-            btn.textContent = 'Registering...';
+            btn.textContent = 'Rejestracja...';
             errEl.classList.add('hidden');
             successEl.classList.add('hidden');
 
@@ -107,18 +107,18 @@
             const confirm = document.getElementById('password-confirm').value;
 
             if (password !== confirm) {
-                errEl.textContent = 'Passwords do not match. / Hasla nie sa zgodne.';
+                errEl.textContent = 'Hasła nie są zgodne.';
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Register as Teacher / Zarejestruj jako nauczyciel';
+                btn.textContent = 'Zarejestruj jako nauczyciel';
                 return;
             }
 
             if (password.length < 8) {
-                errEl.textContent = 'Password must be at least 8 characters. / Haslo musi miec co najmniej 8 znakow.';
+                errEl.textContent = 'Hasło musi mieć co najmniej 8 znaków.';
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Register as Teacher / Zarejestruj jako nauczyciel';
+                btn.textContent = 'Zarejestruj jako nauczyciel';
                 return;
             }
 
@@ -136,10 +136,10 @@
 
                 if (!resp.ok) {
                     const err = await resp.json();
-                    errEl.textContent = err.detail || 'Registration failed';
+                    errEl.textContent = err.detail || 'Rejestracja nie powiodła się';
                     errEl.classList.remove('hidden');
                     btn.disabled = false;
-                    btn.textContent = 'Register as Teacher / Zarejestruj jako nauczyciel';
+                    btn.textContent = 'Zarejestruj jako nauczyciel';
                     return;
                 }
 
@@ -152,16 +152,16 @@
                 STATE.setStudentId(data.student_id);
 
                 // Show success and redirect to teacher dashboard
-                successEl.textContent = 'Registration successful! Redirecting to dashboard...';
+                successEl.textContent = 'Rejestracja udana! Przekierowanie do panelu...';
                 successEl.classList.remove('hidden');
                 setTimeout(() => {
                     window.location.href = 'dashboard.html';
                 }, 1500);
             } catch (err) {
-                errEl.textContent = 'Network error: ' + err.message;
+                errEl.textContent = 'Błąd sieci: ' + err.message;
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Register as Teacher / Zarejestruj jako nauczyciel';
+                btn.textContent = 'Zarejestruj jako nauczyciel';
             }
         });
     </script>

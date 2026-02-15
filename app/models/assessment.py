@@ -11,34 +11,39 @@ class Bracket(str, Enum):
 
 class QuestionType(str, Enum):
     PLACEMENT = "placement"
-    GRAMMAR_MCQ = "grammar_mcq"
-    VOCABULARY_FILL = "vocabulary_fill"
-    READING_COMPREHENSION = "reading_comprehension"
+    ARITHMETIC = "arithmetic"
+    ALGEBRA = "algebra"
+    GEOMETRY = "geometry"
+    TRIGONOMETRY = "trigonometry"
+    CALCULUS = "calculus"
+    STATISTICS = "statistics"
+    LOGIC = "logic"
 
 
 class PlacementQuestion(BaseModel):
     id: int
-    sentence: str
-    is_correct: bool
+    problem: str  # math problem statement
+    correct_answer: str
     difficulty: int  # 1-5
+    math_domain: str
     explanation: str
 
 
 class DiagnosticQuestion(BaseModel):
-    id: str  # e.g. "grammar_1", "vocab_2"
+    id: str
     type: QuestionType
     bracket: Bracket
     question: str
-    options: Optional[list[str]] = None  # for MCQ
+    options: Optional[list[str]] = None
     correct_answer: str
-    passage: Optional[str] = None  # for reading comprehension
-    skill: str  # "grammar", "vocabulary", "reading"
-    topic: str  # e.g. "articles", "present_perfect"
+    skill: str  # "arytmetyka", "algebra", "geometria", etc.
+    topic: str  # e.g. "ulamki", "rownania_liniowe"
+    hint: Optional[str] = None
 
 
 class PlacementAnswer(BaseModel):
     question_id: int
-    answer: bool  # student says correct or incorrect
+    answer: str
 
 
 class DiagnosticAnswer(BaseModel):
@@ -64,8 +69,8 @@ class DiagnosticSubmission(BaseModel):
 
 class PlacementResult(BaseModel):
     bracket: Bracket
-    score: int  # number correct out of 5
-    detail: str  # explanation of bracket assignment
+    score: int
+    detail: str
 
 
 class SubSkillScore(BaseModel):

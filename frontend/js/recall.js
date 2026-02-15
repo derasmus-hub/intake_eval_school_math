@@ -14,11 +14,16 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+function renderMath(el) {
+    if (typeof renderMathInElement !== 'undefined' && el) {
+        renderMathInElement(el, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
+}
+
 async function init() {
     studentId = STATE.requireStudentId();
-    if (!studentId) return; // redirect triggered
+    if (!studentId) return;
 
-    // Set nav links
     const navVocab = document.getElementById('nav-vocab');
     const navConv = document.getElementById('nav-conversation');
     if (navVocab) navVocab.href = `vocab.html?student_id=${studentId}`;
@@ -42,7 +47,7 @@ async function init() {
         await startQuiz();
     } catch (err) {
         document.getElementById('loading-screen').innerHTML =
-            '<p>Error: ' + err.message + '</p>';
+            '<p>Blad: ' + err.message + '</p>';
     }
 }
 
@@ -60,9 +65,7 @@ async function startQuiz() {
         sessionId = data.session_id;
         questions = data.questions;
 
-        // Show encouragement
         document.getElementById('encouragement-text').textContent = data.encouragement || '';
-        document.getElementById('encouragement-text-pl').textContent = data.encouragement_pl || '';
 
         document.getElementById('loading-screen').classList.add('hidden');
         document.getElementById('quiz-area').classList.remove('hidden');
@@ -70,7 +73,7 @@ async function startQuiz() {
         renderQuestion(0);
     } catch (err) {
         document.getElementById('loading-screen').innerHTML =
-            '<p>Error starting quiz: ' + err.message + '</p>';
+            '<p>Blad rozpoczecia quizu: ' + err.message + '</p>';
     }
 }
 
@@ -79,12 +82,10 @@ function renderQuestion(index) {
     const q = questions[index];
     const total = questions.length;
 
-    // Update progress
     const pct = Math.round(((index + 1) / total) * 100);
     document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('progress-text').textContent = `Question ${index + 1} of ${total}`;
+    document.getElementById('progress-text').textContent = `Pytanie ${index + 1} z ${total}`;
 
-    // Nav buttons
     document.getElementById('prev-btn').disabled = (index === 0);
     if (index === total - 1) {
         document.getElementById('next-btn').classList.add('hidden');
@@ -100,7 +101,6 @@ function renderQuestion(index) {
     let html = `<div class="recall-question-card">`;
     html += `<p class="question-number">${escapeHtml(q.question_type.replace('_', ' ').toUpperCase())}</p>`;
     html += `<p class="question-text">${escapeHtml(q.question_text)}</p>`;
-    html += `<p class="polish-text" style="margin-bottom:0.75rem;"><em>${escapeHtml(q.question_text_pl || '')}</em></p>`;
 
     if (q.question_type === 'multiple_choice' && q.options) {
         html += `<div class="recall-options">`;
@@ -117,24 +117,23 @@ function renderQuestion(index) {
     } else {
         html += `<input type="text" class="fill-blank-input" id="answer-input-${q.point_id}"
                     value="${escapeHtml(savedAnswer)}"
-                    placeholder="Type your answer here..."
+                    placeholder="Wpisz odpowiedz..."
                     oninput="saveAnswer(${q.point_id}, this.value)">`;
     }
 
-    // Hint button
     html += `
         <div class="recall-hint" style="margin-top:0.75rem;">
             <button onclick="showHint(${index})" class="btn btn-sm" id="hint-btn-${index}">
-                Show Hint / Pokaz podpowiedz
+                Pokaz podpowiedz
             </button>
             <div id="hint-text-${index}" class="hidden" style="margin-top:0.5rem;">
-                <p><strong>Hint:</strong> ${escapeHtml(q.hint || '')}</p>
-                <p class="polish-text"><em>${escapeHtml(q.hint_pl || '')}</em></p>
+                <p><strong>Podpowiedz:</strong> ${escapeHtml(q.hint || '')}</p>
             </div>
         </div>`;
 
     html += `</div>`;
     container.innerHTML = html;
+    renderMath(container);
 }
 
 function saveAnswer(pointId, value) {
@@ -161,7 +160,7 @@ function prevQuestion() {
 async function submitQuiz() {
     const submitBtn = document.getElementById('submit-btn');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Submitting...';
+    submitBtn.textContent = 'Wysylanie...';
 
     const answers = questions.map(q => ({
         point_id: q.point_id,
@@ -177,18 +176,18 @@ async function submitQuiz() {
 
         if (!resp.ok) {
             const err = await resp.json();
-            alert('Error: ' + (err.detail || 'Unknown error'));
+            alert('Blad: ' + (err.detail || 'Nieznany blad'));
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Answers';
+            submitBtn.textContent = 'Wyslij odpowiedzi';
             return;
         }
 
         const result = await resp.json();
         showResults(result);
     } catch (err) {
-        alert('Error: ' + err.message);
+        alert('Blad: ' + err.message);
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Answers';
+        submitBtn.textContent = 'Wyslij odpowiedzi';
     }
 }
 
@@ -196,10 +195,8 @@ function showResults(result) {
     document.getElementById('quiz-area').classList.add('hidden');
     document.getElementById('results-area').classList.remove('hidden');
 
-    // Score
     document.getElementById('result-score').textContent = Math.round(result.overall_score) + '%';
 
-    // Color the score
     const scoreEl = document.getElementById('result-score');
     if (result.overall_score >= 85) {
         scoreEl.style.color = '#2ecc71';
@@ -209,34 +206,31 @@ function showResults(result) {
         scoreEl.style.color = '#e74c3c';
     }
 
-    // Encouragement
     document.getElementById('result-encouragement').innerHTML = `
         <p>${escapeHtml(result.encouragement || '')}</p>
-        <p class="polish-text"><em>${escapeHtml(result.encouragement_pl || '')}</em></p>
     `;
 
-    // Per-question feedback
     const feedbackContainer = document.getElementById('result-feedback');
     const evaluations = result.evaluations || [];
     feedbackContainer.innerHTML = evaluations.map((ev, i) => {
         const q = questions.find(q => q.point_id === ev.point_id) || {};
         const scoreColor = ev.score >= 85 ? '#2ecc71' : ev.score >= 60 ? '#f39c12' : '#e74c3c';
-        const answer = userAnswers[ev.point_id] || '(no answer)';
+        const answer = userAnswers[ev.point_id] || '(brak odpowiedzi)';
         return `
             <div class="recall-feedback">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                    <strong>${escapeHtml(q.question_text || 'Question ' + (i + 1))}</strong>
+                    <strong>${escapeHtml(q.question_text || 'Pytanie ' + (i + 1))}</strong>
                     <span style="color:${scoreColor};font-weight:700;">${ev.score}%</span>
                 </div>
-                <p><strong>Your answer:</strong> ${escapeHtml(answer)}</p>
-                <p><strong>Correct:</strong> ${escapeHtml(q.correct_answer || '')}</p>
+                <p><strong>Twoja odpowiedz:</strong> ${escapeHtml(answer)}</p>
+                <p><strong>Poprawna odpowiedz:</strong> ${escapeHtml(q.correct_answer || '')}</p>
                 <p>${escapeHtml(ev.feedback || '')}</p>
-                <p class="polish-text"><em>${escapeHtml(ev.feedback_pl || '')}</em></p>
             </div>
         `;
     }).join('');
 
-    // Weak areas
+    renderMath(feedbackContainer);
+
     const weakAreas = result.weak_areas || [];
     if (weakAreas.length > 0) {
         const weakDiv = document.getElementById('result-weak-areas');
@@ -245,7 +239,6 @@ function showResults(result) {
             weakAreas.map(a => `<li>${escapeHtml(a)}</li>`).join('');
     }
 
-    // Start Lesson button
     document.getElementById('start-lesson-btn').href =
         `session.html?student_id=${studentId}&recall_done=true`;
 }

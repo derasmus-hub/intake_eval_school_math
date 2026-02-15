@@ -1,14 +1,12 @@
 let currentStudentId = null;
 let currentStudentName = null;
-let assessmentData = null; // filled when returning from assessment
+let assessmentData = null;
 
-// Check if returning from assessment (URL has student_id and from=assessment)
 const urlParams = new URLSearchParams(window.location.search);
 const returningStudentId = urlParams.get('student_id');
 const returningFrom = urlParams.get('from');
 
 if (returningStudentId && returningFrom === 'assessment') {
-    // Returning from assessment — jump to step 3
     currentStudentId = parseInt(returningStudentId);
     resumeAtStep3();
 }
@@ -33,7 +31,7 @@ document.getElementById('step1-form').addEventListener('submit', async (e) => {
 
         if (!resp.ok) {
             const err = await resp.json();
-            showError('Error: ' + (err.detail || JSON.stringify(err)));
+            showError('Blad: ' + (err.detail || JSON.stringify(err)));
             return;
         }
 
@@ -44,37 +42,31 @@ document.getElementById('step1-form').addEventListener('submit', async (e) => {
 
         goToStep2();
     } catch (err) {
-        showError('Network error: ' + err.message);
+        showError('Blad sieci: ' + err.message);
     }
 });
 
 function goToStep2() {
-    // Update wizard progress
     document.getElementById('wizard-step-1').classList.remove('active');
     document.getElementById('wizard-step-1').classList.add('completed');
     document.getElementById('wizard-step-2').classList.add('active');
 
-    // Hide step 1, show step 2
     document.getElementById('step1-content').classList.add('hidden');
     document.getElementById('step2-content').classList.remove('hidden');
 
-    // Populate step 2 info
-    document.getElementById('step2-student-name').textContent = currentStudentName || 'Student';
+    document.getElementById('step2-student-name').textContent = currentStudentName || 'Uczen';
     document.getElementById('step2-student-id').textContent = currentStudentId;
     document.getElementById('assessment-link').href = `assessment.html?student_id=${currentStudentId}&return_to=intake`;
 
-    // Show the "I've finished" button
     document.getElementById('step2-waiting').classList.remove('hidden');
 }
 
 async function checkAssessmentAndProceed() {
-    // Check if assessment is completed
     try {
         const resp = await apiFetch(`/api/assessment/${currentStudentId}`);
         if (resp.ok) {
             assessmentData = await resp.json();
             if (assessmentData.status === 'completed') {
-                // Update level in DB
                 if (assessmentData.determined_level) {
                     await apiFetch(`/api/intake/${currentStudentId}/level`, {
                         method: 'PUT',
@@ -86,17 +78,16 @@ async function checkAssessmentAndProceed() {
                 return;
             }
         }
-        // Assessment not found or not completed
-        showError('Assessment not completed yet. Please finish the assessment first, or skip and set a manual level.');
+        showError('Test nie zostal jeszcze ukonczony. Prosze najpierw ukonczyc test lub pominac i ustawic poziom recznie.');
     } catch (err) {
-        showError('Could not check assessment status: ' + err.message);
+        showError('Nie mozna sprawdzic statusu testu: ' + err.message);
     }
 }
 
 async function skipAssessment() {
     const selected = document.querySelector('input[name="manual_level"]:checked');
     if (!selected) {
-        showError('Please select a level before skipping the assessment.');
+        showError('Prosze wybrac poziom przed pominieciem testu.');
         return;
     }
 
@@ -107,24 +98,21 @@ async function skipAssessment() {
             body: JSON.stringify({ level: selected.value }),
         });
 
-        assessmentData = null; // no assessment data
+        assessmentData = null;
         goToStep3();
     } catch (err) {
-        showError('Error setting level: ' + err.message);
+        showError('Blad ustawiania poziomu: ' + err.message);
     }
 }
 
 function goToStep3() {
-    // Update wizard progress
     document.getElementById('wizard-step-2').classList.remove('active');
     document.getElementById('wizard-step-2').classList.add('completed');
     document.getElementById('wizard-step-3').classList.add('active');
 
-    // Hide step 2, show step 3
     document.getElementById('step2-content').classList.add('hidden');
     document.getElementById('step3-content').classList.remove('hidden');
 
-    // If assessment was completed, show summary and pre-populate problem areas
     if (assessmentData && assessmentData.status === 'completed') {
         const summaryPanel = document.getElementById('assessment-summary');
         summaryPanel.classList.remove('hidden');
@@ -135,60 +123,52 @@ function goToStep3() {
             : '--';
         document.getElementById('summary-confidence').textContent = confidence;
 
-        // Show weak areas
         const weakDiv = document.getElementById('summary-weak-areas');
         if (assessmentData.weak_areas && assessmentData.weak_areas.length) {
-            weakDiv.innerHTML = '<p style="margin-top:0.5rem;"><strong>Identified weak areas / Zidentyfikowane trudności:</strong></p><ul>' +
+            weakDiv.innerHTML = '<p style="margin-top:0.5rem;"><strong>Zidentyfikowane trudnosci:</strong></p><ul>' +
                 assessmentData.weak_areas.map(a => `<li>${escapeHtml(a)}</li>`).join('') + '</ul>';
 
-            // Update the problem areas description
             document.getElementById('problems-desc').innerHTML =
-                'These areas were pre-selected based on your assessment. Adjust as needed.' +
-                '<br><em>Te obszary zostały zaznaczone na podstawie testu. Możesz je zmienić.</em>';
+                'Te obszary zostaly zaznaczone na podstawie testu. Mozesz je zmienic.';
 
-            // Pre-check problem areas that match weak areas
             prePopulateProblemAreas(assessmentData.weak_areas);
         }
     }
 }
 
 function prePopulateProblemAreas(weakAreas) {
-    // Map AI weak area descriptions to checkbox values
     const mapping = {
-        'articles': 'articles',
-        'prepositions': 'prepositions',
-        'preposition': 'prepositions',
-        'word order': 'word_order',
-        'word_order': 'word_order',
-        'pronunciation': 'th_sounds',
-        'th sounds': 'th_sounds',
-        'th_sounds': 'th_sounds',
-        'tenses': 'tenses',
-        'tense': 'tenses',
-        'present perfect': 'tenses',
-        'past simple': 'tenses',
-        'present continuous': 'tenses',
-        'false friends': 'false_friends',
-        'false_friends': 'false_friends',
-        'conditionals': 'conditionals',
-        'conditional': 'conditionals',
-        'phrasal verbs': 'phrasal_verbs',
-        'phrasal_verbs': 'phrasal_verbs',
-        'grammar': 'tenses',
-        'vocabulary': 'false_friends',
-        'reading': null,
-        'reading comprehension': null,
+        'arytmetyka': 'arytmetyka',
+        'arithmetic': 'arytmetyka',
+        'ulamki': 'ulamki',
+        'fractions': 'ulamki',
+        'algebra': 'algebra',
+        'geometria': 'geometria',
+        'geometry': 'geometria',
+        'procenty': 'procenty',
+        'percentages': 'procenty',
+        'rownania': 'rownania',
+        'equations': 'rownania',
+        'funkcje': 'funkcje',
+        'functions': 'funkcje',
+        'trygonometria': 'trygonometria',
+        'trigonometry': 'trygonometria',
+        'statystyka': 'statystyka',
+        'statistics': 'statystyka',
+        'logika': 'logika',
+        'logic': 'logika',
+        'analiza': 'funkcje',
+        'rachunek': 'arytmetyka',
+        'wyrazenia': 'algebra',
     };
 
     const toCheck = new Set();
     for (const area of weakAreas) {
         const lower = area.toLowerCase();
-        // Direct match
-        if (mapping[lower] !== undefined && mapping[lower] !== null) {
+        if (mapping[lower] !== undefined) {
             toCheck.add(mapping[lower]);
             continue;
         }
-        // Partial match: check if any mapping key is contained in the area string
         for (const [key, val] of Object.entries(mapping)) {
             if (val && lower.includes(key)) {
                 toCheck.add(val);
@@ -196,7 +176,6 @@ function prePopulateProblemAreas(weakAreas) {
         }
     }
 
-    // Check the matching checkboxes
     for (const val of toCheck) {
         const cb = document.querySelector(`#step3-form input[name="problem_areas"][value="${val}"]`);
         if (cb) cb.checked = true;
@@ -225,56 +204,49 @@ document.getElementById('step3-form').addEventListener('submit', async (e) => {
 
         if (!resp.ok) {
             const err = await resp.json();
-            showError('Error: ' + (err.detail || JSON.stringify(err)));
+            showError('Blad: ' + (err.detail || JSON.stringify(err)));
             return;
         }
 
         showFinalResult();
     } catch (err) {
-        showError('Network error: ' + err.message);
+        showError('Blad sieci: ' + err.message);
     }
 });
 
 async function showFinalResult() {
-    // Update wizard step 3 to completed
     document.getElementById('wizard-step-3').classList.remove('active');
     document.getElementById('wizard-step-3').classList.add('completed');
 
-    // Hide step 3, show result
     document.getElementById('step3-content').classList.add('hidden');
     const resultPanel = document.getElementById('result');
     resultPanel.classList.remove('hidden');
 
     document.getElementById('final-student-id').textContent = currentStudentId;
 
-    // Fetch current student data to show level
     try {
         const resp = await apiFetch(`/api/intake/${currentStudentId}`);
         if (resp.ok) {
             const student = await resp.json();
-            document.getElementById('final-level').textContent = student.current_level || 'pending';
+            document.getElementById('final-level').textContent = student.current_level || 'oczekujacy';
         }
     } catch {
-        document.getElementById('final-level').textContent = assessmentData?.determined_level || 'pending';
+        document.getElementById('final-level').textContent = assessmentData?.determined_level || 'oczekujacy';
     }
 }
 
 async function resumeAtStep3() {
-    // Hide step 1
     document.getElementById('step1-content').classList.add('hidden');
 
-    // Mark steps 1 and 2 as completed
     document.getElementById('wizard-step-1').classList.remove('active');
     document.getElementById('wizard-step-1').classList.add('completed');
     document.getElementById('wizard-step-2').classList.add('completed');
 
-    // Load assessment data
     try {
         const resp = await apiFetch(`/api/assessment/${currentStudentId}`);
         if (resp.ok) {
             assessmentData = await resp.json();
             if (assessmentData.status === 'completed' && assessmentData.determined_level) {
-                // Update level in DB
                 await apiFetch(`/api/intake/${currentStudentId}/level`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
@@ -283,7 +255,7 @@ async function resumeAtStep3() {
             }
         }
     } catch {
-        // Assessment data not available — proceed without it
+        // Assessment data not available
     }
 
     goToStep3();
@@ -295,7 +267,7 @@ async function runDiagnostic() {
     const diagResult = document.getElementById('diagnostic-result');
     const diagOutput = document.getElementById('diagnostic-output');
     diagResult.classList.remove('hidden');
-    diagOutput.textContent = 'Running diagnostic analysis...';
+    diagOutput.textContent = 'Uruchamianie analizy diagnostycznej...';
 
     try {
         const resp = await apiFetch(`/api/diagnostic/${currentStudentId}`, {
@@ -304,14 +276,14 @@ async function runDiagnostic() {
 
         if (!resp.ok) {
             const err = await resp.json();
-            diagOutput.textContent = 'Error: ' + (err.detail || JSON.stringify(err));
+            diagOutput.textContent = 'Blad: ' + (err.detail || JSON.stringify(err));
             return;
         }
 
         const profile = await resp.json();
         diagOutput.textContent = JSON.stringify(profile, null, 2);
     } catch (err) {
-        diagOutput.textContent = 'Network error: ' + err.message;
+        diagOutput.textContent = 'Blad sieci: ' + err.message;
     }
 }
 
@@ -321,7 +293,7 @@ function showError(message) {
 
     const banner = document.createElement('div');
     banner.className = 'error-banner';
-    banner.innerHTML = `<strong>Error:</strong> ${escapeHtml(message)}`;
+    banner.innerHTML = `<strong>Blad:</strong> ${escapeHtml(message)}`;
     document.querySelector('.container').prepend(banner);
 
     setTimeout(() => banner.remove(), 8000);

@@ -1,42 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warm-Up Review / Rozgrzewka</title>
+    <title>Rozgrzewka Matematyczna</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="site-nav" id="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
-                <a href="#" id="nav-vocab">Vocabulary</a>
-                <a href="#" id="nav-conversation">Conversation</a>
-                <a href="#" class="active">Warm-Up</a>
+                <a href="#" id="nav-vocab">Pojęcia</a>
+                <a href="#" id="nav-conversation">Zadania</a>
+                <a href="#" class="active">Rozgrzewka</a>
             </div>
             <span class="nav-student" id="nav-student-name"></span>
         </nav>
 
         <div class="dashboard-header">
             <div>
-                <h1>Warm-Up Review</h1>
-                <p class="subtitle">Rozgrzewka</p>
+                <h1>Rozgrzewka</h1>
+                <p class="subtitle">Powtórka przed lekcją</p>
             </div>
             <a href="dashboard.html" class="btn btn-sm">&larr; Dashboard</a>
         </div>
 
         <div id="loading-screen">
-            <div class="loading">Checking your review status...</div>
+            <div class="loading">Sprawdzam status powtórki...</div>
         </div>
 
         <div id="no-review" class="hidden">
             <div class="detail-panel" style="text-align:center;">
-                <h2>All caught up!</h2>
-                <p>Wszystko powtorzone! No review needed right now.</p>
+                <h2>Wszystko powtórzone!</h2>
+                <p>Nie ma teraz potrzeby powtórki.</p>
                 <a id="no-review-link" href="dashboard.html" class="btn btn-primary" style="margin-top:1rem;">
-                    Back to Dashboard
+                    Powrót do panelu
                 </a>
             </div>
         </div>
@@ -46,51 +49,50 @@
                 <div class="recall-progress-bar">
                     <div id="progress-fill" class="recall-progress-fill" style="width:0%"></div>
                 </div>
-                <span id="progress-text" class="recall-progress-text">Question 1 of ?</span>
+                <span id="progress-text" class="recall-progress-text">Pytanie 1 z ?</span>
             </div>
 
             <div id="encouragement-banner" class="detail-panel" style="text-align:center;margin-bottom:1rem;">
                 <p id="encouragement-text"></p>
-                <p id="encouragement-text-pl" class="polish-text"></p>
             </div>
 
             <div id="question-container"></div>
 
             <div id="quiz-nav" style="display:flex;justify-content:space-between;margin-top:1rem;">
-                <button id="prev-btn" onclick="prevQuestion()" class="btn btn-sm" disabled>&larr; Previous</button>
-                <button id="next-btn" onclick="nextQuestion()" class="btn btn-sm btn-primary">Next &rarr;</button>
-                <button id="submit-btn" onclick="submitQuiz()" class="btn btn-sm btn-secondary hidden">Submit Answers</button>
+                <button id="prev-btn" onclick="prevQuestion()" class="btn btn-sm" disabled>&larr; Poprzednie</button>
+                <button id="next-btn" onclick="nextQuestion()" class="btn btn-sm btn-primary">Następne &rarr;</button>
+                <button id="submit-btn" onclick="submitQuiz()" class="btn btn-sm btn-secondary hidden">Wyślij odpowiedzi</button>
             </div>
         </div>
 
         <div id="results-area" class="hidden">
             <div class="recall-results">
                 <div class="recall-score">
-                    <span class="recall-score-label">Your Score / Twoj wynik</span>
+                    <span class="recall-score-label">Twój wynik</span>
                     <span id="result-score" class="recall-score-value">0%</span>
                 </div>
 
                 <div id="result-encouragement" class="detail-panel" style="text-align:center;margin:1rem 0;">
                 </div>
 
-                <h3 style="margin:1rem 0 0.5rem;">Question Feedback / Odpowiedzi</h3>
+                <h3 style="margin:1rem 0 0.5rem;">Odpowiedzi</h3>
                 <div id="result-feedback"></div>
 
                 <div id="result-weak-areas" class="hidden" style="margin-top:1rem;">
-                    <h3>Areas to Review / Do powtorzenia</h3>
+                    <h3>Do powtórzenia</h3>
                     <ul id="weak-areas-list"></ul>
                 </div>
 
                 <div style="text-align:center;margin-top:1.5rem;">
                     <a id="start-lesson-btn" href="#" class="btn btn-primary">
-                        Start Lesson / Rozpocznij lekcje
+                        Rozpocznij lekcję
                     </a>
                 </div>
             </div>
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard / Panel</a>
+            <a href="dashboard.html">Panel</a>
         </footer>
     </div>
     <script src="js/api.js"></script>

@@ -4,21 +4,21 @@ from enum import Enum
 from datetime import datetime
 
 
-class EnglishLevel(str, Enum):
-    A1 = "A1"
-    A2 = "A2"
-    B1 = "B1"
-    B2 = "B2"
-    C1 = "C1"
-    C2 = "C2"
+class MathLevel(str, Enum):
+    PODSTAWOWY = "podstawowy"
+    GIMNAZJALNY = "gimnazjalny"
+    LICEALNY = "licealny"
+    LICEALNY_ROZSZERZONY = "licealny_rozszerzony"
+    ZAAWANSOWANY = "zaawansowany"
 
 
 class StudentIntake(BaseModel):
     name: str
     age: Optional[int] = None
-    current_level: Optional[EnglishLevel] = None
+    current_level: Optional[MathLevel] = None
     goals: list[str] = []
     problem_areas: list[str] = []
+    exam_target: Optional[str] = None  # e.g. "matura_podstawowa", "matura_rozszerzona", "egzamin_osmoklasisty"
     filler: str = "student"  # student / teacher / parent
     additional_notes: Optional[str] = None
 
@@ -30,6 +30,7 @@ class StudentResponse(BaseModel):
     current_level: str
     goals: list[str] = []
     problem_areas: list[str] = []
+    exam_target: Optional[str] = None
     filler: str = "student"
     additional_notes: Optional[str] = None
     created_at: Optional[str] = None

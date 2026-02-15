@@ -22,9 +22,9 @@ class GameSubmission(BaseModel):
     data: Optional[dict] = None
 
 
-@router.get("/{student_id}/word-match")
-async def generate_word_match(student_id: int):
-    """Generate a word matching game from the student's vocabulary."""
+@router.get("/{student_id}/concept-match")
+async def generate_concept_match(student_id: int):
+    """Generate a math concept matching game from the student's concept cards."""
     db = await get_db()
     try:
         cursor = await db.execute(
@@ -34,38 +34,38 @@ async def generate_word_match(student_id: int):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        # Get vocabulary cards
+        # Get math concept cards
         cursor = await db.execute(
-            "SELECT word, translation FROM vocabulary_cards WHERE student_id = ? ORDER BY RANDOM() LIMIT 8",
+            "SELECT concept, formula FROM math_concept_cards WHERE student_id = ? ORDER BY RANDOM() LIMIT 8",
             (student_id,),
         )
         cards = await cursor.fetchall()
 
         if len(cards) < 4:
             # Generate fallback pairs using AI
-            pairs = await _generate_word_pairs(student["current_level"] or "A1", 8)
+            pairs = await _generate_concept_pairs(student["current_level"] or "podstawowy", 8)
         else:
-            pairs = [{"word": c["word"], "translation": c["translation"]} for c in cards]
+            pairs = [{"concept": c["concept"], "formula": c["formula"]} for c in cards]
 
-        # Shuffle translations separately for matching
-        words = [p["word"] for p in pairs]
-        translations = [p["translation"] for p in pairs]
-        random.shuffle(translations)
+        # Shuffle formulas separately for matching
+        concepts = [p["concept"] for p in pairs]
+        formulas = [p["formula"] for p in pairs]
+        random.shuffle(formulas)
 
         return {
-            "game_type": "word_match",
+            "game_type": "concept_match",
             "pairs": pairs,
-            "words": words,
-            "translations_shuffled": translations,
+            "concepts": concepts,
+            "formulas_shuffled": formulas,
             "time_limit": 60,
         }
     finally:
         await db.close()
 
 
-@router.get("/{student_id}/sentence-builder")
-async def generate_sentence_builder(student_id: int):
-    """Generate a sentence building game."""
+@router.get("/{student_id}/equation-builder")
+async def generate_equation_builder(student_id: int):
+    """Generate an equation building game."""
     db = await get_db()
     try:
         cursor = await db.execute(
@@ -75,12 +75,12 @@ async def generate_sentence_builder(student_id: int):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        level = student["current_level"] or "A1"
-        sentences = await _generate_sentences(level, 5)
+        level = student["current_level"] or "podstawowy"
+        equations = await _generate_equations(level, 5)
 
         return {
-            "game_type": "sentence_builder",
-            "sentences": sentences,
+            "game_type": "equation_builder",
+            "equations": equations,
             "time_limit": 120,
         }
     finally:
@@ -89,7 +89,7 @@ async def generate_sentence_builder(student_id: int):
 
 @router.get("/{student_id}/error-hunt")
 async def generate_error_hunt(student_id: int):
-    """Generate an error hunting game."""
+    """Generate a math error hunting game."""
     db = await get_db()
     try:
         cursor = await db.execute(
@@ -99,21 +99,21 @@ async def generate_error_hunt(student_id: int):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        level = student["current_level"] or "A1"
-        sentences = await _generate_error_sentences(level, 6)
+        level = student["current_level"] or "podstawowy"
+        solutions = await _generate_error_solutions(level, 6)
 
         return {
             "game_type": "error_hunt",
-            "sentences": sentences,
+            "solutions": solutions,
             "time_limit": 90,
         }
     finally:
         await db.close()
 
 
-@router.get("/{student_id}/speed-translate")
-async def generate_speed_translate(student_id: int):
-    """Generate a speed translation game."""
+@router.get("/{student_id}/speed-calc")
+async def generate_speed_calc(student_id: int):
+    """Generate a speed calculation game."""
     db = await get_db()
     try:
         cursor = await db.execute(
@@ -123,12 +123,12 @@ async def generate_speed_translate(student_id: int):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        level = student["current_level"] or "A1"
-        phrases = await _generate_translation_phrases(level, 8)
+        level = student["current_level"] or "podstawowy"
+        problems = await _generate_calc_problems(level, 8)
 
         return {
-            "game_type": "speed_translate",
-            "phrases": phrases,
+            "game_type": "speed_calc",
+            "problems": problems,
             "time_limit": 90,
         }
     finally:
@@ -200,13 +200,13 @@ async def get_game_history(student_id: int):
         await db.close()
 
 
-async def _generate_word_pairs(level: str, count: int) -> list[dict]:
+async def _generate_concept_pairs(level: str, count: int) -> list[dict]:
     client = AsyncOpenAI(api_key=settings.api_key)
     response = await client.chat.completions.create(
         model=settings.model_name,
         messages=[
-            {"role": "system", "content": "Generate English-Polish word pairs for a matching game. Return JSON."},
-            {"role": "user", "content": f"Generate {count} English words with Polish translations for a {level} level student. Return JSON: {{\"pairs\": [{{\"word\": \"...\", \"translation\": \"...\"}}]}}"},
+            {"role": "system", "content": "Jestes pomocnikiem do nauki matematyki. Generujesz pary: pojecie matematyczne i jego wzor lub definicja. Odpowiadaj w formacie JSON."},
+            {"role": "user", "content": f"Wygeneruj {count} par matematycznych pojec z ich wzorami lub definicjami dla poziomu: {level}. Kazda para to pojecie i odpowiadajacy mu wzor/definicja. Zwroc JSON: {{\"pairs\": [{{\"concept\": \"Pole kola\", \"formula\": \"P = pi * r^2\"}}]}}"},
         ],
         response_format={"type": "json_object"},
         temperature=0.8,
@@ -215,46 +215,46 @@ async def _generate_word_pairs(level: str, count: int) -> list[dict]:
     return data.get("pairs", [])[:count]
 
 
-async def _generate_sentences(level: str, count: int) -> list[dict]:
+async def _generate_equations(level: str, count: int) -> list[dict]:
     client = AsyncOpenAI(api_key=settings.api_key)
     response = await client.chat.completions.create(
         model=settings.model_name,
         messages=[
-            {"role": "system", "content": "Generate English sentences for a word-ordering game. Return JSON."},
-            {"role": "user", "content": f"Generate {count} English sentences appropriate for {level} level. Each sentence should be 5-10 words. Return JSON: {{\"sentences\": [{{\"sentence\": \"The cat sat on the mat\", \"translation_pl\": \"Kot siedzial na macie\", \"hint\": \"A common phrase about a pet\"}}]}}"},
+            {"role": "system", "content": "Jestes pomocnikiem do nauki matematyki. Generujesz rownania i wyrazenia matematyczne do gry polegajacej na ukladaniu czesci w poprawnej kolejnosci. Odpowiadaj w formacie JSON."},
+            {"role": "user", "content": f"Wygeneruj {count} rownan lub wyrazen matematycznych dla poziomu: {level}. Kazde rownanie powinno skladac sie z 4-8 czesci do ulozenia we wlasciwej kolejnosci. Zwroc JSON: {{\"equations\": [{{\"equation\": \"2x + 3 = 7\", \"parts\": [\"2x\", \"+\", \"3\", \"=\", \"7\"], \"hint\": \"Rownanie liniowe z jedna niewiadoma\"}}]}}"},
         ],
         response_format={"type": "json_object"},
         temperature=0.8,
     )
     data = json.loads(response.choices[0].message.content)
-    return data.get("sentences", [])[:count]
+    return data.get("equations", [])[:count]
 
 
-async def _generate_error_sentences(level: str, count: int) -> list[dict]:
+async def _generate_error_solutions(level: str, count: int) -> list[dict]:
     client = AsyncOpenAI(api_key=settings.api_key)
     response = await client.chat.completions.create(
         model=settings.model_name,
         messages=[
-            {"role": "system", "content": "Generate sentences with errors typical of Polish speakers learning English. Return JSON."},
-            {"role": "user", "content": f"Generate {count} sentences for {level} level. Some should have errors (common Polish-speaker mistakes), some should be correct. Return JSON: {{\"sentences\": [{{\"sentence\": \"I am go to school\", \"has_error\": true, \"corrected\": \"I am going to school\", \"explanation\": \"Missing -ing form after 'am'\", \"explanation_pl\": \"Brak formy -ing po 'am'\"}}]}}"},
+            {"role": "system", "content": "Jestes pomocnikiem do nauki matematyki. Generujesz rozwiazania zadan matematycznych - niektore z celowymi bledami, a niektore poprawne. Uczen musi znalezc bledy. Odpowiadaj w formacie JSON."},
+            {"role": "user", "content": f"Wygeneruj {count} rozwiazan zadan matematycznych dla poziomu: {level}. Czesc powinna zawierac typowe bledy (np. zly znak, bledne obliczenia, zla kolejnosc dzialan), a czesc powinna byc poprawna. Zwroc JSON: {{\"solutions\": [{{\"problem\": \"Oblicz: 3 * (2 + 4)\", \"shown_solution\": \"3 * 2 + 4 = 10\", \"has_error\": true, \"correct_solution\": \"3 * (2 + 4) = 3 * 6 = 18\", \"explanation\": \"Najpierw wykonujemy dzialanie w nawiasie, potem mnozenie\"}}]}}"},
         ],
         response_format={"type": "json_object"},
         temperature=0.7,
     )
     data = json.loads(response.choices[0].message.content)
-    return data.get("sentences", [])[:count]
+    return data.get("solutions", [])[:count]
 
 
-async def _generate_translation_phrases(level: str, count: int) -> list[dict]:
+async def _generate_calc_problems(level: str, count: int) -> list[dict]:
     client = AsyncOpenAI(api_key=settings.api_key)
     response = await client.chat.completions.create(
         model=settings.model_name,
         messages=[
-            {"role": "system", "content": "Generate Polish phrases with English translations for a speed translation game. Return JSON."},
-            {"role": "user", "content": f"Generate {count} short Polish phrases/sentences ({level} level) with their English translations. Include common phrases. Return JSON: {{\"phrases\": [{{\"polish\": \"Jak sie masz?\", \"english\": \"How are you?\", \"hint\": \"A greeting\"}}]}}"},
+            {"role": "system", "content": "Jestes pomocnikiem do nauki matematyki. Generujesz szybkie zadania do rachunku pamieciowego. Odpowiadaj w formacie JSON."},
+            {"role": "user", "content": f"Wygeneruj {count} krotkich zadan do szybkiego rachunku pamieciowego dla poziomu: {level}. Zadania powinny byc mozliwe do rozwiazania w glowie w kilka sekund. Zwroc JSON: {{\"problems\": [{{\"problem\": \"15 * 4\", \"answer\": \"60\", \"hint\": \"Pomnoz 15 razy 4\"}}]}}"},
         ],
         response_format={"type": "json_object"},
         temperature=0.8,
     )
     data = json.loads(response.choices[0].message.content)
-    return data.get("phrases", [])[:count]
+    return data.get("problems", [])[:count]

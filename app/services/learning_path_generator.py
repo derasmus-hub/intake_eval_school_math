@@ -28,13 +28,14 @@ async def generate_learning_path(
         dict with title, target_level, overview, weeks[], milestones[]
     """
     prompt_data = load_prompt("learning_path.yaml")
+    misconceptions_data = load_prompt("polish_struggles.yaml")
 
     # Build assessment fields with fallbacks
     determined_level = student_info.get("current_level", "pending")
     confidence_score = "N/A"
     sub_skill_breakdown = "No assessment data available."
     weak_areas = "Not assessed."
-    l1_interference = "No L1 interference data available."
+    math_misconceptions = "No math misconceptions data available."
 
     if assessment_data:
         determined_level = assessment_data.get("determined_level") or determined_level
@@ -44,9 +45,12 @@ async def generate_learning_path(
         if assessment_data.get("weak_areas"):
             weak_areas = ", ".join(assessment_data["weak_areas"])
         if assessment_data.get("ai_analysis") and isinstance(assessment_data["ai_analysis"], dict):
-            l1_data = assessment_data["ai_analysis"].get("l1_interference", [])
-            if l1_data:
-                l1_interference = json.dumps(l1_data, indent=2)
+            misconceptions = assessment_data["ai_analysis"].get("math_misconceptions", [])
+            if misconceptions:
+                math_misconceptions = json.dumps(misconceptions, indent=2)
+
+    if math_misconceptions == "No math misconceptions data available." and misconceptions_data:
+        math_misconceptions = yaml.dump(misconceptions_data, default_flow_style=False, allow_unicode=True)
 
     # Build profile fields with fallbacks
     profile_summary = "No diagnostic profile available."
@@ -73,7 +77,7 @@ async def generate_learning_path(
         profile_summary=profile_summary,
         priorities=priorities,
         gaps=gaps,
-        l1_interference=l1_interference,
+        math_misconceptions=math_misconceptions,
     )
 
     client = AsyncOpenAI(api_key=settings.api_key)

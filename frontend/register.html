@@ -1,65 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Rejestracja</title>
+    <title>Rejestracja</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="login.html" class="nav-brand">IntakeEval</a>
+            <a href="login.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
-                <a href="login.html">Login</a>
-                <a href="register.html" class="active">Register</a>
+                <a href="login.html">Logowanie</a>
+                <a href="register.html" class="active">Rejestracja</a>
             </div>
         </nav>
 
         <div class="form-section" style="max-width:400px;margin:2rem auto;">
-            <h2>Register / Rejestracja</h2>
-            <p class="section-desc">Create your account to start learning. / Utworz konto, aby rozpoczac nauke.</p>
+            <h2>Rejestracja</h2>
+            <p class="section-desc">Utwórz konto, aby rozpocząć naukę matematyki.</p>
 
             <div id="error-message" class="error-banner hidden"></div>
 
             <form id="register-form">
                 <div class="form-group">
-                    <label for="name">Name / Imie *</label>
-                    <input type="text" id="name" required placeholder="Your name">
+                    <label for="name">Imię *</label>
+                    <input type="text" id="name" required placeholder="Twoje imię">
                 </div>
                 <div class="form-group">
                     <label for="email">Email *</label>
                     <input type="email" id="email" required placeholder="your@email.com">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password / Haslo *</label>
-                    <input type="password" id="password" required placeholder="Min 8 characters" minlength="8">
+                    <label for="password">Hasło *</label>
+                    <input type="password" id="password" required placeholder="Min. 8 znaków" minlength="8">
                 </div>
                 <div class="form-group">
-                    <label for="password-confirm">Confirm Password / Potwierdz haslo *</label>
-                    <input type="password" id="password-confirm" required placeholder="Repeat password" minlength="8">
+                    <label for="password-confirm">Potwierdź hasło *</label>
+                    <input type="password" id="password-confirm" required placeholder="Powtórz hasło" minlength="8">
                 </div>
                 <div class="form-group">
-                    <label for="age">Age / Wiek</label>
-                    <input type="number" id="age" min="4" max="99" placeholder="Optional">
+                    <label for="age">Wiek</label>
+                    <input type="number" id="age" min="4" max="99" placeholder="Opcjonalne">
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="register-btn">Register / Zarejestruj</button>
+                    <button type="submit" class="btn btn-primary" id="register-btn">Zarejestruj</button>
                 </div>
             </form>
 
             <p style="text-align:center;margin-top:1rem;">
-                Already have an account? / Masz juz konto?
-                <a href="login.html">Login / Zaloguj sie</a>
+                Masz już konto?
+                <a href="login.html">Zaloguj się</a>
             </p>
             <p style="text-align:center;margin-top:0.5rem;font-size:0.9rem;">
-                Teacher with invite? / Nauczyciel z zaproszeniem?
-                <a href="teacher_register.html">Register as Teacher / Zarejestruj jako nauczyciel</a>
+                Nauczyciel z zaproszeniem?
+                <a href="teacher_register.html">Zarejestruj jako nauczyciel</a>
             </p>
         </div>
 
         <footer>
-            <a href="index.html">Intake Form</a> | <a href="dashboard.html">Dashboard</a>
+            <a href="index.html">Formularz</a> | <a href="dashboard.html">Panel</a>
         </footer>
     </div>
 
@@ -83,17 +83,17 @@
             const btn = document.getElementById('register-btn');
             const errEl = document.getElementById('error-message');
             btn.disabled = true;
-            btn.textContent = 'Registering...';
+            btn.textContent = 'Rejestracja...';
             errEl.classList.add('hidden');
 
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('password-confirm').value;
 
             if (password !== confirm) {
-                errEl.textContent = 'Passwords do not match. / Hasla nie sa zgodne.';
+                errEl.textContent = 'Hasła nie są zgodne.';
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Register / Zarejestruj';
+                btn.textContent = 'Zarejestruj';
                 return;
             }
 
@@ -114,7 +114,7 @@
                     errEl.textContent = err.detail || 'Registration failed';
                     errEl.classList.remove('hidden');
                     btn.disabled = false;
-                    btn.textContent = 'Register / Zarejestruj';
+                    btn.textContent = 'Zarejestruj';
                     return;
                 }
 
@@ -131,7 +131,7 @@
                 errEl.textContent = 'Network error: ' + err.message;
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Register / Zarejestruj';
+                btn.textContent = 'Zarejestruj';
             }
         });
     </script>

@@ -20,12 +20,14 @@ async def extract_learning_points(lesson_content: dict, student_level: str) -> l
 
     # Build presentation text
     presentation_text = ""
-    if lesson_content.get("presentation"):
-        p = lesson_content["presentation"]
+    if lesson_content.get("wyjasnienie_tematu"):
+        p = lesson_content["wyjasnienie_tematu"]
         if isinstance(p, dict):
-            presentation_text = f"Presentation Topic: {p.get('topic', '')}\n"
+            presentation_text = f"Topic: {p.get('topic', '')}\n"
             presentation_text += f"Explanation: {p.get('explanation', '')}\n"
-            presentation_text += f"Polish Explanation: {p.get('polish_explanation', '')}\n"
+            definitions = p.get("definitions", [])
+            if definitions:
+                presentation_text += "Definitions: " + "; ".join(definitions) + "\n"
             examples = p.get("examples", [])
             if examples:
                 presentation_text += "Examples: " + "; ".join(examples)
@@ -33,8 +35,8 @@ async def extract_learning_points(lesson_content: dict, student_level: str) -> l
     # Build exercises text
     exercises_text = ""
     exercises = lesson_content.get("exercises", [])
-    if not exercises and lesson_content.get("controlled_practice"):
-        cp = lesson_content["controlled_practice"]
+    if not exercises and lesson_content.get("przyklady_rozwiazane"):
+        cp = lesson_content["przyklady_rozwiazane"]
         if isinstance(cp, dict):
             exercises = cp.get("exercises", [])
     if exercises:
@@ -43,22 +45,27 @@ async def extract_learning_points(lesson_content: dict, student_level: str) -> l
             if isinstance(ex, dict):
                 exercises_text += f"  {i}. [{ex.get('type', '')}] {ex.get('instruction', '')} — {ex.get('content', '')} (Answer: {ex.get('answer', '')})\n"
 
-    # Build conversation text
-    conversation_text = ""
-    prompts = lesson_content.get("conversation_prompts", [])
-    if prompts:
-        conversation_text = "Conversation Prompts: " + "; ".join(prompts)
-    if lesson_content.get("free_practice"):
-        fp = lesson_content["free_practice"]
+    # Build practice text
+    practice_text = ""
+    problems = lesson_content.get("practice_problems", [])
+    if problems:
+        practice_text = "Practice Problems: " + "; ".join(problems)
+    if lesson_content.get("zadania_do_praktyki"):
+        fp = lesson_content["zadania_do_praktyki"]
         if isinstance(fp, dict):
-            conversation_text += f"\nFree Practice: {fp.get('description', '')}"
+            practice_text += f"\nIndependent Practice: {fp.get('description', '')}"
+
+    # Build key formulas text
+    formulas = lesson_content.get("key_formulas", [])
+    if formulas:
+        practice_text += "\nKey Formulas: " + "; ".join(formulas)
 
     user_message = user_template.format(
         student_level=student_level,
         objective=lesson_content.get("objective", ""),
         presentation_text=presentation_text or "No presentation data.",
         exercises_text=exercises_text or "No exercises data.",
-        conversation_text=conversation_text or "No conversation data.",
+        practice_text=practice_text or "No practice data.",
     )
 
     client = AsyncOpenAI(api_key=settings.api_key)

@@ -44,7 +44,7 @@ async def start_recall(student_id: int):
             return {
                 "session_id": None,
                 "questions": [],
-                "encouragement": "All caught up! No review needed right now.",
+                "encouragement": "Wszystko powtorzone! Nie ma teraz potrzeby powtorki.",
             }
 
         # Limit to 5 points for the quiz
@@ -53,8 +53,7 @@ async def start_recall(student_id: int):
         # Generate questions
         result = await generate_recall_questions(quiz_points, student_level)
         questions = result.get("questions", [])
-        encouragement = result.get("encouragement", "Let's warm up!")
-        encouragement_pl = result.get("encouragement_pl", "Rozgrzejmy sie!")
+        encouragement = result.get("encouragement", "Rozgrzejmy sie!")
 
         # Create recall session
         cursor = await db.execute(
@@ -69,7 +68,6 @@ async def start_recall(student_id: int):
             "session_id": session_id,
             "questions": questions,
             "encouragement": encouragement,
-            "encouragement_pl": encouragement_pl,
         }
     finally:
         await db.close()
@@ -99,7 +97,7 @@ async def submit_recall(session_id: int, body: dict):
             "SELECT current_level FROM students WHERE id = ?", (student_id,)
         )
         student = await cursor.fetchone()
-        student_level = student["current_level"] if student else "A1"
+        student_level = student["current_level"] if student else "podstawowy"
 
         # AI evaluate
         evaluation = await evaluate_recall_answers(questions, answers, student_level)
@@ -108,7 +106,6 @@ async def submit_recall(session_id: int, body: dict):
         evaluations = evaluation.get("evaluations", [])
         weak_areas = evaluation.get("weak_areas", [])
         encouragement = evaluation.get("encouragement", "")
-        encouragement_pl = evaluation.get("encouragement_pl", "")
 
         # Update session
         await db.execute(
@@ -148,7 +145,6 @@ async def submit_recall(session_id: int, body: dict):
             "evaluations": evaluations,
             "weak_areas": weak_areas,
             "encouragement": encouragement,
-            "encouragement_pl": encouragement_pl,
         }
     finally:
         await db.close()

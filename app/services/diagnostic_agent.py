@@ -15,7 +15,7 @@ def load_prompt(name: str) -> dict:
 
 async def run_diagnostic(student_id: int, intake_data: dict) -> LearnerProfile:
     diagnostic_prompt = load_prompt("diagnostic.yaml")
-    polish_struggles = load_prompt("polish_struggles.yaml")
+    math_misconceptions = load_prompt("polish_struggles.yaml")
 
     system_prompt = diagnostic_prompt["system_prompt"]
     user_template = diagnostic_prompt["user_template"]
@@ -28,7 +28,7 @@ async def run_diagnostic(student_id: int, intake_data: dict) -> LearnerProfile:
         problem_areas=", ".join(intake_data.get("problem_areas", [])),
         filler=intake_data.get("filler", "student"),
         additional_notes=intake_data.get("additional_notes", "None"),
-        polish_struggles=yaml.dump(polish_struggles, default_flow_style=False, allow_unicode=True),
+        math_misconceptions=yaml.dump(math_misconceptions, default_flow_style=False, allow_unicode=True),
     )
 
     client = AsyncOpenAI(api_key=settings.api_key)

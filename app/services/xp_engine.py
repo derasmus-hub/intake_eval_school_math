@@ -7,8 +7,8 @@ XP_AWARDS = {
     "lesson_complete": 50,
     "perfect_recall": 30,
     "recall_complete": 15,
-    "vocab_review": 10,
-    "conversation": 25,
+    "concept_review": 10,
+    "problem_solving": 25,
     "streak_bonus": 20,
     "game_complete": 15,
     "daily_challenge": 30,
@@ -34,18 +34,18 @@ for i in range(1, 51):
     else:
         LEVEL_THRESHOLDS[i] = 17400 + (i - 40) * 1000
 
-# Polish titles by level range
+# Polish titles by level range (math-themed)
 LEVEL_TITLES = {
     (1, 5): ("Poczatkujacy", "Beginner"),
-    (6, 10): ("Uczen", "Student"),
-    (11, 15): ("Adept", "Apprentice"),
-    (16, 20): ("Student", "Scholar"),
-    (21, 25): ("Znawca", "Expert"),
-    (26, 30): ("Specjalista", "Specialist"),
-    (31, 35): ("Mistrz", "Master"),
-    (36, 40): ("Ekspert", "Authority"),
-    (41, 45): ("Wirtuoz", "Virtuoso"),
-    (46, 50): ("Legenda", "Legend"),
+    (6, 10): ("Rachmistrz", "Calculator"),
+    (11, 15): ("Adept Algebry", "Algebra Apprentice"),
+    (16, 20): ("Geometra", "Geometer"),
+    (21, 25): ("Matematyk", "Mathematician"),
+    (26, 30): ("Analityk", "Analyst"),
+    (31, 35): ("Mistrz Rownan", "Equation Master"),
+    (36, 40): ("Ekspert Liczb", "Number Expert"),
+    (41, 45): ("Wirtuoz Matematyki", "Math Virtuoso"),
+    (46, 50): ("Legenda Matematyki", "Math Legend"),
 }
 
 

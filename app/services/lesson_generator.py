@@ -5,11 +5,11 @@ from openai import AsyncOpenAI
 from app.config import settings
 from app.models.lesson import (
     LessonContent,
-    WarmUp,
-    Presentation,
-    ControlledPractice,
-    FreePractice,
-    WrapUp,
+    Rozgrzewka,
+    WyjasnienieTematu,
+    PrzykladyRozwiazane,
+    ZadaniaDoPraktyki,
+    Podsumowanie,
 )
 
 PROMPTS_DIR = Path(__file__).parent.parent.parent / "prompts"
@@ -66,36 +66,37 @@ async def generate_lesson(
     result = json.loads(result_text)
 
     # Build 5-phase sub-models from AI response (if present)
-    warm_up = None
-    if result.get("warm_up"):
-        warm_up = WarmUp(**result["warm_up"])
+    rozgrzewka = None
+    if result.get("rozgrzewka"):
+        rozgrzewka = Rozgrzewka(**result["rozgrzewka"])
 
-    presentation = None
-    if result.get("presentation"):
-        presentation = Presentation(**result["presentation"])
+    wyjasnienie_tematu = None
+    if result.get("wyjasnienie_tematu"):
+        wyjasnienie_tematu = WyjasnienieTematu(**result["wyjasnienie_tematu"])
 
-    controlled_practice = None
-    if result.get("controlled_practice"):
-        controlled_practice = ControlledPractice(**result["controlled_practice"])
+    przyklady_rozwiazane = None
+    if result.get("przyklady_rozwiazane"):
+        przyklady_rozwiazane = PrzykladyRozwiazane(**result["przyklady_rozwiazane"])
 
-    free_practice = None
-    if result.get("free_practice"):
-        free_practice = FreePractice(**result["free_practice"])
+    zadania_do_praktyki = None
+    if result.get("zadania_do_praktyki"):
+        zadania_do_praktyki = ZadaniaDoPraktyki(**result["zadania_do_praktyki"])
 
-    wrap_up = None
-    if result.get("wrap_up"):
-        wrap_up = WrapUp(**result["wrap_up"])
+    podsumowanie = None
+    if result.get("podsumowanie"):
+        podsumowanie = Podsumowanie(**result["podsumowanie"])
 
     return LessonContent(
         objective=result.get("objective", ""),
-        polish_explanation=result.get("polish_explanation", ""),
+        explanation=result.get("explanation", ""),
         exercises=result.get("exercises", []),
-        conversation_prompts=result.get("conversation_prompts", []),
-        win_activity=result.get("win_activity", ""),
+        practice_problems=result.get("practice_problems", []),
+        key_formulas=result.get("key_formulas", []),
         difficulty=result.get("difficulty", current_level),
-        warm_up=warm_up,
-        presentation=presentation,
-        controlled_practice=controlled_practice,
-        free_practice=free_practice,
-        wrap_up=wrap_up,
+        math_domain=result.get("math_domain", ""),
+        rozgrzewka=rozgrzewka,
+        wyjasnienie_tematu=wyjasnienie_tematu,
+        przyklady_rozwiazane=przyklady_rozwiazane,
+        zadania_do_praktyki=zadania_do_praktyki,
+        podsumowanie=podsumowanie,
     )

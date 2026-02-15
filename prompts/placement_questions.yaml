@@ -1,904 +1,566 @@
-# Placement Questions - 5 sentences of increasing difficulty
-# Student judges each sentence as correct or incorrect
+# Pytania diagnostyczne z matematyki - 5 zadan o rosnacym poziomie trudnosci
+# Uczen rozwiazuje kazde zadanie i podaje odpowiedz
 placement:
   - id: 1
-    sentence: "She have a red car."
-    is_correct: false
+    problem: "Oblicz: 15 + 27 - 8 = ?"
+    correct_answer: "34"
     difficulty: 1
-    explanation: "Subject-verb agreement: 'She has' not 'She have'."
+    math_domain: "arytmetyka"
+    explanation: "Proste dodawanie i odejmowanie: 15 + 27 = 42, 42 - 8 = 34."
 
   - id: 2
-    sentence: "I went to the shop yesterday and bought some bread."
-    is_correct: true
+    problem: "Rozwiaz rownanie: 3x + 5 = 20. Ile wynosi x?"
+    correct_answer: "5"
     difficulty: 2
-    explanation: "Correct use of past simple with time marker 'yesterday'."
+    math_domain: "algebra"
+    explanation: "3x = 20 - 5 = 15, x = 15 / 3 = 5."
 
   - id: 3
-    sentence: "If I would have more time, I would travel more."
-    is_correct: false
+    problem: "Ile wynosi pole trojkata o podstawie 10 cm i wysokosci 6 cm?"
+    correct_answer: "30"
     difficulty: 3
-    explanation: "Second conditional requires past simple in the if-clause: 'If I had more time'."
+    math_domain: "geometria"
+    explanation: "Pole trojkata = (podstawa * wysokosc) / 2 = (10 * 6) / 2 = 30 cm^2."
 
   - id: 4
-    sentence: "Not only did she finish the report, but she also prepared the presentation."
-    is_correct: true
+    problem: "Oblicz pochodna funkcji f(x) = 3x^2 + 2x - 1. Ile wynosi f'(x)?"
+    correct_answer: "6x + 2"
     difficulty: 4
-    explanation: "Correct inverted word order after 'Not only' with auxiliary 'did'."
+    math_domain: "analiza_matematyczna"
+    explanation: "f'(x) = 2*3x + 2 = 6x + 2. Stosujemy regule pochodnej potegi."
 
   - id: 5
-    sentence: "Had the committee been made aware of the discrepancies sooner, they might have reconsidered their initial assessment."
-    is_correct: true
+    problem: "Oblicz calke oznaczona: integral od 0 do 2 z (x^2) dx = ?"
+    correct_answer: "8/3"
     difficulty: 5
-    explanation: "Correct use of third conditional with subject-auxiliary inversion (formal register)."
+    math_domain: "analiza_matematyczna"
+    explanation: "Calka z x^2 = x^3/3. Podstawiamy: [2^3/3] - [0^3/3] = 8/3 - 0 = 8/3."
 
-# Diagnostic Questions - organized by bracket and skill
-# Each bracket has 8+ questions per skill (grammar, vocabulary, reading)
+# Pytania diagnostyczne - wedlug poziomu i dziedziny matematyki
+# Kazdy poziom ma 8+ pytan z arytmetyki, algebry i geometrii
 diagnostic:
   beginner:
-    grammar:
+    arytmetyka:
+      - id: "ba_1"
+        type: "arithmetic"
+        question: "Oblicz: 48 + 35 = ?"
+        options: ["73", "83", "85", "93"]
+        correct_answer: "83"
+        topic: "dodawanie"
+
+      - id: "ba_2"
+        type: "arithmetic"
+        question: "Oblicz: 156 - 89 = ?"
+        options: ["57", "67", "77", "87"]
+        correct_answer: "67"
+        topic: "odejmowanie"
+
+      - id: "ba_3"
+        type: "arithmetic"
+        question: "Oblicz: 7 * 8 = ?"
+        options: ["54", "56", "58", "64"]
+        correct_answer: "56"
+        topic: "mnozenie"
+
+      - id: "ba_4"
+        type: "arithmetic"
+        question: "Oblicz: 144 / 12 = ?"
+        options: ["11", "12", "13", "14"]
+        correct_answer: "12"
+        topic: "dzielenie"
+
+      - id: "ba_5"
+        type: "arithmetic"
+        question: "Ile wynosi 3/4 + 1/2?"
+        options: ["4/6", "1 1/4", "1", "5/4"]
+        correct_answer: "5/4"
+        topic: "ulamki"
+
+      - id: "ba_6"
+        type: "arithmetic"
+        question: "Oblicz: 25% z 200 = ?"
+        options: ["25", "40", "50", "75"]
+        correct_answer: "50"
+        topic: "procenty"
+
+      - id: "ba_7"
+        type: "arithmetic"
+        question: "Jaka jest kolejnosc dzialan w wyrazeniu: 2 + 3 * 4 = ?"
+        options: ["20", "14", "24", "12"]
+        correct_answer: "14"
+        topic: "kolejnosc_dzialan"
+
+      - id: "ba_8"
+        type: "arithmetic"
+        question: "Oblicz: (-5) + 8 = ?"
+        options: ["-3", "3", "-13", "13"]
+        correct_answer: "3"
+        topic: "liczby_calkowite"
+
+    algebra:
+      - id: "bal_1"
+        type: "algebra"
+        question: "Rozwiaz: x + 7 = 15. Ile wynosi x?"
+        options: ["7", "8", "22", "9"]
+        correct_answer: "8"
+        topic: "rownania_proste"
+
+      - id: "bal_2"
+        type: "algebra"
+        question: "Uprość wyrazenie: 3a + 5a = ?"
+        options: ["8a", "15a", "8", "35a"]
+        correct_answer: "8a"
+        topic: "upraszczanie"
+
+      - id: "bal_3"
+        type: "algebra"
+        question: "Ktora z ponizszych wartosci spelnia nierownosc x > -3?"
+        options: ["-5", "-3", "0", "-4"]
+        correct_answer: "0"
+        topic: "nierownosci"
+
+      - id: "bal_4"
+        type: "algebra"
+        question: "Oblicz wartosc wyrazenia 2(x + 3) dla x = 4."
+        options: ["10", "14", "11", "16"]
+        correct_answer: "14"
+        topic: "wartosc_wyrazenia"
+
+      - id: "bal_5"
+        type: "algebra"
+        question: "Rozwiaz: 2x - 4 = 10. Ile wynosi x?"
+        options: ["3", "5", "7", "8"]
+        correct_answer: "7"
+        topic: "rownania_liniowe"
+
+      - id: "bal_6"
+        type: "algebra"
+        question: "Co to jest wspolczynnik w wyrazeniu 5x?"
+        options: ["x", "5", "5x", "1"]
+        correct_answer: "5"
+        topic: "pojecia_algebraiczne"
+
+      - id: "bal_7"
+        type: "algebra"
+        question: "Rozwin nawias: 3(a + 2) = ?"
+        options: ["3a + 2", "3a + 6", "a + 6", "3a + 5"]
+        correct_answer: "3a + 6"
+        topic: "rozwijanie_nawiasow"
+
+      - id: "bal_8"
+        type: "algebra"
+        question: "Jaki jest nastepny element ciagu: 2, 5, 8, 11, ...?"
+        options: ["12", "13", "14", "15"]
+        correct_answer: "14"
+        topic: "ciagi_proste"
+
+    geometria:
       - id: "bg_1"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "She is a teacher."
-          - "She are a teacher."
-          - "She am a teacher."
-          - "She be a teacher."
-        correct_answer: "She is a teacher."
-        topic: "be_verb"
+        type: "geometry"
+        question: "Ile wynosi obwod kwadratu o boku 5 cm?"
+        options: ["10 cm", "15 cm", "20 cm", "25 cm"]
+        correct_answer: "20 cm"
+        topic: "obwod"
 
       - id: "bg_2"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "I don't like coffee."
-          - "I doesn't like coffee."
-          - "I not like coffee."
-          - "I no like coffee."
-        correct_answer: "I don't like coffee."
-        topic: "negation"
+        type: "geometry"
+        question: "Ile wynosi pole prostokata o bokach 4 cm i 7 cm?"
+        options: ["11 cm^2", "22 cm^2", "28 cm^2", "32 cm^2"]
+        correct_answer: "28 cm^2"
+        topic: "pole"
 
       - id: "bg_3"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "There are three cats in the garden."
-          - "There is three cats in the garden."
-          - "There have three cats in the garden."
-          - "It are three cats in the garden."
-        correct_answer: "There are three cats in the garden."
-        topic: "there_is_are"
+        type: "geometry"
+        question: "Ile stopni ma kat prosty?"
+        options: ["45", "60", "90", "180"]
+        correct_answer: "90"
+        topic: "katy"
 
       - id: "bg_4"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "He goes to school every day."
-          - "He go to school every day."
-          - "He going to school every day."
-          - "He goed to school every day."
-        correct_answer: "He goes to school every day."
-        topic: "present_simple"
+        type: "geometry"
+        question: "Ile wierzcholkow ma trojkat?"
+        options: ["2", "3", "4", "5"]
+        correct_answer: "3"
+        topic: "figury_podstawowe"
 
       - id: "bg_5"
-        type: "grammar_mcq"
-        question: "Which sentence is correct?"
-        options:
-          - "I am reading a book right now."
-          - "I read a book right now."
-          - "I reading a book right now."
-          - "I am read a book right now."
-        correct_answer: "I am reading a book right now."
-        topic: "present_continuous"
+        type: "geometry"
+        question: "Ile wynosi obwod kola o promieniu 7 cm? (uzyj pi = 22/7)"
+        options: ["22 cm", "44 cm", "154 cm", "88 cm"]
+        correct_answer: "44 cm"
+        topic: "kolo"
 
       - id: "bg_6"
-        type: "grammar_mcq"
-        question: "Choose the correct answer:"
-        options:
-          - "She can swim very well."
-          - "She cans swim very well."
-          - "She can swims very well."
-          - "She can to swim very well."
-        correct_answer: "She can swim very well."
-        topic: "modal_verbs"
+        type: "geometry"
+        question: "Trojkat o bokach 3 cm, 4 cm, 5 cm jest trojkatem:"
+        options: ["rownoramiennym", "prostokatnym", "rownobocznym", "rozwartym"]
+        correct_answer: "prostokatnym"
+        topic: "rodzaje_trojkatow"
 
       - id: "bg_7"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "I bought a new phone yesterday."
-          - "I buyed a new phone yesterday."
-          - "I buy a new phone yesterday."
-          - "I was buy a new phone yesterday."
-        correct_answer: "I bought a new phone yesterday."
-        topic: "past_simple"
+        type: "geometry"
+        question: "Suma katow w trojkacie wynosi:"
+        options: ["90 stopni", "180 stopni", "270 stopni", "360 stopni"]
+        correct_answer: "180 stopni"
+        topic: "katy_trojkata"
 
       - id: "bg_8"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "Do you like chocolate?"
-          - "Are you like chocolate?"
-          - "You like chocolate?"
-          - "Does you like chocolate?"
-        correct_answer: "Do you like chocolate?"
-        topic: "questions"
-
-    vocabulary:
-      - id: "bv_1"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'I wake up early in the _____.'"
-        correct_answer: "morning"
-        topic: "time_of_day"
-
-      - id: "bv_2"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'She is wearing a warm _____ because it is cold outside.'"
-        correct_answer: "coat"
-        topic: "clothing"
-
-      - id: "bv_3"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'We eat _____ for breakfast, lunch, and dinner.'"
-        correct_answer: "food"
-        topic: "daily_life"
-
-      - id: "bv_4"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The opposite of 'hot' is _____.'"
-        correct_answer: "cold"
-        topic: "adjectives"
-
-      - id: "bv_5"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'I go to _____ to buy food and drinks.'"
-        correct_answer: "shop"
-        topic: "places"
-
-      - id: "bv_6"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'My _____ is the person who teaches me at school.'"
-        correct_answer: "teacher"
-        topic: "people"
-
-      - id: "bv_7"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'I use a _____ to call my friends.'"
-        correct_answer: "phone"
-        topic: "technology"
-
-      - id: "bv_8"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'She _____ to music every evening.'"
-        correct_answer: "listens"
-        topic: "activities"
-
-    reading:
-      - id: "br_1"
-        type: "reading_comprehension"
-        passage: |
-          Anna is from Poland. She is 25 years old. She works in a shop in Warsaw.
-          She likes her job because she meets many people. After work, she goes home
-          and cooks dinner. She lives with her cat, Mruczek.
-        question: "Where does Anna work?"
-        options:
-          - "In a shop"
-          - "In a school"
-          - "In a hospital"
-          - "In an office"
-        correct_answer: "In a shop"
-        topic: "basic_comprehension"
-
-      - id: "br_2"
-        type: "reading_comprehension"
-        passage: |
-          Anna is from Poland. She is 25 years old. She works in a shop in Warsaw.
-          She likes her job because she meets many people. After work, she goes home
-          and cooks dinner. She lives with her cat, Mruczek.
-        question: "Why does Anna like her job?"
-        options:
-          - "Because she meets many people"
-          - "Because she earns a lot of money"
-          - "Because it is easy"
-          - "Because she can bring her cat"
-        correct_answer: "Because she meets many people"
-        topic: "basic_comprehension"
-
-      - id: "br_3"
-        type: "reading_comprehension"
-        passage: |
-          Anna is from Poland. She is 25 years old. She works in a shop in Warsaw.
-          She likes her job because she meets many people. After work, she goes home
-          and cooks dinner. She lives with her cat, Mruczek.
-        question: "What does Anna do after work?"
-        options:
-          - "She goes home and cooks dinner"
-          - "She goes to the gym"
-          - "She visits her friends"
-          - "She watches TV"
-        correct_answer: "She goes home and cooks dinner"
-        topic: "basic_comprehension"
-
-      - id: "br_4"
-        type: "reading_comprehension"
-        passage: |
-          Tom wants to learn English. He studies every day for one hour.
-          On Monday he reads books, on Wednesday he watches English films,
-          and on Friday he talks with his English friend on the phone.
-          He thinks speaking is the most difficult part.
-        question: "How often does Tom study English?"
-        options:
-          - "Every day"
-          - "Three times a week"
-          - "Once a week"
-          - "On weekends"
-        correct_answer: "Every day"
-        topic: "detail_extraction"
-
-      - id: "br_5"
-        type: "reading_comprehension"
-        passage: |
-          Tom wants to learn English. He studies every day for one hour.
-          On Monday he reads books, on Wednesday he watches English films,
-          and on Friday he talks with his English friend on the phone.
-          He thinks speaking is the most difficult part.
-        question: "What does Tom find the most difficult?"
-        options:
-          - "Speaking"
-          - "Reading"
-          - "Watching films"
-          - "Writing"
-        correct_answer: "Speaking"
-        topic: "detail_extraction"
-
-      - id: "br_6"
-        type: "reading_comprehension"
-        passage: |
-          Tom wants to learn English. He studies every day for one hour.
-          On Monday he reads books, on Wednesday he watches English films,
-          and on Friday he talks with his English friend on the phone.
-          He thinks speaking is the most difficult part.
-        question: "What does Tom do on Wednesday?"
-        options:
-          - "He watches English films"
-          - "He reads books"
-          - "He talks on the phone"
-          - "He goes to English class"
-        correct_answer: "He watches English films"
-        topic: "detail_extraction"
-
-      - id: "br_7"
-        type: "reading_comprehension"
-        passage: |
-          Maria goes to the market every Saturday. She buys fruit, vegetables,
-          and bread. Sometimes she buys flowers for her mother. The market is
-          near her house, so she walks there. She likes the fresh food.
-        question: "How does Maria get to the market?"
-        options:
-          - "She walks"
-          - "She drives"
-          - "She takes the bus"
-          - "She rides a bicycle"
-        correct_answer: "She walks"
-        topic: "inference"
-
-      - id: "br_8"
-        type: "reading_comprehension"
-        passage: |
-          Maria goes to the market every Saturday. She buys fruit, vegetables,
-          and bread. Sometimes she buys flowers for her mother. The market is
-          near her house, so she walks there. She likes the fresh food.
-        question: "Who does Maria sometimes buy flowers for?"
-        options:
-          - "Her mother"
-          - "Her friend"
-          - "Her teacher"
-          - "Herself"
-        correct_answer: "Her mother"
-        topic: "detail_extraction"
+        type: "geometry"
+        question: "Przekatna kwadratu o boku 'a' wynosi:"
+        options: ["a", "2a", "a*sqrt(2)", "a*sqrt(3)"]
+        correct_answer: "a*sqrt(2)"
+        topic: "przekatne"
 
   intermediate:
-    grammar:
+    arytmetyka:
+      - id: "ia_1"
+        type: "arithmetic"
+        question: "Oblicz: 2^5 + 3^3 = ?"
+        options: ["53", "59", "55", "51"]
+        correct_answer: "59"
+        topic: "potegi"
+
+      - id: "ia_2"
+        type: "arithmetic"
+        question: "Uprość: sqrt(144) + sqrt(25) = ?"
+        options: ["13", "17", "15", "19"]
+        correct_answer: "17"
+        topic: "pierwiastki"
+
+      - id: "ia_3"
+        type: "arithmetic"
+        question: "Cena produktu po 15% znizce z 200 zl wynosi:"
+        options: ["170 zl", "175 zl", "180 zl", "185 zl"]
+        correct_answer: "170 zl"
+        topic: "procenty_stosowane"
+
+      - id: "ia_4"
+        type: "arithmetic"
+        question: "Oblicz: |(-7) - 3| = ?"
+        options: ["-10", "10", "4", "-4"]
+        correct_answer: "10"
+        topic: "wartosc_bezwzgledna"
+
+      - id: "ia_5"
+        type: "arithmetic"
+        question: "Zamien 3/8 na ulamek dziesietny:"
+        options: ["0.375", "0.38", "0.35", "0.325"]
+        correct_answer: "0.375"
+        topic: "ulamki_dziesietne"
+
+      - id: "ia_6"
+        type: "arithmetic"
+        question: "Ile wynosi NWW(12, 18)?"
+        options: ["6", "36", "72", "216"]
+        correct_answer: "36"
+        topic: "nww_nwd"
+
+      - id: "ia_7"
+        type: "arithmetic"
+        question: "Zapisz w notacji naukowej: 0.00045 = ?"
+        options: ["4.5 * 10^-4", "45 * 10^-5", "4.5 * 10^-3", "0.45 * 10^-3"]
+        correct_answer: "4.5 * 10^-4"
+        topic: "notacja_naukowa"
+
+      - id: "ia_8"
+        type: "arithmetic"
+        question: "Stosunek 3:5 wyrażony jako procent części mniejszej do calości wynosi:"
+        options: ["37.5%", "60%", "40%", "75%"]
+        correct_answer: "37.5%"
+        topic: "proporcje"
+
+    algebra:
+      - id: "ial_1"
+        type: "algebra"
+        question: "Rozwiaz uklad rownan: x + y = 10, x - y = 4. Ile wynosi x?"
+        options: ["5", "6", "7", "8"]
+        correct_answer: "7"
+        topic: "uklady_rownan"
+
+      - id: "ial_2"
+        type: "algebra"
+        question: "Wyznacz rownanie prostej przechodzacej przez punkty (0, 3) i (2, 7):"
+        options: ["y = 2x + 3", "y = 3x + 2", "y = x + 3", "y = 4x + 3"]
+        correct_answer: "y = 2x + 3"
+        topic: "funkcja_liniowa"
+
+      - id: "ial_3"
+        type: "algebra"
+        question: "Rozwiaz rownanie kwadratowe: x^2 - 5x + 6 = 0. Ile wynosi suma pierwiastkow?"
+        options: ["5", "6", "-5", "1"]
+        correct_answer: "5"
+        topic: "rownania_kwadratowe"
+
+      - id: "ial_4"
+        type: "algebra"
+        question: "Uprość: (2x + 3)(x - 1) = ?"
+        options: ["2x^2 + x - 3", "2x^2 - x - 3", "2x^2 + x + 3", "2x^2 + 5x - 3"]
+        correct_answer: "2x^2 + x - 3"
+        topic: "mnozenie_wielomianow"
+
+      - id: "ial_5"
+        type: "algebra"
+        question: "Jaka jest dziedzina funkcji f(x) = 1/(x-3)?"
+        options: ["R", "R \\ {3}", "R \\ {0}", "x > 3"]
+        correct_answer: "R \\ {3}"
+        topic: "dziedzina_funkcji"
+
+      - id: "ial_6"
+        type: "algebra"
+        question: "Rozloz na czynniki: x^2 - 9 = ?"
+        options: ["(x-3)(x+3)", "(x-9)(x+1)", "(x-3)^2", "(x+3)^2"]
+        correct_answer: "(x-3)(x+3)"
+        topic: "rozklad_na_czynniki"
+
+      - id: "ial_7"
+        type: "algebra"
+        question: "Jezeli f(x) = 2x + 1, to f(3) = ?"
+        options: ["5", "6", "7", "8"]
+        correct_answer: "7"
+        topic: "wartosc_funkcji"
+
+      - id: "ial_8"
+        type: "algebra"
+        question: "Dla jakiej wartosci x wyrazenie (x^2 - 4) = 0?"
+        options: ["x = 2 lub x = -2", "x = 4", "x = -4", "x = 2"]
+        correct_answer: "x = 2 lub x = -2"
+        topic: "zera_funkcji"
+
+    geometria:
       - id: "ig_1"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "I have been living here since 2015."
-          - "I am living here since 2015."
-          - "I live here since 2015."
-          - "I lived here since 2015."
-        correct_answer: "I have been living here since 2015."
-        topic: "present_perfect_continuous"
+        type: "geometry"
+        question: "Oblicz pole trojkata o podstawie 12 cm i wysokosci 8 cm:"
+        options: ["48 cm^2", "96 cm^2", "20 cm^2", "36 cm^2"]
+        correct_answer: "48 cm^2"
+        topic: "pole_trojkata"
 
       - id: "ig_2"
-        type: "grammar_mcq"
-        question: "Which sentence is correct?"
-        options:
-          - "If I had enough money, I would buy a new car."
-          - "If I would have enough money, I would buy a new car."
-          - "If I have enough money, I would buy a new car."
-          - "If I had enough money, I will buy a new car."
-        correct_answer: "If I had enough money, I would buy a new car."
-        topic: "second_conditional"
+        type: "geometry"
+        question: "Oblicz objetosc szescianu o krawedzi 4 cm:"
+        options: ["16 cm^3", "48 cm^3", "64 cm^3", "96 cm^3"]
+        correct_answer: "64 cm^3"
+        topic: "objetosc"
 
       - id: "ig_3"
-        type: "grammar_mcq"
-        question: "Choose the correct option:"
-        options:
-          - "She told me that she was going to the party."
-          - "She told me that she is going to the party."
-          - "She told to me that she was going to the party."
-          - "She told me that she goes to the party."
-        correct_answer: "She told me that she was going to the party."
-        topic: "reported_speech"
+        type: "geometry"
+        question: "W trojkacie prostokatnym przyprostokątne maja dlugosc 6 i 8. Ile wynosi przeciwprostokatna?"
+        options: ["10", "12", "14", "7"]
+        correct_answer: "10"
+        topic: "twierdzenie_pitagorasa"
 
       - id: "ig_4"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "The book that I borrowed from the library was fascinating."
-          - "The book what I borrowed from the library was fascinating."
-          - "The book who I borrowed from the library was fascinating."
-          - "The book which I borrowed it from the library was fascinating."
-        correct_answer: "The book that I borrowed from the library was fascinating."
-        topic: "relative_clauses"
+        type: "geometry"
+        question: "Oblicz pole kola o promieniu 5 cm (pi ≈ 3.14):"
+        options: ["31.4 cm^2", "78.5 cm^2", "15.7 cm^2", "157 cm^2"]
+        correct_answer: "78.5 cm^2"
+        topic: "pole_kola"
 
       - id: "ig_5"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "I wish I had studied harder for the exam."
-          - "I wish I studied harder for the exam."
-          - "I wish I would study harder for the exam."
-          - "I wish I have studied harder for the exam."
-        correct_answer: "I wish I had studied harder for the exam."
-        topic: "wish_clauses"
+        type: "geometry"
+        question: "Kat wpisany oparty na polokolu jest katem:"
+        options: ["ostrym", "prostym", "rozwartym", "pelnym"]
+        correct_answer: "prostym"
+        topic: "katy_w_kole"
 
       - id: "ig_6"
-        type: "grammar_mcq"
-        question: "Which sentence uses the passive voice correctly?"
-        options:
-          - "The window was broken by the children."
-          - "The window broken by the children."
-          - "The window is break by the children."
-          - "The window was break by the children."
-        correct_answer: "The window was broken by the children."
-        topic: "passive_voice"
+        type: "geometry"
+        question: "Dwa trojkaty sa podobne, jesli:"
+        options: [
+          "maja rowne wszystkie boki",
+          "ich odpowiednie katy sa rowne",
+          "maja rowne pola",
+          "maja rowne obwody"
+        ]
+        correct_answer: "ich odpowiednie katy sa rowne"
+        topic: "podobienstwo"
 
       - id: "ig_7"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "By the time I arrived, they had already left."
-          - "By the time I arrived, they already left."
-          - "By the time I arrived, they have already left."
-          - "By the time I arrived, they were already leaving."
-        correct_answer: "By the time I arrived, they had already left."
-        topic: "past_perfect"
+        type: "geometry"
+        question: "Ile przekatnych ma szescioakat foremny?"
+        options: ["6", "9", "12", "15"]
+        correct_answer: "9"
+        topic: "wielokaty"
 
       - id: "ig_8"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "You should have told me about the problem earlier."
-          - "You should told me about the problem earlier."
-          - "You should to have told me about the problem earlier."
-          - "You should had told me about the problem earlier."
-        correct_answer: "You should have told me about the problem earlier."
-        topic: "modal_perfects"
-
-    vocabulary:
-      - id: "iv_1"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The manager decided to _____ the meeting until next week.'"
-        correct_answer: "postpone"
-        topic: "business"
-
-      - id: "iv_2"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'After the argument, they tried to find a _____ that would satisfy both sides.'"
-        correct_answer: "compromise"
-        topic: "conflict_resolution"
-
-      - id: "iv_3"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'She has a very busy _____ this week, with meetings every day.'"
-        correct_answer: "schedule"
-        topic: "time_management"
-
-      - id: "iv_4"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The company is looking for someone with _____ in project management.'"
-        correct_answer: "experience"
-        topic: "work"
-
-      - id: "iv_5"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'I need to _____ my English before the interview next month.'"
-        correct_answer: "improve"
-        topic: "self_development"
-
-      - id: "iv_6"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The doctor gave her a _____ for the medicine she needed.'"
-        correct_answer: "prescription"
-        topic: "health"
-
-      - id: "iv_7"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'We need to _____ a solution to this problem as soon as possible.'"
-        correct_answer: "find"
-        topic: "problem_solving"
-
-      - id: "iv_8"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The weather _____ says it will rain tomorrow.'"
-        correct_answer: "forecast"
-        topic: "weather"
-
-    reading:
-      - id: "ir_1"
-        type: "reading_comprehension"
-        passage: |
-          Remote work has become increasingly popular since 2020. Many companies
-          have discovered that employees can be just as productive working from home
-          as they are in the office. However, some workers report feeling isolated
-          and missing the social aspects of office life. Companies are now trying
-          to find a balance between flexibility and team connection, with many
-          adopting a hybrid model where employees work from home two or three
-          days a week and come to the office for the rest.
-        question: "What is the main challenge of remote work mentioned in the text?"
-        options:
-          - "Workers feeling isolated and missing social interaction"
-          - "Lower productivity at home"
-          - "Technical problems with internet"
-          - "Managers not trusting employees"
-        correct_answer: "Workers feeling isolated and missing social interaction"
-        topic: "main_idea"
-
-      - id: "ir_2"
-        type: "reading_comprehension"
-        passage: |
-          Remote work has become increasingly popular since 2020. Many companies
-          have discovered that employees can be just as productive working from home
-          as they are in the office. However, some workers report feeling isolated
-          and missing the social aspects of office life. Companies are now trying
-          to find a balance between flexibility and team connection, with many
-          adopting a hybrid model where employees work from home two or three
-          days a week and come to the office for the rest.
-        question: "What is a 'hybrid model' according to the text?"
-        options:
-          - "Working some days at home and some days at the office"
-          - "Using both a computer and paper documents"
-          - "Having two different jobs at the same time"
-          - "Working for two different companies"
-        correct_answer: "Working some days at home and some days at the office"
-        topic: "vocabulary_in_context"
-
-      - id: "ir_3"
-        type: "reading_comprehension"
-        passage: |
-          Remote work has become increasingly popular since 2020. Many companies
-          have discovered that employees can be just as productive working from home
-          as they are in the office. However, some workers report feeling isolated
-          and missing the social aspects of office life. Companies are now trying
-          to find a balance between flexibility and team connection, with many
-          adopting a hybrid model where employees work from home two or three
-          days a week and come to the office for the rest.
-        question: "What have companies discovered about remote workers' productivity?"
-        options:
-          - "They can be equally productive at home"
-          - "They are always more productive at home"
-          - "They need supervision to be productive"
-          - "They are less productive but happier"
-        correct_answer: "They can be equally productive at home"
-        topic: "detail_extraction"
-
-      - id: "ir_4"
-        type: "reading_comprehension"
-        passage: |
-          Learning a second language as an adult is different from learning as a child.
-          Children acquire language naturally through exposure, while adults tend to
-          rely more on explicit grammar rules and translation. However, research shows
-          that adults have some advantages: they can use their knowledge of their first
-          language to understand patterns, they have better study habits, and they are
-          more motivated. The key for adult learners is consistent practice and not
-          being afraid to make mistakes.
-        question: "According to the text, what advantage do adult learners have?"
-        options:
-          - "They can use their first language knowledge to find patterns"
-          - "They learn faster than children"
-          - "They don't need grammar rules"
-          - "They never make mistakes"
-        correct_answer: "They can use their first language knowledge to find patterns"
-        topic: "detail_extraction"
-
-      - id: "ir_5"
-        type: "reading_comprehension"
-        passage: |
-          Learning a second language as an adult is different from learning as a child.
-          Children acquire language naturally through exposure, while adults tend to
-          rely more on explicit grammar rules and translation. However, research shows
-          that adults have some advantages: they can use their knowledge of their first
-          language to understand patterns, they have better study habits, and they are
-          more motivated. The key for adult learners is consistent practice and not
-          being afraid to make mistakes.
-        question: "What is 'the key' for adult language learners?"
-        options:
-          - "Consistent practice and not fearing mistakes"
-          - "Studying grammar rules every day"
-          - "Living in an English-speaking country"
-          - "Having a private tutor"
-        correct_answer: "Consistent practice and not fearing mistakes"
-        topic: "main_idea"
-
-      - id: "ir_6"
-        type: "reading_comprehension"
-        passage: |
-          Learning a second language as an adult is different from learning as a child.
-          Children acquire language naturally through exposure, while adults tend to
-          rely more on explicit grammar rules and translation. However, research shows
-          that adults have some advantages: they can use their knowledge of their first
-          language to understand patterns, they have better study habits, and they are
-          more motivated. The key for adult learners is consistent practice and not
-          being afraid to make mistakes.
-        question: "How do children learn language differently from adults?"
-        options:
-          - "Children acquire it naturally through exposure"
-          - "Children study grammar books"
-          - "Children use translation apps"
-          - "Children learn only at school"
-        correct_answer: "Children acquire it naturally through exposure"
-        topic: "comparison"
-
-      - id: "ir_7"
-        type: "reading_comprehension"
-        passage: |
-          The number of people learning English worldwide continues to grow. It is
-          estimated that about 1.5 billion people are currently learning English,
-          making it the most studied language in the world. English is important for
-          international business, science, and technology. In Poland, English is taught
-          from primary school, and many Poles speak English at an intermediate level
-          or higher. Despite this, many Polish professionals still feel that their
-          English is not good enough for their careers.
-        question: "What can be inferred about Polish professionals from the text?"
-        options:
-          - "Many want to improve their English further for work"
-          - "They all speak English fluently"
-          - "They prefer to learn German instead"
-          - "They don't need English for their jobs"
-        correct_answer: "Many want to improve their English further for work"
-        topic: "inference"
-
-      - id: "ir_8"
-        type: "reading_comprehension"
-        passage: |
-          The number of people learning English worldwide continues to grow. It is
-          estimated that about 1.5 billion people are currently learning English,
-          making it the most studied language in the world. English is important for
-          international business, science, and technology. In Poland, English is taught
-          from primary school, and many Poles speak English at an intermediate level
-          or higher. Despite this, many Polish professionals still feel that their
-          English is not good enough for their careers.
-        question: "At what level do many Poles speak English?"
-        options:
-          - "Intermediate or higher"
-          - "Beginner"
-          - "Native level"
-          - "The text doesn't say"
-        correct_answer: "Intermediate or higher"
-        topic: "detail_extraction"
+        type: "geometry"
+        question: "Pole powierzchni bocznej walca o promieniu r i wysokosci h wynosi:"
+        options: ["2*pi*r*h", "pi*r^2*h", "2*pi*r*(r+h)", "pi*r*h"]
+        correct_answer: "2*pi*r*h"
+        topic: "bryly_obrotowe"
 
   advanced:
-    grammar:
+    arytmetyka:
+      - id: "aa_1"
+        type: "arithmetic"
+        question: "Oblicz: log_2(32) = ?"
+        options: ["4", "5", "6", "3"]
+        correct_answer: "5"
+        topic: "logarytmy"
+
+      - id: "aa_2"
+        type: "arithmetic"
+        question: "Uprość: (2^3 * 2^-1) / 2^4 = ?"
+        options: ["1/4", "1/2", "2", "1/8"]
+        correct_answer: "1/4"
+        topic: "potegi_wykladnicze"
+
+      - id: "aa_3"
+        type: "arithmetic"
+        question: "Oblicz: 5! / 3! = ?"
+        options: ["10", "20", "60", "5"]
+        correct_answer: "20"
+        topic: "silnia"
+
+      - id: "aa_4"
+        type: "arithmetic"
+        question: "Ile wynosi dwumian Newtona C(6,2)?"
+        options: ["12", "15", "30", "6"]
+        correct_answer: "15"
+        topic: "kombinatoryka"
+
+      - id: "aa_5"
+        type: "arithmetic"
+        question: "Oblicz: sum_{k=1}^{4} k^2 = ?"
+        options: ["20", "25", "30", "35"]
+        correct_answer: "30"
+        topic: "sumy"
+
+      - id: "aa_6"
+        type: "arithmetic"
+        question: "Ciag geometryczny: a_1 = 3, q = 2. Ile wynosi a_5?"
+        options: ["24", "48", "96", "32"]
+        correct_answer: "48"
+        topic: "ciagi_geometryczne"
+
+      - id: "aa_7"
+        type: "arithmetic"
+        question: "Ile wynosi suma ciagu arytmetycznego: a_1 = 2, d = 3, n = 10?"
+        options: ["145", "155", "165", "175"]
+        correct_answer: "155"
+        topic: "suma_ciagu_arytmetycznego"
+
+      - id: "aa_8"
+        type: "arithmetic"
+        question: "Uprość: log(a*b) = ?"
+        options: ["log(a) * log(b)", "log(a) + log(b)", "log(a) - log(b)", "log(a) / log(b)"]
+        correct_answer: "log(a) + log(b)"
+        topic: "wlasnosci_logarytmow"
+
+    algebra:
+      - id: "aal_1"
+        type: "algebra"
+        question: "Rozwiaz: |2x - 3| = 7. Jakie sa rozwiazania?"
+        options: ["x = 5 lub x = -2", "x = 2 lub x = 5", "x = -5 lub x = 2", "x = 5 lub x = 2"]
+        correct_answer: "x = 5 lub x = -2"
+        topic: "rownania_z_wartoscia_bezwzgledna"
+
+      - id: "aal_2"
+        type: "algebra"
+        question: "Wyznacz wierzcholek paraboli y = x^2 - 4x + 3:"
+        options: ["(2, -1)", "(2, 1)", "(-2, -1)", "(4, 3)"]
+        correct_answer: "(2, -1)"
+        topic: "funkcja_kwadratowa"
+
+      - id: "aal_3"
+        type: "algebra"
+        question: "Jesli f(x) = x^3 - 3x, to f'(x) = ?"
+        options: ["3x^2 - 3", "x^2 - 3", "3x^2 + 3", "3x - 3"]
+        correct_answer: "3x^2 - 3"
+        topic: "pochodne"
+
+      - id: "aal_4"
+        type: "algebra"
+        question: "Oblicz lim_{x->0} (sin(x)/x) = ?"
+        options: ["0", "1", "nieskonczonosc", "nie istnieje"]
+        correct_answer: "1"
+        topic: "granice"
+
+      - id: "aal_5"
+        type: "algebra"
+        question: "Calka nieoznaczona: integral z cos(x) dx = ?"
+        options: ["sin(x) + C", "-sin(x) + C", "cos(x) + C", "-cos(x) + C"]
+        correct_answer: "sin(x) + C"
+        topic: "calki"
+
+      - id: "aal_6"
+        type: "algebra"
+        question: "Jaka jest funkcja odwrotna do f(x) = 2x + 3?"
+        options: ["(x-3)/2", "(x+3)/2", "2x-3", "3-2x"]
+        correct_answer: "(x-3)/2"
+        topic: "funkcja_odwrotna"
+
+      - id: "aal_7"
+        type: "algebra"
+        question: "Rozwiaz nierownosc: x^2 - 4x + 3 < 0"
+        options: ["1 < x < 3", "x < 1 lub x > 3", "x > 3", "-1 < x < 3"]
+        correct_answer: "1 < x < 3"
+        topic: "nierownosci_kwadratowe"
+
+      - id: "aal_8"
+        type: "algebra"
+        question: "Dziedzina funkcji f(x) = ln(x^2 - 4) to:"
+        options: ["x > 2 lub x < -2", "x > 2", "-2 < x < 2", "x != 2"]
+        correct_answer: "x > 2 lub x < -2"
+        topic: "dziedzina_zaawansowana"
+
+    geometria:
       - id: "ag_1"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "Had I known about the delay, I would have taken a different route."
-          - "If I had known about the delay, I would took a different route."
-          - "Had I known about the delay, I would took a different route."
-          - "If I would have known about the delay, I had taken a different route."
-        correct_answer: "Had I known about the delay, I would have taken a different route."
-        topic: "third_conditional_inversion"
+        type: "geometry"
+        question: "Oblicz odleglosc miedzy punktami A(1,2) i B(4,6):"
+        options: ["5", "6", "7", "sqrt(7)"]
+        correct_answer: "5"
+        topic: "odleglosc_punktow"
 
       - id: "ag_2"
-        type: "grammar_mcq"
-        question: "Which sentence is correct?"
-        options:
-          - "The report, which was submitted last Friday, contained several inaccuracies."
-          - "The report, that was submitted last Friday, contained several inaccuracies."
-          - "The report which, was submitted last Friday, contained several inaccuracies."
-          - "The report, which was submitted last Friday contained several inaccuracies."
-        correct_answer: "The report, which was submitted last Friday, contained several inaccuracies."
-        topic: "non_defining_relative_clauses"
+        type: "geometry"
+        question: "Oblicz pole trojkata o wierzcholkach A(0,0), B(4,0), C(0,3):"
+        options: ["6", "12", "7", "24"]
+        correct_answer: "6"
+        topic: "geometria_analityczna"
 
       - id: "ag_3"
-        type: "grammar_mcq"
-        question: "Choose the correct option:"
-        options:
-          - "Not until the results were published did the public become aware of the issue."
-          - "Not until the results were published the public became aware of the issue."
-          - "Not until the results were published the public did become aware of the issue."
-          - "Not until the results published did the public become aware of the issue."
-        correct_answer: "Not until the results were published did the public become aware of the issue."
-        topic: "inversion_after_negative_adverbials"
+        type: "geometry"
+        question: "Oblicz: sin(30°) = ?"
+        options: ["1/2", "sqrt(2)/2", "sqrt(3)/2", "1"]
+        correct_answer: "1/2"
+        topic: "trygonometria"
 
       - id: "ag_4"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "The proposal is to be reviewed by the board before any decision is made."
-          - "The proposal is being to review by the board before any decision is made."
-          - "The proposal is to being reviewed by the board before any decision is made."
-          - "The proposal is to be reviewing by the board before any decision is made."
-        correct_answer: "The proposal is to be reviewed by the board before any decision is made."
-        topic: "passive_infinitive"
+        type: "geometry"
+        question: "Rownanie okregu o srodku (2,3) i promieniu 4 to:"
+        options: [
+          "(x-2)^2 + (y-3)^2 = 16",
+          "(x+2)^2 + (y+3)^2 = 16",
+          "(x-2)^2 + (y-3)^2 = 4",
+          "x^2 + y^2 = 16"
+        ]
+        correct_answer: "(x-2)^2 + (y-3)^2 = 16"
+        topic: "rownanie_okregu"
 
       - id: "ag_5"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "She demanded that he apologize immediately."
-          - "She demanded that he apologizes immediately."
-          - "She demanded that he apologized immediately."
-          - "She demanded that he would apologize immediately."
-        correct_answer: "She demanded that he apologize immediately."
-        topic: "subjunctive"
+        type: "geometry"
+        question: "Objetosc stozka o promieniu 3 i wysokosci 4 wynosi (pi ≈ 3.14):"
+        options: ["12*pi", "36*pi", "9*pi", "4*pi"]
+        correct_answer: "12*pi"
+        topic: "objetosc_stozka"
 
       - id: "ag_6"
-        type: "grammar_mcq"
-        question: "Which sentence correctly uses a participle clause?"
-        options:
-          - "Having finished the project, she submitted it to her supervisor."
-          - "Having finished the project, it was submitted to her supervisor."
-          - "Finishing the project, it was submitted to her supervisor."
-          - "Had finishing the project, she submitted it to her supervisor."
-        correct_answer: "Having finished the project, she submitted it to her supervisor."
-        topic: "participle_clauses"
+        type: "geometry"
+        question: "Dwie proste sa prostopadle, gdy iloczyn ich wspolczynnikow kierunkowych wynosi:"
+        options: ["-1", "0", "1", "nieskonczonosc"]
+        correct_answer: "-1"
+        topic: "proste_prostopadle"
 
       - id: "ag_7"
-        type: "grammar_mcq"
-        question: "Choose the correct sentence:"
-        options:
-          - "Rarely have I encountered such a well-argued thesis."
-          - "Rarely I have encountered such a well-argued thesis."
-          - "Rarely have I encountered such well-argued thesis."
-          - "Rarely I encountered such a well-argued thesis."
-        correct_answer: "Rarely have I encountered such a well-argued thesis."
-        topic: "inversion_emphasis"
+        type: "geometry"
+        question: "W trojkacie o bokach a=5, b=7 i kacie miedzy nimi C=60°, oblicz c uzywajac tw. cosinusow. c^2 = ?"
+        options: ["39", "49", "59", "74"]
+        correct_answer: "39"
+        topic: "twierdzenie_cosinusow"
 
       - id: "ag_8"
-        type: "grammar_mcq"
-        question: "Which is correct?"
-        options:
-          - "Were it not for his quick thinking, the situation could have escalated."
-          - "Was it not for his quick thinking, the situation could have escalated."
-          - "Were it not for his quick thinking, the situation could escalated."
-          - "If it were not for his quick thinking, the situation could have been escalated."
-        correct_answer: "Were it not for his quick thinking, the situation could have escalated."
-        topic: "formal_conditionals"
-
-    vocabulary:
-      - id: "av_1"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The government's decision to cut funding has _____ widespread criticism from educators.'"
-        correct_answer: "sparked"
-        topic: "formal_register"
-
-      - id: "av_2"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'Despite initial _____, the project turned out to be a great success.'"
-        correct_answer: "skepticism"
-        topic: "abstract_concepts"
-
-      - id: "av_3"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The two companies decided to _____ forces and create a joint venture.'"
-        correct_answer: "join"
-        topic: "collocations"
-
-      - id: "av_4"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'Her _____ approach to problem-solving made her an invaluable asset to the team.'"
-        correct_answer: "innovative"
-        topic: "professional"
-
-      - id: "av_5"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The findings of the study _____ the theory that early intervention is effective.'"
-        correct_answer: "support"
-        topic: "academic"
-
-      - id: "av_6"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'He tends to _____ the importance of preparation, which often leads to poor results.'"
-        correct_answer: "underestimate"
-        topic: "prefixes"
-
-      - id: "av_7"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The new policy aims to _____ the gap between rich and poor communities.'"
-        correct_answer: "bridge"
-        topic: "metaphorical_language"
-
-      - id: "av_8"
-        type: "vocabulary_fill"
-        question: "Complete the sentence: 'The committee will _____ the proposal at their next meeting.'"
-        correct_answer: "review"
-        topic: "formal_processes"
-
-    reading:
-      - id: "ar_1"
-        type: "reading_comprehension"
-        passage: |
-          The phenomenon of code-switching — alternating between two or more languages
-          within a single conversation — has long been viewed negatively by language
-          purists. However, recent linguistic research suggests that code-switching is
-          not a sign of linguistic deficiency but rather an indicator of sophisticated
-          bilingual competence. Speakers who code-switch demonstrate a deep understanding
-          of both languages' grammatical systems, as they must navigate complex rules
-          about where switches can and cannot occur. Furthermore, code-switching serves
-          important social functions: it can signal group identity, emphasize particular
-          points, or fill lexical gaps where one language expresses a concept more
-          precisely than the other.
-        question: "What does recent research suggest about code-switching?"
-        options:
-          - "It indicates sophisticated bilingual ability"
-          - "It shows that speakers are confused between languages"
-          - "It should be discouraged in educational settings"
-          - "It only happens when speakers lack vocabulary"
-        correct_answer: "It indicates sophisticated bilingual ability"
-        topic: "author_argument"
-
-      - id: "ar_2"
-        type: "reading_comprehension"
-        passage: |
-          The phenomenon of code-switching — alternating between two or more languages
-          within a single conversation — has long been viewed negatively by language
-          purists. However, recent linguistic research suggests that code-switching is
-          not a sign of linguistic deficiency but rather an indicator of sophisticated
-          bilingual competence. Speakers who code-switch demonstrate a deep understanding
-          of both languages' grammatical systems, as they must navigate complex rules
-          about where switches can and cannot occur. Furthermore, code-switching serves
-          important social functions: it can signal group identity, emphasize particular
-          points, or fill lexical gaps where one language expresses a concept more
-          precisely than the other.
-        question: "The word 'deficiency' in the text is closest in meaning to:"
-        options:
-          - "Weakness or lack of ability"
-          - "Difference or variety"
-          - "Strength or advantage"
-          - "Preference or choice"
-        correct_answer: "Weakness or lack of ability"
-        topic: "vocabulary_in_context"
-
-      - id: "ar_3"
-        type: "reading_comprehension"
-        passage: |
-          The phenomenon of code-switching — alternating between two or more languages
-          within a single conversation — has long been viewed negatively by language
-          purists. However, recent linguistic research suggests that code-switching is
-          not a sign of linguistic deficiency but rather an indicator of sophisticated
-          bilingual competence. Speakers who code-switch demonstrate a deep understanding
-          of both languages' grammatical systems, as they must navigate complex rules
-          about where switches can and cannot occur. Furthermore, code-switching serves
-          important social functions: it can signal group identity, emphasize particular
-          points, or fill lexical gaps where one language expresses a concept more
-          precisely than the other.
-        question: "Which social function of code-switching is NOT mentioned in the text?"
-        options:
-          - "Showing respect to elders"
-          - "Signaling group identity"
-          - "Emphasizing particular points"
-          - "Filling lexical gaps"
-        correct_answer: "Showing respect to elders"
-        topic: "negative_detail"
-
-      - id: "ar_4"
-        type: "reading_comprehension"
-        passage: |
-          The rise of artificial intelligence in language education presents both
-          opportunities and challenges. AI-powered tools can provide instant feedback
-          on grammar and pronunciation, offer personalized learning paths, and make
-          practice available 24/7. However, critics argue that AI cannot replicate
-          the nuanced understanding of a human teacher who can read body language,
-          adjust explanations in real-time based on student confusion, and provide
-          the emotional support that is crucial for language learning confidence.
-          The most promising approach appears to be a blended model, where AI handles
-          repetitive practice and pattern recognition while human teachers focus on
-          communication skills, cultural context, and motivational coaching.
-        question: "What is the author's position on AI in language education?"
-        options:
-          - "A blended approach combining AI and human teachers is most promising"
-          - "AI should completely replace human teachers"
-          - "Human teachers are always superior to AI"
-          - "AI is not useful for language learning"
-        correct_answer: "A blended approach combining AI and human teachers is most promising"
-        topic: "author_position"
-
-      - id: "ar_5"
-        type: "reading_comprehension"
-        passage: |
-          The rise of artificial intelligence in language education presents both
-          opportunities and challenges. AI-powered tools can provide instant feedback
-          on grammar and pronunciation, offer personalized learning paths, and make
-          practice available 24/7. However, critics argue that AI cannot replicate
-          the nuanced understanding of a human teacher who can read body language,
-          adjust explanations in real-time based on student confusion, and provide
-          the emotional support that is crucial for language learning confidence.
-          The most promising approach appears to be a blended model, where AI handles
-          repetitive practice and pattern recognition while human teachers focus on
-          communication skills, cultural context, and motivational coaching.
-        question: "According to critics, what can human teachers do that AI cannot?"
-        options:
-          - "Read body language and provide emotional support"
-          - "Give instant feedback on grammar"
-          - "Be available 24/7"
-          - "Offer personalized learning paths"
-        correct_answer: "Read body language and provide emotional support"
-        topic: "opposing_viewpoint"
-
-      - id: "ar_6"
-        type: "reading_comprehension"
-        passage: |
-          The rise of artificial intelligence in language education presents both
-          opportunities and challenges. AI-powered tools can provide instant feedback
-          on grammar and pronunciation, offer personalized learning paths, and make
-          practice available 24/7. However, critics argue that AI cannot replicate
-          the nuanced understanding of a human teacher who can read body language,
-          adjust explanations in real-time based on student confusion, and provide
-          the emotional support that is crucial for language learning confidence.
-          The most promising approach appears to be a blended model, where AI handles
-          repetitive practice and pattern recognition while human teachers focus on
-          communication skills, cultural context, and motivational coaching.
-        question: "In the blended model, what role does AI play?"
-        options:
-          - "Handling repetitive practice and pattern recognition"
-          - "Teaching communication skills"
-          - "Providing cultural context"
-          - "Offering motivational coaching"
-        correct_answer: "Handling repetitive practice and pattern recognition"
-        topic: "detail_extraction"
-
-      - id: "ar_7"
-        type: "reading_comprehension"
-        passage: |
-          Linguistic relativity, also known as the Sapir-Whorf hypothesis, posits that
-          the structure of a language affects its speakers' worldview and cognition.
-          The strong version of this hypothesis — that language determines thought —
-          has been largely discredited. However, the weak version — that language
-          influences thought — continues to find empirical support. For instance,
-          speakers of languages with mandatory grammatical gender tend to attribute
-          gendered qualities to inanimate objects, and speakers of languages with
-          absolute spatial reference frames (using cardinal directions instead of
-          left/right) demonstrate superior spatial orientation abilities.
-        question: "What is the difference between the strong and weak versions of the Sapir-Whorf hypothesis?"
-        options:
-          - "Strong: language determines thought; Weak: language influences thought"
-          - "Strong: applies to all languages; Weak: applies only to some"
-          - "Strong: about grammar; Weak: about vocabulary"
-          - "Strong: proven true; Weak: still debated"
-        correct_answer: "Strong: language determines thought; Weak: language influences thought"
-        topic: "distinguishing_concepts"
-
-      - id: "ar_8"
-        type: "reading_comprehension"
-        passage: |
-          Linguistic relativity, also known as the Sapir-Whorf hypothesis, posits that
-          the structure of a language affects its speakers' worldview and cognition.
-          The strong version of this hypothesis — that language determines thought —
-          has been largely discredited. However, the weak version — that language
-          influences thought — continues to find empirical support. For instance,
-          speakers of languages with mandatory grammatical gender tend to attribute
-          gendered qualities to inanimate objects, and speakers of languages with
-          absolute spatial reference frames (using cardinal directions instead of
-          left/right) demonstrate superior spatial orientation abilities.
-        question: "The phrase 'empirical support' most likely means:"
-        options:
-          - "Evidence from experiments and observations"
-          - "Opinions from experts"
-          - "Mathematical proof"
-          - "Historical documentation"
-        correct_answer: "Evidence from experiments and observations"
-        topic: "vocabulary_in_context"
+        type: "geometry"
+        question: "Prawdopodobienstwo wyrzucenia co najmniej jednej szostki w 2 rzutach kostka wynosi:"
+        options: ["11/36", "1/6", "1/3", "1/36"]
+        correct_answer: "11/36"
+        topic: "prawdopodobienstwo"

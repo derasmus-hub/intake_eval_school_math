@@ -14,8 +14,8 @@ ACHIEVEMENT_DEFINITIONS = [
     {"type": "high_scorer", "title": "High Achiever", "title_pl": "Prymus", "description": "Average score above 85%", "category": "mastery", "xp_reward": 75, "icon": "target"},
     {"type": "perfect_score", "title": "Perfection!", "title_pl": "Perfekcja!", "description": "Score 100% on a lesson", "category": "mastery", "xp_reward": 50, "icon": "sparkle"},
     {"type": "perfect_recall", "title": "Total Recall", "title_pl": "Pamiec absolutna", "description": "Score 100% on a recall quiz", "category": "mastery", "xp_reward": 40, "icon": "brain"},
-    {"type": "level_up_b1", "title": "Intermediate!", "title_pl": "Sredniozaawansowany!", "description": "Reach B1 level", "category": "mastery", "xp_reward": 150, "icon": "medal"},
-    {"type": "level_up_b2", "title": "Upper Intermediate!", "title_pl": "Wyzszy sredni!", "description": "Reach B2 level", "category": "mastery", "xp_reward": 300, "icon": "crown"},
+    {"type": "level_up_intermediate", "title": "Intermediate!", "title_pl": "Sredniozaawansowany!", "description": "Reach intermediate level", "category": "mastery", "xp_reward": 150, "icon": "medal"},
+    {"type": "level_up_advanced", "title": "Advanced!", "title_pl": "Zaawansowany!", "description": "Reach advanced level", "category": "mastery", "xp_reward": 300, "icon": "crown"},
 
     # Dedication category
     {"type": "streak_3", "title": "On a Roll", "title_pl": "Jestem na fali", "description": "3-day study streak", "category": "dedication", "xp_reward": 30, "icon": "fire"},
@@ -25,11 +25,11 @@ ACHIEVEMENT_DEFINITIONS = [
     {"type": "xp_level_10", "title": "Double Digits", "title_pl": "Podwojne cyfry", "description": "Reach XP level 10", "category": "dedication", "xp_reward": 100, "icon": "up"},
     {"type": "xp_level_25", "title": "Quarter Master", "title_pl": "Cwierc mistrz", "description": "Reach XP level 25", "category": "dedication", "xp_reward": 250, "icon": "gem"},
 
-    # Vocabulary category
-    {"type": "vocab_10", "title": "Word Collector", "title_pl": "Zbieracz slow", "description": "Learn 10 vocabulary words", "category": "vocabulary", "xp_reward": 25, "icon": "cards"},
-    {"type": "vocab_50", "title": "Wordsmith", "title_pl": "Slownikarz", "description": "Learn 50 vocabulary words", "category": "vocabulary", "xp_reward": 75, "icon": "scroll"},
-    {"type": "vocab_100", "title": "Lexicon Lord", "title_pl": "Wladca leksykonu", "description": "Learn 100 vocabulary words", "category": "vocabulary", "xp_reward": 200, "icon": "castle"},
-    {"type": "vocab_mastered_10", "title": "Memory Master", "title_pl": "Mistrz pamieci", "description": "Master 10 vocabulary words", "category": "vocabulary", "xp_reward": 100, "icon": "lock"},
+    # Math concepts category
+    {"type": "concepts_10", "title": "Concept Collector", "title_pl": "Zbieracz pojec", "description": "Learn 10 math concepts", "category": "math_concepts", "xp_reward": 25, "icon": "cards"},
+    {"type": "concepts_50", "title": "Formula Fan", "title_pl": "Fan formul", "description": "Learn 50 math concepts", "category": "math_concepts", "xp_reward": 75, "icon": "scroll"},
+    {"type": "concepts_100", "title": "Math Encyclopedia", "title_pl": "Encyklopedia matematyki", "description": "Learn 100 math concepts", "category": "math_concepts", "xp_reward": 200, "icon": "castle"},
+    {"type": "concepts_mastered_10", "title": "Memory Master", "title_pl": "Mistrz pamieci", "description": "Master 10 math concepts", "category": "math_concepts", "xp_reward": 100, "icon": "lock"},
 
     # Secret category
     {"type": "night_owl", "title": "Night Owl", "title_pl": "Nocna sowa", "description": "Study after midnight", "category": "secret", "xp_reward": 25, "icon": "moon"},
@@ -65,7 +65,7 @@ async def check_achievements(student_id: int, context: dict = None) -> list[dict
 
         xp_level = student["xp_level"] or 1
         streak = student["streak"] or 0
-        current_level = student["current_level"] or "A1"
+        current_level = student["current_level"] or "beginner"
 
         # Progress stats
         cursor = await db.execute(
@@ -77,18 +77,18 @@ async def check_achievements(student_id: int, context: dict = None) -> list[dict
         avg_score = stats["avg_score"] or 0
         max_score = stats["max_score"] or 0
 
-        # Vocab stats
+        # Math concept stats
         cursor = await db.execute(
-            "SELECT COUNT(*) as total FROM vocabulary_cards WHERE student_id = ?",
+            "SELECT COUNT(*) as total FROM math_concept_cards WHERE student_id = ?",
             (student_id,),
         )
-        vocab_total = (await cursor.fetchone())["total"]
+        concepts_total = (await cursor.fetchone())["total"]
 
         cursor = await db.execute(
-            "SELECT COUNT(*) as mastered FROM vocabulary_cards WHERE student_id = ? AND repetitions >= 5",
+            "SELECT COUNT(*) as mastered FROM math_concept_cards WHERE student_id = ? AND repetitions >= 5",
             (student_id,),
         )
-        vocab_mastered = (await cursor.fetchone())["mastered"]
+        concepts_mastered = (await cursor.fetchone())["mastered"]
 
         # Recall stats
         cursor = await db.execute(
@@ -117,18 +117,18 @@ async def check_achievements(student_id: int, context: dict = None) -> list[dict
             "high_scorer": total_lessons >= 3 and avg_score > 85,
             "perfect_score": max_score >= 100,
             "perfect_recall": max_recall and max_recall >= 100,
-            "level_up_b1": current_level in ("B1", "B2", "C1", "C2"),
-            "level_up_b2": current_level in ("B2", "C1", "C2"),
+            "level_up_intermediate": current_level in ("intermediate", "advanced"),
+            "level_up_advanced": current_level == "advanced",
             "streak_3": streak >= 3,
             "streak_7": streak >= 7,
             "streak_14": streak >= 14,
             "streak_30": streak >= 30,
             "xp_level_10": xp_level >= 10,
             "xp_level_25": xp_level >= 25,
-            "vocab_10": vocab_total >= 10,
-            "vocab_50": vocab_total >= 50,
-            "vocab_100": vocab_total >= 100,
-            "vocab_mastered_10": vocab_mastered >= 10,
+            "concepts_10": concepts_total >= 10,
+            "concepts_50": concepts_total >= 50,
+            "concepts_100": concepts_total >= 100,
+            "concepts_mastered_10": concepts_mastered >= 10,
             "night_owl": 0 <= hour < 4,
             "early_bird": 4 <= hour < 6,
             "game_master": len(game_types_played) >= 4,

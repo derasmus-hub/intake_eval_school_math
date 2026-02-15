@@ -1,5 +1,6 @@
 /**
  * assessment.js — Robust assessment flow with STATE integration.
+ * Polish math assessment version.
  */
 (function () {
     'use strict';
@@ -50,14 +51,14 @@
             var parsed = JSON.parse(body);
             detail = parsed.detail || JSON.stringify(parsed).substring(0, 300);
         } catch (_) {
-            detail = 'Unexpected response from server';
+            detail = 'Nieoczekiwana odpowied\u017A serwera';
         }
         var prefix = context ? context + ': ' : '';
         if (resp.status === 422) {
-            return prefix + 'Invalid data sent to server — ' + detail;
+            return prefix + 'Nieprawid\u0142owe dane wys\u0142ane do serwera \u2014 ' + detail;
         }
         if (resp.status >= 500) {
-            return prefix + 'Server error (' + resp.status + '). Check backend logs. ' + detail;
+            return prefix + 'B\u0142\u0105d serwera (' + resp.status + '). Sprawd\u017A logi backendu. ' + detail;
         }
         if (resp.status === 404) {
             return prefix + detail;
@@ -67,21 +68,23 @@
 
     // ── Expose answer handlers globally ────────────────────────────────
     window.onPlacementAnswer = function (questionId) {
-        var selected = document.querySelector('input[name="placement_' + questionId + '"]:checked');
-        if (selected) {
-            placementAnswers[questionId] = selected.value === 'true';
+        var input = document.getElementById('placement_input_' + questionId);
+        if (input && input.value.trim()) {
+            placementAnswers[questionId] = input.value.trim();
+        } else {
+            delete placementAnswers[questionId];
         }
         var total = document.querySelectorAll('#placement-questions .question-card').length;
         var answered = Object.keys(placementAnswers).length;
         document.getElementById('btn-submit-placement').disabled = answered < total;
-        console.log('[assessment] placement answer', questionId, '— answered', answered, '/', total);
+        console.log('[assessment] placement answer', questionId, '\u2014 answered', answered, '/', total);
     };
 
     window.onDiagnosticAnswer = function (questionId) {
         var q = diagnosticQuestions.find(function (q) { return q.id === questionId; });
         if (!q) return;
 
-        if (q.type === 'vocabulary_fill') {
+        if (!q.options || !q.options.length) {
             var input = document.getElementById('diag_input_' + questionId);
             if (input && input.value.trim()) {
                 diagnosticAnswers[questionId] = input.value.trim();
@@ -98,13 +101,13 @@
         var total = diagnosticQuestions.length;
         var answered = Object.keys(diagnosticAnswers).length;
         document.getElementById('btn-submit-diagnostic').disabled = answered < total;
-        console.log('[assessment] diagnostic answer', questionId, '— answered', answered, '/', total);
+        console.log('[assessment] diagnostic answer', questionId, '\u2014 answered', answered, '/', total);
     };
 
     // ── Core flow ──────────────────────────────────────────────────────
 
     async function startAssessment() {
-        setStatus('Starting assessment...', 'info');
+        setStatus('Rozpoczynam test...', 'info');
         console.log('[assessment] startAssessment() student_id=', studentId);
 
         try {
@@ -121,7 +124,7 @@
             console.log('[assessment] startAssessment response status:', resp.status);
 
             if (!resp.ok) {
-                var errMsg = await extractApiError(resp, 'Starting assessment');
+                var errMsg = await extractApiError(resp, 'Rozpocz\u0119cie testu');
                 setStatus(errMsg, 'error');
                 return;
             }
@@ -131,7 +134,7 @@
             console.log('[assessment] assessment_id=', assessmentId, 'questions=', data.questions && data.questions.length);
 
             if (!data.questions || !data.questions.length) {
-                setStatus('Error: Server returned no placement questions.', 'error');
+                setStatus('B\u0142\u0105d: Serwer nie zwr\u00f3ci\u0142 pyta\u0144 klasyfikuj\u0105cych.', 'error');
                 return;
             }
 
@@ -139,7 +142,7 @@
             clearStatus();
         } catch (e) {
             console.error('[assessment] startAssessment error:', e);
-            setStatus('Network error: ' + e.message + '. Is the backend running at ' + (window.API_BASE || ':8000') + '?', 'error');
+            setStatus('B\u0142\u0105d sieci: ' + e.message + '. Czy backend dzia\u0142a pod adresem ' + (window.API_BASE || ':8000') + '?', 'error');
         }
     }
 
@@ -150,19 +153,17 @@
         questions.forEach(function (q, idx) {
             var card = document.createElement('div');
             card.className = 'question-card';
+            var domainBadge = q.math_domain
+                ? '<span class="skill-tag">' + escapeHtml(q.math_domain) + '</span>'
+                : '';
             card.innerHTML =
-                '<div class="question-number">Question ' + (idx + 1) + ' / Pytanie ' + (idx + 1) + '</div>' +
-                '<div class="question-sentence">"' + escapeHtml(q.sentence) + '"</div>' +
-                '<div class="question-prompt">Is this sentence correct? / Czy to zdanie jest poprawne?</div>' +
-                '<div class="answer-options">' +
-                    '<label class="radio-label answer-label">' +
-                        '<input type="radio" name="placement_' + q.id + '" value="true" onchange="onPlacementAnswer(' + q.id + ')">' +
-                        '<span>Correct / Poprawne</span>' +
-                    '</label>' +
-                    '<label class="radio-label answer-label">' +
-                        '<input type="radio" name="placement_' + q.id + '" value="false" onchange="onPlacementAnswer(' + q.id + ')">' +
-                        '<span>Incorrect / Niepoprawne</span>' +
-                    '</label>' +
+                '<div class="question-number">Pytanie ' + (idx + 1) + '</div>' +
+                domainBadge +
+                '<div class="question-text">' + escapeHtml(q.problem) + '</div>' +
+                '<div class="fill-input">' +
+                    '<input type="text" id="placement_input_' + q.id + '" class="fill-blank-input" ' +
+                        'placeholder="Wpisz odpowied\u017A..." ' +
+                        'oninput="onPlacementAnswer(' + q.id + ')">' +
                 '</div>';
             container.appendChild(card);
         });
@@ -175,12 +176,12 @@
         var btn = document.getElementById('btn-submit-placement');
         var origText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Submitting...';
+        btn.textContent = 'Wysy\u0142anie...';
 
         var total = document.querySelectorAll('#placement-questions .question-card').length;
         var answered = Object.keys(placementAnswers).length;
         if (answered < total) {
-            setStatus('Please answer all ' + total + ' questions. (' + answered + '/' + total + ')', 'error');
+            setStatus('Odpowiedz na wszystkie ' + total + ' pyta\u0144. (' + answered + '/' + total + ')', 'error');
             btn.disabled = false;
             btn.textContent = origText;
             submitting = false;
@@ -193,10 +194,10 @@
 
         var payload = { student_id: studentId, assessment_id: assessmentId, answers: answers };
         var endpoint = '/api/assessment/placement';
-        console.log('[assessment] submit clicked — placement');
+        console.log('[assessment] submit clicked \u2014 placement');
         console.log('[assessment] payload:', JSON.stringify(payload));
         console.log('[assessment] endpoint url:', window.API_BASE + endpoint);
-        setStatus('Submitting placement answers...', 'info');
+        setStatus('Wysy\u0142anie odpowiedzi...', 'info');
 
         try {
             var resp = await apiFetch(endpoint, {
@@ -207,7 +208,7 @@
             console.log('[assessment] response status:', resp.status);
 
             if (!resp.ok) {
-                var errMsg = await extractApiError(resp, 'Submitting placement');
+                var errMsg = await extractApiError(resp, 'Wysy\u0142anie klasyfikacji');
                 setStatus(errMsg, 'error');
                 btn.disabled = false;
                 btn.textContent = origText;
@@ -216,12 +217,12 @@
             }
 
             var data = await STATE.safeJson(resp);
-            console.log('[assessment] placement accepted — bracket:', data.placement_result && data.placement_result.bracket);
-            setStatus('Placement complete! Loading diagnostic...', 'success');
+            console.log('[assessment] placement accepted \u2014 bracket:', data.placement_result && data.placement_result.bracket);
+            setStatus('Klasyfikacja uko\u0144czona! \u0141adowanie diagnostyki...', 'success');
             showDiagnosticStage(data);
         } catch (e) {
             console.error('[assessment] submitPlacement error:', e);
-            setStatus('Network error: ' + e.message, 'error');
+            setStatus('B\u0142\u0105d sieci: ' + e.message, 'error');
             btn.disabled = false;
             btn.textContent = origText;
         } finally {
@@ -238,17 +239,15 @@
         document.getElementById('stage-diagnostic').classList.remove('hidden');
 
         var bracketLabels = {
-            beginner: 'Beginner / Pocz\u0105tkuj\u0105cy',
-            intermediate: 'Intermediate / \u015Arednio\u200Bzaawansowany',
-            advanced: 'Advanced / Zaawansowany',
+            beginner: 'Pocz\u0105tkuj\u0105cy',
+            intermediate: '\u015arednio\u200Bzaawansowany',
+            advanced: 'Zaawansowany',
         };
         document.getElementById('bracket-display').textContent =
             bracketLabels[data.placement_result.bracket] || data.placement_result.bracket;
         document.getElementById('diagnostic-intro').innerHTML =
-            'Based on your placement, you\'ve been placed in the <strong>' + escapeHtml(data.placement_result.bracket) + '</strong> bracket. ' +
-            'Answer the following questions to determine your exact level.' +
-            '<br><em>Na podstawie klasyfikacji zosta\u0142e\u015B/a\u015B przypisany/a do poziomu <strong>' + escapeHtml(data.placement_result.bracket) + '</strong>. ' +
-            'Odpowiedz na pytania, aby ustali\u0107 dok\u0142adny poziom.</em>';
+            'Na podstawie klasyfikacji zosta\u0142e\u015B/a\u015B przypisany/a do poziomu <strong>' + escapeHtml(bracketLabels[data.placement_result.bracket] || data.placement_result.bracket) + '</strong>. ' +
+            'Odpowiedz na poni\u017Csze pytania, aby ustali\u0107 dok\u0142adny poziom matematyczny.';
 
         diagnosticQuestions = data.questions;
         renderDiagnosticQuestions(data.questions);
@@ -259,7 +258,6 @@
     function renderDiagnosticQuestions(questions) {
         var container = document.getElementById('diagnostic-questions');
         container.innerHTML = '';
-        var currentPassage = null;
         var questionNum = 0;
 
         questions.forEach(function (q) {
@@ -268,18 +266,15 @@
             card.className = 'question-card';
 
             var skillBadge = '<span class="skill-tag skill-' + escapeHtml(q.skill) + '">' + escapeHtml(q.skill) + '</span>';
-            var content = '<div class="question-header"><span class="question-number">Q' + questionNum + '</span>' + skillBadge + '</div>';
-
-            if (q.type === 'reading_comprehension' && q.passage) {
-                if (q.passage !== currentPassage) {
-                    currentPassage = q.passage;
-                    content += '<div class="reading-passage">' + escapeHtml(q.passage) + '</div>';
-                }
-            }
+            var content = '<div class="question-header"><span class="question-number">P' + questionNum + '</span>' + skillBadge + '</div>';
 
             content += '<div class="question-text">' + escapeHtml(q.question) + '</div>';
 
-            if (q.type === 'grammar_mcq' || q.type === 'reading_comprehension') {
+            if (q.hint) {
+                content += '<div class="question-hint"><em>Wskaz\u00f3wka: ' + escapeHtml(q.hint) + '</em></div>';
+            }
+
+            if (q.options && q.options.length) {
                 content += '<div class="answer-options">';
                 q.options.forEach(function (opt) {
                     content +=
@@ -289,11 +284,11 @@
                         '</label>';
                 });
                 content += '</div>';
-            } else if (q.type === 'vocabulary_fill') {
+            } else {
                 content +=
                     '<div class="fill-input">' +
                         '<input type="text" id="diag_input_' + q.id + '" class="fill-blank-input" ' +
-                            'placeholder="Type your answer... / Wpisz odpowied\u017A..." ' +
+                            'placeholder="Wpisz odpowied\u017A..." ' +
                             'oninput="onDiagnosticAnswer(\'' + q.id + '\')">' +
                     '</div>';
             }
@@ -305,7 +300,7 @@
 
     async function submitDiagnostic() {
         if (submitting) {
-            console.log('[assessment] submitDiagnostic blocked — already submitting');
+            console.log('[assessment] submitDiagnostic blocked \u2014 already submitting');
             return;
         }
         submitting = true;
@@ -313,14 +308,14 @@
         var btn = document.getElementById('btn-submit-diagnostic');
         var origText = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Submitting...';
+        btn.textContent = 'Wysy\u0142anie...';
 
         var total = diagnosticQuestions.length;
         var answered = Object.keys(diagnosticAnswers).length;
-        console.log('[assessment] submitDiagnostic — answered', answered, '/', total);
+        console.log('[assessment] submitDiagnostic \u2014 answered', answered, '/', total);
 
         if (answered < total) {
-            setStatus('Please answer all ' + total + ' questions. (' + answered + '/' + total + ')', 'error');
+            setStatus('Odpowiedz na wszystkie ' + total + ' pyta\u0144. (' + answered + '/' + total + ')', 'error');
             btn.disabled = false;
             btn.textContent = origText;
             submitting = false;
@@ -335,11 +330,11 @@
         });
         var payload = { student_id: studentId, assessment_id: assessmentId, answers: answers };
         var endpoint = '/api/assessment/diagnostic';
-        console.log('[assessment] submit clicked — diagnostic');
+        console.log('[assessment] submit clicked \u2014 diagnostic');
         console.log('[assessment] student_id:', studentId, 'assessment_id:', assessmentId);
         console.log('[assessment] payload:', JSON.stringify(payload));
         console.log('[assessment] endpoint url:', window.API_BASE + endpoint);
-        setStatus('Submitting diagnostic — AI analysis in progress...', 'info');
+        setStatus('Wysy\u0142anie diagnostyki \u2014 analiza AI w toku...', 'info');
 
         try {
             var resp = await apiFetch(endpoint, {
@@ -351,7 +346,7 @@
 
             if (!resp.ok) {
                 if (overlay) overlay.classList.add('hidden');
-                var errMsg = await extractApiError(resp, 'Diagnostic submission failed');
+                var errMsg = await extractApiError(resp, 'B\u0142\u0105d przesy\u0142ania diagnostyki');
                 console.error('[assessment] diagnostic error:', errMsg);
                 setStatus(errMsg, 'error');
                 btn.disabled = false;
@@ -369,9 +364,9 @@
             if (overlay) overlay.classList.add('hidden');
 
             if (data.ai_error) {
-                setStatus('Assessment scored (AI analysis was unavailable: ' + data.ai_error + ')', 'info');
+                setStatus('Test oceniony (analiza AI niedost\u0119pna: ' + data.ai_error + ')', 'info');
             } else {
-                setStatus('Assessment complete!', 'success');
+                setStatus('Test uko\u0144czony!', 'success');
             }
 
             showResults(data);
@@ -381,7 +376,7 @@
         } catch (e) {
             console.error('[assessment] submitDiagnostic network error:', e);
             if (overlay) overlay.classList.add('hidden');
-            setStatus('Network error: ' + e.message + '. Is the backend running?', 'error');
+            setStatus('B\u0142\u0105d sieci: ' + e.message + '. Czy backend dzia\u0142a?', 'error');
             btn.disabled = false;
             btn.textContent = origText;
         } finally {
@@ -397,7 +392,7 @@
      * These are best-effort — failures don't block the results page.
      */
     async function triggerPostDiagnosticPipeline() {
-        console.log('[assessment] triggerPostDiagnosticPipeline — student_id:', studentId);
+        console.log('[assessment] triggerPostDiagnosticPipeline \u2014 student_id:', studentId);
         var pipelineEl = document.getElementById('pipeline-status');
 
         function setPipelineStatus(msg) {
@@ -406,7 +401,7 @@
         }
 
         // Step 1: Create learner profile
-        setPipelineStatus('Creating learner profile...');
+        setPipelineStatus('Tworzenie profilu ucznia...');
         try {
             var profileResp = await apiFetch('/api/diagnostic/' + studentId, {
                 method: 'POST',
@@ -415,15 +410,15 @@
             if (profileResp.ok) {
                 var profileData = await STATE.safeJson(profileResp);
                 console.log('[assessment] learner profile created:', JSON.stringify(profileData).substring(0, 300));
-                setPipelineStatus('Learner profile created. Generating learning path...');
+                setPipelineStatus('Profil ucznia utworzony. Generowanie \u015Bcie\u017Cki nauki...');
             } else {
-                var profileErr = await extractApiError(profileResp, 'Learner profile');
+                var profileErr = await extractApiError(profileResp, 'Profil ucznia');
                 console.warn('[assessment] learner profile failed:', profileErr);
-                setPipelineStatus('Learner profile: ' + profileErr + '. Generating learning path...');
+                setPipelineStatus('Profil ucznia: ' + profileErr + '. Generowanie \u015Bcie\u017Cki nauki...');
             }
         } catch (e) {
             console.warn('[assessment] learner profile network error:', e.message);
-            setPipelineStatus('Learner profile unavailable. Generating learning path...');
+            setPipelineStatus('Profil ucznia niedost\u0119pny. Generowanie \u015Bcie\u017Cki nauki...');
         }
 
         // Step 2: Generate learning path
@@ -435,15 +430,15 @@
             if (pathResp.ok) {
                 var pathData = await STATE.safeJson(pathResp);
                 console.log('[assessment] learning path generated:', JSON.stringify(pathData).substring(0, 300));
-                setPipelineStatus('Learning path generated! Go to Dashboard to view it.');
+                setPipelineStatus('\u015acie\u017Cka nauki wygenerowana! Przejd\u017A do panelu, aby j\u0105 zobaczy\u0107.');
             } else {
-                var pathErr = await extractApiError(pathResp, 'Learning path');
+                var pathErr = await extractApiError(pathResp, '\u015acie\u017Cka nauki');
                 console.warn('[assessment] learning path failed:', pathErr);
-                setPipelineStatus('Learning path: ' + pathErr);
+                setPipelineStatus('\u015acie\u017Cka nauki: ' + pathErr);
             }
         } catch (e) {
             console.warn('[assessment] learning path network error:', e.message);
-            setPipelineStatus('Learning path generation unavailable.');
+            setPipelineStatus('Generowanie \u015Bcie\u017Cki nauki niedost\u0119pne.');
         }
     }
 
@@ -483,12 +478,12 @@
             var rawDiv = document.createElement('div');
             rawDiv.className = 'raw-scores';
             rawDiv.innerHTML =
-                '<h4>Raw Scores / Surowe wyniki</h4>' +
+                '<h4>Wyniki surowe</h4>' +
                 '<div class="score-grid">' +
-                    '<div class="score-item"><span class="score-label">Grammar</span><span class="score-value">' + data.scores.grammar + '%</span></div>' +
-                    '<div class="score-item"><span class="score-label">Vocabulary</span><span class="score-value">' + data.scores.vocabulary + '%</span></div>' +
-                    '<div class="score-item"><span class="score-label">Reading</span><span class="score-value">' + data.scores.reading + '%</span></div>' +
-                    '<div class="score-item overall"><span class="score-label">Overall</span><span class="score-value">' + data.scores.overall + '%</span></div>' +
+                    '<div class="score-item"><span class="score-label">Arytmetyka</span><span class="score-value">' + data.scores.arytmetyka + '%</span></div>' +
+                    '<div class="score-item"><span class="score-label">Algebra</span><span class="score-value">' + data.scores.algebra + '%</span></div>' +
+                    '<div class="score-item"><span class="score-label">Geometria</span><span class="score-value">' + data.scores.geometria + '%</span></div>' +
+                    '<div class="score-item overall"><span class="score-label">Og\u00f3\u0142em</span><span class="score-value">' + data.scores.overall + '%</span></div>' +
                 '</div>';
             skillsContainer.appendChild(rawDiv);
         }
@@ -502,26 +497,26 @@
                 weakList.appendChild(li);
             });
         } else {
-            weakList.innerHTML = '<li>No significant weak areas identified.</li>';
+            weakList.innerHTML = '<li>Nie zidentyfikowano istotnych s\u0142abych obszar\u00f3w.</li>';
         }
 
-        var l1Container = document.getElementById('l1-interference');
-        l1Container.innerHTML = '';
-        if (data.l1_interference && data.l1_interference.length) {
-            data.l1_interference.forEach(function (item) {
+        var misconceptionsContainer = document.getElementById('math-misconceptions');
+        misconceptionsContainer.innerHTML = '';
+        if (data.common_misconceptions && data.common_misconceptions.length) {
+            data.common_misconceptions.forEach(function (item) {
                 var div = document.createElement('div');
-                div.className = 'l1-item';
+                div.className = 'misconception-item';
                 div.innerHTML =
                     '<strong>' + escapeHtml(item.area) + '</strong>' +
                     '<p>' + escapeHtml(item.description) + '</p>' +
-                    (item.evidence ? '<p class="evidence"><em>Evidence: ' + escapeHtml(item.evidence) + '</em></p>' : '');
-                l1Container.appendChild(div);
+                    (item.evidence ? '<p class="evidence"><em>Dow\u00f3d: ' + escapeHtml(item.evidence) + '</em></p>' : '');
+                misconceptionsContainer.appendChild(div);
             });
         } else {
-            l1Container.innerHTML = '<p>No significant L1 interference patterns detected.</p>';
+            misconceptionsContainer.innerHTML = '<p>Nie wykryto typowych b\u0142\u0119d\u00f3w matematycznych.</p>';
         }
 
-        document.getElementById('result-summary').textContent = data.summary || 'No summary available.';
+        document.getElementById('result-summary').textContent = data.summary || 'Brak podsumowania.';
 
         var recList = document.getElementById('result-recommendations');
         recList.innerHTML = '';
@@ -539,7 +534,7 @@
             var continueLink = document.createElement('a');
             continueLink.href = 'index.html?student_id=' + studentId + '&from=assessment';
             continueLink.className = 'btn btn-primary';
-            continueLink.textContent = 'Continue Registration / Kontynuuj rejestracj\u0119 \u2192';
+            continueLink.textContent = 'Kontynuuj rejestracj\u0119 \u2192';
             actionsDiv.prepend(continueLink);
         }
 
@@ -549,7 +544,7 @@
     // ── Init ───────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('[assessment] DOMContentLoaded — wiring up');
+        console.log('[assessment] DOMContentLoaded \u2014 wiring up');
 
         // Get student ID via STATE (URL param → localStorage fallback)
         studentId = STATE.requireStudentId();

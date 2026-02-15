@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Intake Eval School", lifespan=lifespan)
+app = FastAPI(title="Intake Eval School Math", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -113,5 +113,26 @@ async def serve_root():
 # and API endpoints require Bearer token authentication.
 # Server-side guards were removed because browser navigation doesn't send
 # Authorization headers (tokens are in localStorage, not cookies).
+
+# Extensionless routes for frontend pages
+_html_pages = [
+    "dashboard", "assessment", "conversation", "recall", "session",
+    "vocab", "games", "leaderboard", "profile", "login", "register",
+    "teacher_register", "student_dashboard",
+]
+
+
+@app.get("/{page}")
+async def serve_page(page: str):
+    if page in _html_pages:
+        html_file = frontend_path / f"{page}.html"
+        if html_file.exists():
+            return FileResponse(html_file)
+    # Fall through to static files
+    static_file = frontend_path / page
+    if static_file.exists() and static_file.is_file():
+        return FileResponse(static_file)
+    return FileResponse(frontend_path / "login.html")
+
 
 app.mount("/", StaticFiles(directory=frontend_path), name="frontend")

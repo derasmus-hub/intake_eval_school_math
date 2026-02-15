@@ -3,54 +3,60 @@ from typing import Optional
 from datetime import datetime
 
 
-class WarmUp(BaseModel):
+class Rozgrzewka(BaseModel):
+    """Warm-up: mental math drill or quick review."""
     description: str = ""
     activity: str = ""
     duration_minutes: int = 5
     materials: Optional[list[str]] = None
 
 
-class Presentation(BaseModel):
+class WyjasnienieTematu(BaseModel):
+    """Topic explanation with theory and definitions."""
     topic: str = ""
     explanation: str = ""
-    polish_explanation: str = ""
+    definitions: list[str] = []
     examples: list[str] = []
     visual_aid: Optional[str] = None
 
 
-class ControlledPractice(BaseModel):
+class PrzykladyRozwiazane(BaseModel):
+    """Step-by-step worked examples."""
     exercises: list[dict] = []
     instructions: str = ""
     instructions_pl: Optional[str] = None
 
 
-class FreePractice(BaseModel):
-    activity: str = ""
+class ZadaniaDoPraktyki(BaseModel):
+    """Independent practice problems with progressive hints."""
+    problems: list[dict] = []
     description: str = ""
-    prompts: list[str] = []
+    hints: list[str] = []
     success_criteria: Optional[str] = None
 
 
-class WrapUp(BaseModel):
+class Podsumowanie(BaseModel):
+    """Wrap-up: summary, key formulas, homework."""
     summary: str = ""
+    key_formulas: list[str] = []
     homework: Optional[str] = None
     next_preview: Optional[str] = None
-    win_activity: str = ""
 
 
 class LessonContent(BaseModel):
     objective: str = ""
-    polish_explanation: str = ""
+    explanation: str = ""
     exercises: list[dict] = []
-    conversation_prompts: list[str] = []
-    win_activity: str = ""
+    practice_problems: list[str] = []
+    key_formulas: list[str] = []
     difficulty: str = ""
-    # 5-phase structure (Optional — old lessons won't have these)
-    warm_up: Optional[WarmUp] = None
-    presentation: Optional[Presentation] = None
-    controlled_practice: Optional[ControlledPractice] = None
-    free_practice: Optional[FreePractice] = None
-    wrap_up: Optional[WrapUp] = None
+    math_domain: str = ""
+    # 5-phase structure
+    rozgrzewka: Optional[Rozgrzewka] = None
+    wyjasnienie_tematu: Optional[WyjasnienieTematu] = None
+    przyklady_rozwiazane: Optional[PrzykladyRozwiazane] = None
+    zadania_do_praktyki: Optional[ZadaniaDoPraktyki] = None
+    podsumowanie: Optional[Podsumowanie] = None
 
 
 class LessonResponse(BaseModel):
@@ -60,6 +66,7 @@ class LessonResponse(BaseModel):
     objective: Optional[str] = None
     content: Optional[LessonContent] = None
     difficulty: Optional[str] = None
+    math_domain: Optional[str] = None
     status: str = "generated"
     created_at: Optional[str] = None
 

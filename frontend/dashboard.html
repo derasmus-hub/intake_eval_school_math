@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - Panel nauczyciela</title>
+    <title>Panel Nauczyciela - MatEval</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="index.html">Intake</a>
                 <a href="dashboard.html" class="active">Dashboard</a>
@@ -22,14 +22,14 @@
 
         <div class="dashboard-header">
             <div>
-                <h1>Teacher Dashboard</h1>
-                <p class="subtitle">Panel nauczyciela</p>
+                <h1>Panel Nauczyciela</h1>
+                <p class="subtitle">Korepetycje z matematyki</p>
             </div>
-            <a href="index.html" class="btn btn-primary btn-sm">+ New Student / Nowy uczeń</a>
+            <a href="index.html" class="btn btn-primary btn-sm">+ Nowy uczen</a>
         </div>
 
         <div id="student-list-section">
-            <h2>Students / Uczniowie</h2>
+            <h2>Uczniowie</h2>
             <div id="student-list" class="student-list">
                 <!-- Skeleton loading injected by JS -->
             </div>
@@ -38,8 +38,8 @@
         <!-- Availability Management Panel -->
         <div id="availability-management-section" class="detail-panel" style="margin-bottom:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-                <h2 style="margin:0;">My Availability / Moja dostępność</h2>
-                <button class="btn btn-primary btn-sm" onclick="toggleAvailabilityForm()">+ Add Slot / Dodaj slot</button>
+                <h2 style="margin:0;">Moja dostepnosc</h2>
+                <button class="btn btn-primary btn-sm" onclick="toggleAvailabilityForm()">+ Dodaj slot</button>
             </div>
 
             <!-- Add Availability Form -->
@@ -90,7 +90,7 @@
         <!-- Session Requests Panel -->
         <div id="session-requests-section" class="detail-panel" style="margin-bottom:1.5rem;">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
-                <h2 style="margin:0;">Session Requests / Prośby o sesję</h2>
+                <h2 style="margin:0;">Prosby o sesje</h2>
                 <button class="btn btn-sm" onclick="loadTeacherSessions()" style="background:#eee;">Refresh</button>
             </div>
             <div id="teacher-sessions-list">
@@ -109,19 +109,19 @@
             </div>
 
             <div class="student-actions" style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;">
-                <a id="session-link" href="#" class="btn btn-sm btn-primary">Start Session / Rozpocznij sesje</a>
-                <a id="vocab-link" href="#" class="btn btn-sm btn-secondary">Vocabulary / Slownictwo</a>
-                <a id="conversation-link" href="#" class="btn btn-sm btn-secondary">Conversation / Konwersacja</a>
-                <a id="games-link" href="#" class="btn btn-sm btn-secondary">Games / Gry</a>
-                <a id="profile-link" href="#" class="btn btn-sm" style="background:#9b59b6;color:white;">Profile / Profil</a>
+                <a id="session-link" href="#" class="btn btn-sm btn-primary">Rozpocznij sesje</a>
+                <a id="vocab-link" href="#" class="btn btn-sm btn-secondary">Karty pojec</a>
+                <a id="conversation-link" href="#" class="btn btn-sm btn-secondary">Rozwiazywanie zadan</a>
+                <a id="games-link" href="#" class="btn btn-sm btn-secondary">Gry</a>
+                <a id="profile-link" href="#" class="btn btn-sm" style="background:#9b59b6;color:white;">Profil</a>
             </div>
 
             <div class="tabs">
-                <button class="tab active" onclick="switchTab('overview')">Overview / Przegląd</button>
-                <button class="tab" onclick="switchTab('profile')">Profile / Profil</button>
-                <button class="tab" onclick="switchTab('lessons')">Lessons / Lekcje</button>
-                <button class="tab" onclick="switchTab('progress')">Progress / Postępy</button>
-                <button class="tab" onclick="switchTab('analytics')">Analytics / Analityka</button>
+                <button class="tab active" onclick="switchTab('overview')">Przeglad</button>
+                <button class="tab" onclick="switchTab('profile')">Profil</button>
+                <button class="tab" onclick="switchTab('lessons')">Lekcje</button>
+                <button class="tab" onclick="switchTab('progress')">Postepy</button>
+                <button class="tab" onclick="switchTab('analytics')">Analityka</button>
             </div>
 
             <div id="tab-overview" class="tab-content active">
@@ -185,7 +185,7 @@
         </div>
 
         <footer>
-            <a href="index.html">Intake Form / Formularz przyjęcia</a>
+            <a href="index.html">Formularz przyjecia</a>
         </footer>
     </div>
     <script src="js/api.js"></script>

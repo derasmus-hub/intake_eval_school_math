@@ -8,14 +8,14 @@ from app.services.xp_engine import award_xp, XP_AWARDS
 router = APIRouter(prefix="/api/challenges", tags=["challenges"])
 
 CHALLENGE_TEMPLATES = [
-    {"type": "complete_lesson", "title": "Complete a Lesson", "title_pl": "Ukoncz lekcje", "description": "Complete any lesson today", "target": 1, "reward_xp": 30},
-    {"type": "review_vocab", "title": "Vocab Review", "title_pl": "Powtorka slowek", "description": "Review 5 vocabulary cards", "target": 5, "reward_xp": 25},
-    {"type": "practice_conversation", "title": "Chat Practice", "title_pl": "Cwiczenie rozmowy", "description": "Send 3 messages in conversation", "target": 3, "reward_xp": 30},
-    {"type": "perfect_recall", "title": "Perfect Recall", "title_pl": "Perfekcyjna pamiec", "description": "Score 80%+ on a recall quiz", "target": 1, "reward_xp": 40},
-    {"type": "play_game", "title": "Game Time", "title_pl": "Czas na gre", "description": "Play any mini-game", "target": 1, "reward_xp": 25},
-    {"type": "high_score", "title": "High Scorer", "title_pl": "Rekord", "description": "Score 90%+ on a lesson", "target": 1, "reward_xp": 35},
-    {"type": "vocab_add", "title": "Word Hunter", "title_pl": "Lowca slow", "description": "Add 3 new vocabulary words", "target": 3, "reward_xp": 25},
-    {"type": "two_lessons", "title": "Double Down", "title_pl": "Podwojnie", "description": "Complete 2 lessons today", "target": 2, "reward_xp": 50},
+    {"type": "complete_lesson", "title": "Ukoncz lekcje", "title_pl": "Ukoncz lekcje", "description": "Ukoncz dowolna lekcje dzisiaj", "target": 1, "reward_xp": 30},
+    {"type": "review_concept", "title": "Powtorka pojec", "title_pl": "Powtorka pojec", "description": "Powtorz 5 kart z pojeciami matematycznymi", "target": 5, "reward_xp": 25},
+    {"type": "practice_problem_solving", "title": "Rozwiazywanie zadan", "title_pl": "Rozwiazywanie zadan", "description": "Wyslij 3 wiadomosci w sesji rozwiazywania zadan", "target": 3, "reward_xp": 30},
+    {"type": "perfect_recall", "title": "Perfekcyjna pamiec", "title_pl": "Perfekcyjna pamiec", "description": "Zdobadz 80%+ w quizie powtorkowym", "target": 1, "reward_xp": 40},
+    {"type": "play_game", "title": "Czas na gre", "title_pl": "Czas na gre", "description": "Zagraj w dowolna mini-gre", "target": 1, "reward_xp": 25},
+    {"type": "high_score", "title": "Rekord", "title_pl": "Rekord", "description": "Zdobadz 90%+ w lekcji", "target": 1, "reward_xp": 35},
+    {"type": "concept_add", "title": "Zbieracz pojec", "title_pl": "Zbieracz pojec", "description": "Dodaj 3 nowe pojecia matematyczne", "target": 3, "reward_xp": 25},
+    {"type": "two_lessons", "title": "Podwojnie", "title_pl": "Podwojnie", "description": "Ukoncz 2 lekcje dzisiaj", "target": 2, "reward_xp": 50},
 ]
 
 

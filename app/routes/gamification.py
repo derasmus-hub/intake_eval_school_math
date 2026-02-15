@@ -171,12 +171,12 @@ async def get_weekly_summary(student_id: int):
         )
         lessons = (await cursor.fetchone())["cnt"]
 
-        # Vocab reviewed
+        # Concepts reviewed
         cursor = await db.execute(
-            "SELECT COUNT(*) as cnt FROM vocabulary_cards WHERE student_id = ? AND next_review > datetime('now', '-7 days')",
+            "SELECT COUNT(*) as cnt FROM math_concept_cards WHERE student_id = ? AND next_review > datetime('now', '-7 days')",
             (student_id,),
         )
-        vocab_reviewed = (await cursor.fetchone())["cnt"]
+        concepts_reviewed = (await cursor.fetchone())["cnt"]
 
         # Games played
         cursor = await db.execute(
@@ -213,7 +213,7 @@ async def get_weekly_summary(student_id: int):
             "student_id": student_id,
             "weekly_xp": weekly_xp,
             "lessons_completed": lessons,
-            "vocab_reviewed": vocab_reviewed,
+            "concepts_reviewed": concepts_reviewed,
             "games_played": games,
             "current_streak": streak,
             "new_achievements": new_achievements,

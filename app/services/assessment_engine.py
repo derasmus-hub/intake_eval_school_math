@@ -21,7 +21,7 @@ class AssessmentEngine:
     _instance = None
     _question_bank = None
     _analyzer_prompt = None
-    _polish_struggles = None
+    _math_misconceptions = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -40,11 +40,11 @@ class AssessmentEngine:
                 self._analyzer_prompt = yaml.safe_load(f)
         return self._analyzer_prompt
 
-    def _load_polish_struggles(self):
-        if self._polish_struggles is None:
+    def _load_math_misconceptions(self):
+        if self._math_misconceptions is None:
             with open(PROMPTS_DIR / "polish_struggles.yaml", "r") as f:
-                self._polish_struggles = yaml.safe_load(f)
-        return self._polish_struggles
+                self._math_misconceptions = yaml.safe_load(f)
+        return self._math_misconceptions
 
     def get_placement_questions(self) -> list[PlacementQuestion]:
         bank = self._load_question_bank()
@@ -53,9 +53,10 @@ class AssessmentEngine:
             questions.append(
                 PlacementQuestion(
                     id=q["id"],
-                    sentence=q["sentence"],
-                    is_correct=q["is_correct"],
+                    problem=q["problem"],
+                    correct_answer=q["correct_answer"],
                     difficulty=q["difficulty"],
+                    math_domain=q["math_domain"],
                     explanation=q["explanation"],
                 )
             )
@@ -72,7 +73,7 @@ class AssessmentEngine:
             q = questions_by_id.get(answer.question_id)
             if q is None:
                 continue
-            if answer.answer == q["is_correct"]:
+            if answer.answer.strip().lower() == str(q["correct_answer"]).strip().lower():
                 correct_count += 1
                 max_correct_difficulty = max(max_correct_difficulty, q["difficulty"])
 
@@ -82,13 +83,13 @@ class AssessmentEngine:
         # Got difficulty 4+ correct = advanced
         if max_correct_difficulty <= 2:
             bracket = Bracket.BEGINNER
-            detail = f"Correctly identified sentences up to difficulty {max_correct_difficulty}. Assigned to beginner diagnostic."
+            detail = f"Correctly solved problems up to difficulty {max_correct_difficulty}. Assigned to beginner diagnostic."
         elif max_correct_difficulty <= 3:
             bracket = Bracket.INTERMEDIATE
-            detail = f"Correctly identified sentences up to difficulty {max_correct_difficulty}. Assigned to intermediate diagnostic."
+            detail = f"Correctly solved problems up to difficulty {max_correct_difficulty}. Assigned to intermediate diagnostic."
         else:
             bracket = Bracket.ADVANCED
-            detail = f"Correctly identified sentences up to difficulty {max_correct_difficulty}. Assigned to advanced diagnostic."
+            detail = f"Correctly solved problems up to difficulty {max_correct_difficulty}. Assigned to advanced diagnostic."
 
         return PlacementResult(
             bracket=bracket,
@@ -100,52 +101,52 @@ class AssessmentEngine:
         bank = self._load_question_bank()
         bracket_data = bank["diagnostic"][bracket.value]
 
-        # Select 5 grammar, 4 vocabulary, 3 reading = 12 total
-        grammar_pool = bracket_data["grammar"]
-        vocab_pool = bracket_data["vocabulary"]
-        reading_pool = bracket_data["reading"]
+        # Select 5 arytmetyka, 4 algebra, 3 geometria = 12 total
+        arytmetyka_pool = bracket_data["arytmetyka"]
+        algebra_pool = bracket_data["algebra"]
+        geometria_pool = bracket_data["geometria"]
 
-        grammar_qs = random.sample(grammar_pool, min(5, len(grammar_pool)))
-        vocab_qs = random.sample(vocab_pool, min(4, len(vocab_pool)))
-        reading_qs = random.sample(reading_pool, min(3, len(reading_pool)))
+        arytmetyka_qs = random.sample(arytmetyka_pool, min(5, len(arytmetyka_pool)))
+        algebra_qs = random.sample(algebra_pool, min(4, len(algebra_pool)))
+        geometria_qs = random.sample(geometria_pool, min(3, len(geometria_pool)))
 
         questions = []
-        for q in grammar_qs:
+        for q in arytmetyka_qs:
             questions.append(
                 DiagnosticQuestion(
                     id=q["id"],
-                    type=QuestionType.GRAMMAR_MCQ,
+                    type=QuestionType.ARITHMETIC,
                     bracket=bracket,
                     question=q["question"],
                     options=q.get("options"),
                     correct_answer=q["correct_answer"],
-                    skill="grammar",
+                    skill="arytmetyka",
                     topic=q["topic"],
                 )
             )
-        for q in vocab_qs:
+        for q in algebra_qs:
             questions.append(
                 DiagnosticQuestion(
                     id=q["id"],
-                    type=QuestionType.VOCABULARY_FILL,
-                    bracket=bracket,
-                    question=q["question"],
-                    correct_answer=q["correct_answer"],
-                    skill="vocabulary",
-                    topic=q["topic"],
-                )
-            )
-        for q in reading_qs:
-            questions.append(
-                DiagnosticQuestion(
-                    id=q["id"],
-                    type=QuestionType.READING_COMPREHENSION,
+                    type=QuestionType.ALGEBRA,
                     bracket=bracket,
                     question=q["question"],
                     options=q.get("options"),
                     correct_answer=q["correct_answer"],
-                    passage=q.get("passage"),
-                    skill="reading",
+                    skill="algebra",
+                    topic=q["topic"],
+                )
+            )
+        for q in geometria_qs:
+            questions.append(
+                DiagnosticQuestion(
+                    id=q["id"],
+                    type=QuestionType.GEOMETRY,
+                    bracket=bracket,
+                    question=q["question"],
+                    options=q.get("options"),
+                    correct_answer=q["correct_answer"],
+                    skill="geometria",
                     topic=q["topic"],
                 )
             )
@@ -160,9 +161,9 @@ class AssessmentEngine:
         questions_by_id = {q.id: q for q in questions}
 
         results = {
-            "grammar": {"correct": 0, "total": 0, "details": []},
-            "vocabulary": {"correct": 0, "total": 0, "details": []},
-            "reading": {"correct": 0, "total": 0, "details": []},
+            "arytmetyka": {"correct": 0, "total": 0, "details": []},
+            "algebra": {"correct": 0, "total": 0, "details": []},
+            "geometria": {"correct": 0, "total": 0, "details": []},
         }
 
         for answer in answers:
@@ -211,7 +212,7 @@ class AssessmentEngine:
         answers: list[DiagnosticAnswer],
     ) -> dict:
         prompt_data = self._load_analyzer_prompt()
-        polish_struggles = self._load_polish_struggles()
+        math_misconceptions = self._load_math_misconceptions()
 
         # Build diagnostic responses text
         questions_by_id = {q.id: q for q in questions}
@@ -241,13 +242,13 @@ class AssessmentEngine:
             bracket=bracket.value,
             placement_score=placement_score,
             diagnostic_responses="\n".join(responses_lines),
-            grammar_score=f"{diagnostic_scores['grammar']['correct']}/{diagnostic_scores['grammar']['total']} ({diagnostic_scores['grammar']['score']}%)",
-            vocab_score=f"{diagnostic_scores['vocabulary']['correct']}/{diagnostic_scores['vocabulary']['total']} ({diagnostic_scores['vocabulary']['score']}%)",
-            reading_score=f"{diagnostic_scores['reading']['correct']}/{diagnostic_scores['reading']['total']} ({diagnostic_scores['reading']['score']}%)",
+            arytmetyka_score=f"{diagnostic_scores['arytmetyka']['correct']}/{diagnostic_scores['arytmetyka']['total']} ({diagnostic_scores['arytmetyka']['score']}%)",
+            algebra_score=f"{diagnostic_scores['algebra']['correct']}/{diagnostic_scores['algebra']['total']} ({diagnostic_scores['algebra']['score']}%)",
+            geometria_score=f"{diagnostic_scores['geometria']['correct']}/{diagnostic_scores['geometria']['total']} ({diagnostic_scores['geometria']['score']}%)",
             overall_score=f"{diagnostic_scores['overall_score']}%",
             incorrect_details="\n".join(incorrect_lines) if incorrect_lines else "No incorrect answers.",
-            polish_struggles=yaml.dump(
-                polish_struggles, default_flow_style=False, allow_unicode=True
+            math_misconceptions=yaml.dump(
+                math_misconceptions, default_flow_style=False, allow_unicode=True
             ),
         )
 

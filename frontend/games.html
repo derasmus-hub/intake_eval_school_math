@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini-Games - Gry</title>
+    <title>Gry Matematyczne</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
                 <a href="games.html" class="active">Games</a>
@@ -19,41 +22,41 @@
         </nav>
 
         <header>
-            <h1>Mini-Games</h1>
-            <p class="subtitle">Gry edukacyjne</p>
+            <h1>Gry Matematyczne</h1>
+            <p class="subtitle">Gry edukacyjne z matematyki</p>
         </header>
 
         <!-- Game Selection -->
         <div id="game-selection">
             <div class="games-grid">
-                <div class="game-card" onclick="startGame('word-match')">
-                    <div class="game-icon">W</div>
-                    <h3>Word Match</h3>
-                    <p>Dopasuj slowa</p>
+                <div class="game-card" onclick="startGame('concept-match')">
+                    <div class="game-icon">P</div>
+                    <h3>Dopasuj Pojęcia</h3>
+                    <p>Dopasuj pojęcia do wzorów</p>
                     <span class="game-xp">+15-50 XP</span>
                 </div>
-                <div class="game-card" onclick="startGame('sentence-builder')">
-                    <div class="game-icon">S</div>
-                    <h3>Sentence Builder</h3>
-                    <p>Uloz zdanie</p>
+                <div class="game-card" onclick="startGame('equation-builder')">
+                    <div class="game-icon">R</div>
+                    <h3>Ułóż Równanie</h3>
+                    <p>Ułóż równanie z części</p>
                     <span class="game-xp">+15-50 XP</span>
                 </div>
                 <div class="game-card" onclick="startGame('error-hunt')">
-                    <div class="game-icon">E</div>
-                    <h3>Error Hunt</h3>
-                    <p>Znajdz blad</p>
+                    <div class="game-icon">B</div>
+                    <h3>Znajdź Błąd</h3>
+                    <p>Znajdź błąd w rozwiązaniu</p>
                     <span class="game-xp">+15-50 XP</span>
                 </div>
-                <div class="game-card" onclick="startGame('speed-translate')">
-                    <div class="game-icon">T</div>
-                    <h3>Speed Translate</h3>
-                    <p>Szybkie tlumaczenie</p>
+                <div class="game-card" onclick="startGame('speed-calc')">
+                    <div class="game-icon">K</div>
+                    <h3>Szybkie Liczenie</h3>
+                    <p>Obliczenia w pamięci</p>
                     <span class="game-xp">+15-50 XP</span>
                 </div>
             </div>
 
             <div id="game-history" class="form-section" style="margin-top:1rem;">
-                <h3>Recent Scores / Ostatnie wyniki</h3>
+                <h3>Ostatnie wyniki</h3>
                 <div id="history-content"><p>Loading...</p></div>
             </div>
         </div>
@@ -61,7 +64,7 @@
         <!-- Game Area -->
         <div id="game-area" class="hidden">
             <div class="game-header">
-                <button onclick="exitGame()" class="btn btn-sm">&larr; Back / Wstecz</button>
+                <button onclick="exitGame()" class="btn btn-sm">&larr; Wstecz</button>
                 <div class="game-timer" id="game-timer">0:00</div>
                 <div class="game-score-live" id="game-score-live">0 / 0</div>
             </div>
@@ -72,7 +75,7 @@
         <div id="game-results" class="hidden">
             <div class="recall-results">
                 <div class="recall-score">
-                    <span class="recall-score-label">Score / Wynik</span>
+                    <span class="recall-score-label">Wynik</span>
                     <span class="recall-score-value" id="final-score">0%</span>
                 </div>
                 <div id="xp-earned-display" style="text-align:center;margin:1rem 0;">
@@ -80,15 +83,15 @@
                 </div>
                 <div id="game-feedback"></div>
                 <div class="result-actions" style="justify-content:center;">
-                    <button onclick="exitGame()" class="btn btn-secondary">Play Again / Graj ponownie</button>
+                    <button onclick="exitGame()" class="btn btn-secondary">Graj ponownie</button>
                     <a href="#" onclick="APP.goHomeByRole(); return false;" class="btn btn-primary">Dashboard</a>
                 </div>
             </div>
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard</a> &middot;
-            <a href="leaderboard.html">Leaderboard</a>
+            <a href="dashboard.html">Panel</a> &middot;
+            <a href="leaderboard.html">Ranking</a>
         </footer>
     </div>
     <script src="js/api.js"></script>

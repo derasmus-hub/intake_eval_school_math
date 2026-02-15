@@ -1,61 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conversation Practice - Praktyka konwersacji</title>
+    <title>Rozwiązywanie Zadań</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="site-nav" id="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
-                <a href="#" id="nav-vocab">Vocabulary</a>
-                <a href="#" class="active" id="nav-conversation">Conversation</a>
-                <a href="#" id="nav-session">Session</a>
+                <a href="#" id="nav-vocab">Pojęcia</a>
+                <a href="#" class="active" id="nav-conversation">Zadania</a>
+                <a href="#" id="nav-session">Sesja</a>
             </div>
             <span class="nav-student" id="nav-student-name"></span>
         </nav>
 
         <div class="dashboard-header">
             <div>
-                <h1>Conversation Practice</h1>
-                <p class="subtitle">Praktyka konwersacji</p>
+                <h1>Rozwiązywanie Zadań</h1>
+                <p class="subtitle">Sesja rozwiązywania zadań matematycznych</p>
             </div>
-            <a href="dashboard.html" class="btn btn-sm">Back to Dashboard / Powrot</a>
+            <a href="dashboard.html" class="btn btn-sm">Powrót do panelu</a>
         </div>
 
         <div id="scenario-select" class="detail-panel">
-            <h3>Choose a Scenario / Wybierz scenariusz</h3>
+            <h3>Wybierz scenariusz</h3>
             <div id="scenarios-list">
                 <div class="loading">Loading scenarios...</div>
             </div>
             <div style="margin-top:1rem;">
                 <button onclick="startFreeChat()" class="btn btn-secondary btn-sm">
-                    Free Conversation / Swobodna rozmowa
+                    Swobodna sesja
                 </button>
             </div>
         </div>
 
         <div id="chat-area" class="hidden">
             <div id="chat-header" class="chat-header">
-                <button onclick="endChat()" class="btn btn-sm">End / Zakoncz</button>
+                <button onclick="endChat()" class="btn btn-sm">Zakończ</button>
                 <span id="chat-scenario-title"></span>
                 <span id="chat-level-badge" class="level-badge"></span>
             </div>
             <div id="chat-messages" class="chat-messages"></div>
             <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Type your message... / Wpisz wiadomosc..."
+                <input type="text" id="chat-input" placeholder="Wpisz wiadomość..."
                        onkeydown="if(event.key==='Enter')sendMessage()">
-                <button onclick="sendMessage()" class="btn btn-primary" id="send-btn">Send</button>
+                <button onclick="sendMessage()" class="btn btn-primary" id="send-btn">Wyślij</button>
             </div>
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard / Panel</a> |
-            <a href="index.html">Intake Form / Formularz</a>
+            <a href="dashboard.html">Panel</a> |
+            <a href="index.html">Formularz</a>
         </footer>
     </div>
     <script src="js/api.js"></script>

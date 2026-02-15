@@ -17,7 +17,26 @@ async def create_diagnostic(student_id: int):
             raise HTTPException(status_code=404, detail="Student not found")
 
         intake_data = json.loads(student["intake_data"]) if student["intake_data"] else {}
-        profile = await run_diagnostic(student_id, intake_data)
+
+        # Ensure intake_data has required keys for the prompt template
+        intake_data.setdefault("name", student["name"] or "Unknown")
+        intake_data.setdefault("age", student["age"] or "Not specified")
+        intake_data.setdefault("current_level", student["current_level"] or "pending")
+        intake_data.setdefault("goals", [])
+        intake_data.setdefault("problem_areas", [])
+        intake_data.setdefault("filler", "student")
+        intake_data.setdefault("additional_notes", "None")
+
+        # Wrap AI call so failures return a meaningful error
+        try:
+            profile = await run_diagnostic(student_id, intake_data)
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(
+                status_code=502,
+                detail=f"Diagnostic AI call failed: {str(exc)[:200]}"
+            )
 
         cursor = await db.execute(
             """INSERT INTO learner_profiles (student_id, gaps, priorities, profile_summary, recommended_start_level)

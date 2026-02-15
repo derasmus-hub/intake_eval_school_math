@@ -42,6 +42,7 @@ async def _run_migrations(db):
         ("students", "avatar_id", "ALTER TABLE students ADD COLUMN avatar_id TEXT DEFAULT 'default'"),
         ("students", "theme_preference", "ALTER TABLE students ADD COLUMN theme_preference TEXT DEFAULT 'light'"),
         ("students", "display_title", "ALTER TABLE students ADD COLUMN display_title TEXT"),
+        ("students", "exam_target", "ALTER TABLE students ADD COLUMN exam_target TEXT"),
         ("achievements", "category", "ALTER TABLE achievements ADD COLUMN category TEXT DEFAULT 'progress'"),
         ("achievements", "xp_reward", "ALTER TABLE achievements ADD COLUMN xp_reward INTEGER DEFAULT 0"),
         ("achievements", "icon", "ALTER TABLE achievements ADD COLUMN icon TEXT"),
@@ -50,6 +51,9 @@ async def _run_migrations(db):
         ("sessions", "homework", "ALTER TABLE sessions ADD COLUMN homework TEXT"),
         ("sessions", "session_summary", "ALTER TABLE sessions ADD COLUMN session_summary TEXT"),
         ("sessions", "updated_at", "ALTER TABLE sessions ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"),
+        # Math-specific columns
+        ("lessons", "math_domain", "ALTER TABLE lessons ADD COLUMN math_domain TEXT"),
+        ("learning_points", "math_domain", "ALTER TABLE learning_points ADD COLUMN math_domain TEXT"),
     ]
 
     for table, column, sql in migrations:
@@ -57,4 +61,16 @@ async def _run_migrations(db):
         columns = [row[1] for row in await cursor.fetchall()]
         if column not in columns:
             await db.execute(sql)
+            await db.commit()
+
+    # Rename columns from English-tutoring era to math-tutoring names
+    renames = [
+        ("learning_points", "polish_explanation", "explanation"),
+        ("learning_points", "example_sentence", "example_problem"),
+    ]
+    for table, old_col, new_col in renames:
+        cursor = await db.execute(f"PRAGMA table_info({table})")
+        columns = [row[1] for row in await cursor.fetchall()]
+        if old_col in columns and new_col not in columns:
+            await db.execute(f"ALTER TABLE {table} RENAME COLUMN {old_col} TO {new_col}")
             await db.commit()

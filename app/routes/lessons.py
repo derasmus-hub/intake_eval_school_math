@@ -26,14 +26,28 @@ async def generate_next_lesson(student_id: int):
         )
         profile_row = await cursor.fetchone()
         if not profile_row:
-            raise HTTPException(status_code=400, detail="Run diagnostic first before generating lessons")
+            # Fallback: build a default profile from student data so lessons can still be generated
+            current_level = student["current_level"] or "podstawowy"
+            problem_areas = []
+            if student["problem_areas"]:
+                try:
+                    problem_areas = json.loads(student["problem_areas"])
+                except (json.JSONDecodeError, TypeError):
+                    problem_areas = [student["problem_areas"]]
 
-        profile_data = {
-            "gaps": json.loads(profile_row["gaps"]) if profile_row["gaps"] else [],
-            "priorities": json.loads(profile_row["priorities"]) if profile_row["priorities"] else [],
-            "profile_summary": profile_row["profile_summary"] or "",
-            "recommended_start_level": profile_row["recommended_start_level"],
-        }
+            profile_data = {
+                "gaps": [{"area": area, "severity": "medium", "description": f"Zgloszony problem: {area}"} for area in problem_areas],
+                "priorities": problem_areas or ["arytmetyka", "algebra"],
+                "profile_summary": f"Profil domyslny (diagnostyka nie zostala ukonczona). Poziom: {current_level}.",
+                "recommended_start_level": current_level if current_level != "pending" else "podstawowy",
+            }
+        else:
+            profile_data = {
+                "gaps": json.loads(profile_row["gaps"]) if profile_row["gaps"] else [],
+                "priorities": json.loads(profile_row["priorities"]) if profile_row["priorities"] else [],
+                "profile_summary": profile_row["profile_summary"] or "",
+                "recommended_start_level": profile_row["recommended_start_level"],
+            }
 
         # Get progress history
         cursor = await db.execute(
@@ -90,15 +104,23 @@ async def generate_next_lesson(student_id: int):
                 recall_weak_areas = None
 
         # Generate lesson
-        lesson_content = await generate_lesson(
-            student_id=student_id,
-            profile=profile_data,
-            progress_history=progress_history,
-            session_number=session_number,
-            current_level=student["current_level"],
-            previous_topics=previous_topics,
-            recall_weak_areas=recall_weak_areas,
-        )
+        try:
+            lesson_content = await generate_lesson(
+                student_id=student_id,
+                profile=profile_data,
+                progress_history=progress_history,
+                session_number=session_number,
+                current_level=student["current_level"] or "podstawowy",
+                previous_topics=previous_topics,
+                recall_weak_areas=recall_weak_areas,
+            )
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            raise HTTPException(
+                status_code=502,
+                detail=f"Lesson generation AI call failed: {str(exc)[:200]}"
+            )
 
         # Save to database
         cursor = await db.execute(
@@ -205,7 +227,7 @@ async def complete_lesson(lesson_id: int):
             "SELECT current_level FROM students WHERE id = ?", (student_id,)
         )
         student = await cursor.fetchone()
-        student_level = student["current_level"] if student else "A1"
+        student_level = student["current_level"] if student else "podstawowy"
 
         # Parse lesson content
         content = {}
@@ -224,17 +246,18 @@ async def complete_lesson(lesson_id: int):
         for p in points:
             cursor = await db.execute(
                 """INSERT INTO learning_points
-                   (student_id, lesson_id, point_type, content, polish_explanation,
-                    example_sentence, importance_weight, next_review_date)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                   (student_id, lesson_id, point_type, content, explanation,
+                    example_problem, importance_weight, math_domain, next_review_date)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     student_id,
                     lesson_id,
-                    p.get("point_type", "grammar_rule"),
+                    p.get("point_type", "wzor_formula"),
                     p.get("content", ""),
-                    p.get("polish_explanation", ""),
-                    p.get("example_sentence", ""),
+                    p.get("explanation", ""),
+                    p.get("example_problem", ""),
                     p.get("importance_weight", 3),
+                    p.get("math_domain", ""),
                     tomorrow,
                 ),
             )

@@ -11,7 +11,7 @@ from app.db.database import get_db
 from app.services.xp_engine import award_xp
 from app.routes.challenges import update_challenge_progress
 
-router = APIRouter(prefix="/api/conversation", tags=["conversation"])
+router = APIRouter(prefix="/api/conversation", tags=["problem_solving"])
 
 PROMPTS_DIR = Path(__file__).parent.parent.parent / "prompts"
 
@@ -42,14 +42,14 @@ async def get_scenarios(student_id: int):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        level = student["current_level"] or "A1"
+        level = student["current_level"] or "podstawowy"
         prompt_data = _load_prompt()
         scenarios = prompt_data.get("scenarios", {})
 
         # Map level to scenario bracket
-        if level in ("A1", "A2"):
+        if level == "podstawowy":
             bracket = "beginner"
-        elif level in ("B1", "B2"):
+        elif level == "gimnazjalny":
             bracket = "intermediate"
         else:
             bracket = "advanced"
@@ -75,7 +75,7 @@ async def chat(student_id: int, msg: ChatMessage):
         if not student:
             raise HTTPException(status_code=404, detail="Student not found")
 
-        level = student["current_level"] or "A1"
+        level = student["current_level"] or "podstawowy"
         name = student["name"]
 
         # Get weak areas from latest profile
@@ -110,9 +110,9 @@ async def chat(student_id: int, msg: ChatMessage):
         messages.append({"role": h.get("role", "user"), "content": h.get("content", "")})
     messages.append({"role": "user", "content": msg.message})
 
-    # Award XP for conversation practice (every message)
-    await award_xp(student_id, 25, "conversation", msg.scenario_title or "Free conversation")
-    await update_challenge_progress(student_id, "practice_conversation")
+    # Award XP for problem solving practice (every message)
+    await award_xp(student_id, 25, "problem_solving", msg.scenario_title or "Free conversation")
+    await update_challenge_progress(student_id, "practice_problem_solving")
 
     client = AsyncOpenAI(api_key=settings.api_key)
 

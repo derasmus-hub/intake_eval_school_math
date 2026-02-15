@@ -16,6 +16,8 @@ PUBLIC_PATHS = {
     "/assessment.html",
     "/vocab",
     "/vocab.html",
+    "/concepts",
+    "/concepts.html",
     "/conversation",
     "/conversation.html",
     "/recall",

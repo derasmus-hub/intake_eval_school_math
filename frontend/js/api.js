@@ -37,7 +37,7 @@
         localStorage.removeItem('auth_student_email');
         localStorage.removeItem('active_student_id');
         sessionStorage.setItem('state_error',
-          'Session expired. Please log in again. / Sesja wygasla. Zaloguj sie ponownie.');
+          'Sesja wygasla. Zaloguj sie ponownie.');
         window.location.href = 'login.html';
       }
       return resp;

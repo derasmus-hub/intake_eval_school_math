@@ -1,126 +1,94 @@
-polish_english_contrastive:
-  articles:
-    description: "Polish has no articles (a, an, the). This is one of the most persistent errors for Polish learners."
+czesste_bledy_matematyczne:
+  kolejnosc_dzialan:
+    description: "Uczniowie czesto nie przestrzegaja kolejnosci dzialan (PEMDAS/BODMAS)."
     common_errors:
-      - "Omitting articles entirely: 'I have dog' instead of 'I have a dog'"
-      - "Confusing definite and indefinite: 'I saw a moon' instead of 'I saw the moon'"
-      - "Overusing 'the' once learned: 'The life is beautiful'"
+      - "Wykonywanie dodawania przed mnozeniem: 2 + 3 * 4 = 20 zamiast 14"
+      - "Ignorowanie nawiasow: (2 + 3) * 4 liczone jako 2 + 12 = 14"
+      - "Bledna kolejnosc poteg i pierwiastkow"
     teaching_strategies:
-      - "Start with concrete, countable nouns in context"
-      - "Use Polish demonstratives (ten, ta, to) as a bridge to 'the'"
-      - "Practice with picture descriptions - 'There is a cat. The cat is black.'"
-      - "Focus on the concept of 'known vs unknown' information"
+      - "Uczyc mnemonika: Nawiasy → Potegi → Mnozenie/Dzielenie → Dodawanie/Odejmowanie"
+      - "Duzo cwiczen z wyrazeniami wielodzialaniowymi"
+      - "Uzywac kolorowego oznaczania kolejnosci dzialan"
 
-  prepositions:
-    description: "Polish prepositions map differently to English ones. The case system in Polish handles much of what prepositions do in English."
+  ulamki:
+    description: "Ulamki sa jednym z najtrudniejszych tematow dla uczniow w kazdym wieku."
     common_errors:
-      - "'na' maps to on/at/for depending on context"
-      - "'w' maps to in/at depending on context"
-      - "'do' maps to to/into/for"
-      - "Saying 'on the university' (na uniwersytecie) instead of 'at the university'"
-      - "Saying 'in Monday' instead of 'on Monday'"
+      - "Dodawanie licznikow i mianownikow osobno: 1/3 + 1/4 = 2/7"
+      - "Zapominanie o sprowadzaniu do wspolnego mianownika"
+      - "Bledne mnozenie ulamkow: mnozenie 'na krzyz' zamiast licznik*licznik"
+      - "Nieupraszczanie wynikow: 4/8 zamiast 1/2"
     teaching_strategies:
-      - "Teach prepositions in chunks/collocations, not in isolation"
-      - "Create visual maps showing Polish->English preposition mappings"
-      - "Practice with time expressions (in/on/at) as a group"
-      - "Practice with place expressions (in/on/at) as a separate group"
+      - "Wizualizacja ulamkow za pomoca diagramow kolowych i prostokatnych"
+      - "Cwiczenie znajdowania NWW jako wspolnego mianownika"
+      - "Uzywanie przykladow z zycia codziennego (pizza, ciasto)"
 
-  word_order:
-    description: "Polish has relatively free word order due to its case system. English requires strict SVO order."
+  liczby_ujemne:
+    description: "Operacje na liczbach ujemnych sprawiaja trudnosci, szczegolnie mnozenie i dzielenie."
     common_errors:
-      - "Placing adverbs incorrectly: 'I always am happy' instead of 'I am always happy'"
-      - "Inverted word order in statements: 'Very much I like it'"
-      - "Adjective placement after noun: 'car red' instead of 'red car'"
-      - "Question formation without do/does: 'You like coffee?' instead of 'Do you like coffee?'"
+      - "(-3) * (-2) = -6 zamiast +6"
+      - "(-5) - (-3) = -8 zamiast -2"
+      - "Mylenie znaku przy potegowaniu: (-2)^2 vs -2^2"
     teaching_strategies:
-      - "Drill SVO pattern with visual sentence builders"
-      - "Practice question formation with do/does/did explicitly"
-      - "Use colored blocks for sentence parts (subject=blue, verb=red, object=green)"
+      - "Os liczbowa do wizualizacji"
+      - "Regula znakow: minus razy minus = plus"
+      - "Duzo cwiczen z nawiasami"
 
-  pronunciation:
-    description: "Several English sounds don't exist in Polish phonology."
+  algebra_bledy:
+    description: "Typowe bledy algebraiczne polskich uczniow."
     common_errors:
-      - "'th' sounds /θ/ and /ð/ - often replaced with /f/, /t/, or /d/: 'fink' for 'think', 'dis' for 'this'"
-      - "w/v confusion: Polish 'w' is pronounced /v/, leading to 'wery' for 'very'"
-      - "Vowel length not distinguished: Polish doesn't differentiate long/short vowels"
-      - "Word stress: Polish stress is almost always penultimate, English stress varies"
-      - "Silent letters: 'knife', 'psychology' - Polish is more phonetic"
+      - "Bledne przenoszenie wyrazow: x + 3 = 7 → x = 7 + 3"
+      - "(a + b)^2 = a^2 + b^2 zamiast a^2 + 2ab + b^2"
+      - "Dzielenie przez zero w rownaniach"
+      - "Zapominanie o dwoch rozwiazaniach rownania kwadratowego"
+      - "Bledne stosowanie wzoru na delta: b^2 - 4ac z blednymi znakami"
     teaching_strategies:
-      - "Mirror exercises for 'th' - tongue placement between teeth"
-      - "Minimal pair drills: thin/fin, three/free, vine/wine, vet/wet"
-      - "Record and playback exercises"
-      - "Stress marking in vocabulary lists"
+      - "Sprawdzanie rozwiazan przez podstawienie"
+      - "Wizualizacja rownan jako wagi (co z jednej strony, to z drugiej)"
+      - "Krok po kroku rozpisywanie przeksztalcen"
 
-  tenses:
-    description: "Polish uses a simpler tense system based on aspect (perfective/imperfective) rather than English's 12 tense-aspect combinations."
+  geometria_bledy:
+    description: "Czeste bledy w geometrii."
     common_errors:
-      - "Confusing present simple and present continuous: 'I am go to school every day'"
-      - "Avoiding present perfect entirely: 'I lived here for 5 years' instead of 'I have lived here for 5 years'"
-      - "Overusing simple past where present perfect is needed"
-      - "Difficulty with future forms: will vs going to vs present continuous for future"
+      - "Mylenie pola z obwodem"
+      - "Zapominanie o dzieleniu przez 2 w polu trojkata"
+      - "Bledne stosowanie twierdzenia Pitagorasa: a^2 + b^2 = c^2 gdzie c nie jest przeciwprostokatna"
+      - "Mylenie promienia z srednica"
+      - "Bledne jednostki: cm vs cm^2 vs cm^3"
     teaching_strategies:
-      - "Start with clear timelines - visual representation of when tenses apply"
-      - "Contrast Polish aspect with English tense-aspect: imperfective ≈ continuous, perfective ≈ simple/perfect"
-      - "Use signal words (always, right now, since, for, yet, already)"
-      - "Build from present simple → present continuous → past simple → present perfect"
+      - "Zawsze rysowac rysunek pomocniczy"
+      - "Podpisywac jednostki przy kazdym obliczeniu"
+      - "Cwiczenia z rozpoznawaniem figur"
 
-  false_friends:
-    description: "Words that look similar in Polish and English but have different meanings."
-    common_pairs:
-      - polish: "aktualnie"
-        looks_like: "actually"
-        real_meaning: "currently/at the moment"
-        english_actually: "w rzeczywistości"
-      - polish: "ewentualnie"
-        looks_like: "eventually"
-        real_meaning: "possibly/alternatively"
-        english_eventually: "w końcu/ostatecznie"
-      - polish: "sympatyczny"
-        looks_like: "sympathetic"
-        real_meaning: "nice/likeable"
-        english_sympathetic: "współczujący"
-      - polish: "sensowny"
-        looks_like: "sensible"
-        real_meaning: "sensible (correct match)"
-        note: "This one actually matches but students doubt it"
-      - polish: "ordynarny"
-        looks_like: "ordinary"
-        real_meaning: "vulgar/rude"
-        english_ordinary: "zwyczajny"
-      - polish: "fabryka"
-        looks_like: "fabric"
-        real_meaning: "factory"
-        english_fabric: "tkanina/materiał"
-      - polish: "recepta"
-        looks_like: "receipt"
-        real_meaning: "prescription"
-        english_receipt: "paragon/pokwitowanie"
-    teaching_strategies:
-      - "Create flashcard sets specifically for false friends"
-      - "Use sentences where the false friend creates a humorous misunderstanding"
-      - "Test regularly as these errors are persistent"
-
-  conditionals:
-    description: "Polish conditional structures differ significantly from English ones."
+  procenty:
+    description: "Procenty i ich zastosowania w zadaniach tekstowych."
     common_errors:
-      - "Using 'will' in if-clauses: 'If I will go...' instead of 'If I go...'"
-      - "Mixing conditional types"
-      - "Avoiding third conditional entirely due to complexity"
+      - "Mylenie 'ile procent z' z 'o ile procent wiecej'"
+      - "20% znizki z 100 zl: 100 - 20 = 80 (dobrze) ale 20% znizki z 150 zl: 150 - 20 = 130 (zle)"
+      - "Procent skladany: mylenie z procentem prostym"
     teaching_strategies:
-      - "Teach conditionals in order: zero → first → second → third"
-      - "Use real-life scenarios relevant to the student"
-      - "Emphasize the 'no will after if' rule as a starting point"
-      - "Practice with gap-fill and sentence completion"
+      - "Metoda: zamien procent na ulamek (25% = 1/4)"
+      - "Przyklady z zycia: zakupy, podatki, rabaty"
+      - "Rysowanie diagramow"
 
-  phrasal_verbs:
-    description: "Polish doesn't have phrasal verbs. The concept of a verb changing meaning with a particle is foreign."
+  funkcje:
+    description: "Trudnosci z pojęciem funkcji i ich wlasnosciami."
     common_errors:
-      - "Avoiding phrasal verbs entirely, using formal Latin-origin words instead"
-      - "Separable vs inseparable confusion: 'look up it' instead of 'look it up'"
-      - "Using wrong particle: 'look at' instead of 'look for'"
+      - "Mylenie dziedziny z przeciwdziedzina"
+      - "f(x+1) ≠ f(x) + 1 — bledne podstawianie"
+      - "Bledne odczytywanie wykresow funkcji"
+      - "Zapominanie o warunkach istnienia (mianownik ≠ 0, podpierwiastkowe ≥ 0)"
     teaching_strategies:
-      - "Teach in context, not as lists"
-      - "Group by particle (up/down/out/in) to show patterns"
-      - "Group by base verb (look up, look for, look after, look into)"
-      - "Use visual imagery to link particle meaning to spatial concepts"
-      - "Start with the 20 most common phrasal verbs"
+      - "Duzo cwiczen z rysowaniem wykresow"
+      - "Tabelki wartosci funkcji"
+      - "Cwiczenia z odczytywaniem informacji z wykresu"
+
+  trygonometria_bledy:
+    description: "Typowe bledy w trygonometrii."
+    common_errors:
+      - "Mylenie sin, cos, tan — ktory bok do ktorego"
+      - "Stosowanie funkcji trygonometrycznych do katow w stopniach zamiast radianow (i odwrotnie)"
+      - "sin(a + b) ≠ sin(a) + sin(b)"
+    teaching_strategies:
+      - "SOH-CAH-TOA jako mnemonik"
+      - "Kolo trygonometryczne do wizualizacji"
+      - "Powtarzanie wartosci funkcji dla katow standardowych (30, 45, 60, 90)"

@@ -61,7 +61,7 @@ const CELEBRATIONS = {
         overlay.innerHTML = `
             <div class="level-up-card">
                 <div class="level-up-badge">${newLevel}</div>
-                <h2>Level Up!</h2>
+                <h2>Nowy poziom!</h2>
                 <p>${this.getRandomEncouragement('levelUp')}</p>
                 <button onclick="this.parentElement.parentElement.remove()" class="btn btn-primary">OK!</button>
             </div>
@@ -78,7 +78,7 @@ const CELEBRATIONS = {
         notification.className = 'streak-notification';
         notification.innerHTML = `
             <span class="streak-fire">!</span>
-            <span>${streakDays}-day streak! ${this.getRandomEncouragement('streak')}</span>
+            <span>Seria ${streakDays} dni! ${this.getRandomEncouragement('streak')}</span>
         `;
         document.body.appendChild(notification);
 
@@ -95,7 +95,7 @@ const CELEBRATIONS = {
         notification.innerHTML = `
             <div class="ach-notif-icon">${achievement.icon || '?'}</div>
             <div class="ach-notif-info">
-                <div class="ach-notif-label">Achievement Unlocked!</div>
+                <div class="ach-notif-label">Osiagniecie odblokowane!</div>
                 <div class="ach-notif-title">${achievement.title}</div>
                 <div class="ach-notif-title-pl">${achievement.title_pl || ''}</div>
                 ${achievement.xp_reward ? `<div class="ach-notif-xp">+${achievement.xp_reward} XP</div>` : ''}

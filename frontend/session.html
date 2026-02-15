@@ -1,68 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Session / Sesja</title>
+    <title>Sesja Lekcyjna</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav" id="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
-                <a href="#" id="nav-vocab">Vocabulary</a>
-                <a href="#" id="nav-conversation">Conversation</a>
-                <a href="#" class="active">Session</a>
+                <a href="#" id="nav-vocab">Pojęcia</a>
+                <a href="#" id="nav-conversation">Zadania</a>
+                <a href="#" class="active">Sesja</a>
             </div>
             <span class="nav-student" id="nav-student-name"></span>
         </nav>
 
         <div class="dashboard-header">
             <div>
-                <h1>Lesson Session</h1>
-                <p class="subtitle">Sesja lekcyjna</p>
+                <h1>Sesja Lekcyjna</h1>
+                <p class="subtitle">Sesja lekcyjna z matematyki</p>
             </div>
             <a href="dashboard.html" class="btn btn-sm">&larr; Dashboard</a>
         </div>
 
         <div id="loading-screen">
-            <div class="loading">Checking session status...</div>
+            <div class="loading">Sprawdzam status sesji...</div>
         </div>
 
         <div id="recall-prompt" class="hidden">
             <div class="detail-panel" style="text-align:center;">
-                <h2>Time for a quick warm-up!</h2>
-                <p class="subtitle">Czas na szybka rozgrzewke!</p>
+                <h2>Czas na szybką rozgrzewkę!</h2>
                 <p style="margin:1rem 0;">
-                    You have some review items from previous lessons.
-                    Let's do a quick warm-up before your new lesson.
-                </p>
-                <p class="polish-text" style="margin-bottom:1rem;">
-                    <em>Masz kilka elementow do powtorzenia z poprzednich lekcji.
-                    Zrobmy szybka rozgrzewke przed nowa lekcja.</em>
+                    Masz kilka elementów do powtórzenia z poprzednich lekcji.
+                    Zróbmy szybką rozgrzewkę przed nową lekcją.
                 </p>
                 <a id="warmup-link" href="#" class="btn btn-primary">
-                    Start Warm-Up / Rozpocznij rozgrzewke
+                    Rozpocznij rozgrzewkę
                 </a>
             </div>
         </div>
 
         <div id="ready-screen" class="hidden">
             <div class="detail-panel" style="text-align:center;">
-                <h2>Ready for your lesson!</h2>
-                <p class="subtitle">Gotowy na lekcje!</p>
+                <h2>Gotowy na lekcję!</h2>
+                <p class="subtitle">Gotowy na lekcję z matematyki!</p>
                 <div id="student-info" style="margin:1rem 0;"></div>
                 <div id="recall-summary" class="hidden" style="margin:1rem 0;text-align:left;"></div>
                 <a id="dashboard-link" href="#" onclick="APP.goHomeByRole(); return false;" class="btn btn-primary" style="margin-top:1rem;">
-                    Go to Dashboard / Przejdz do panelu
+                    Przejdź do panelu
                 </a>
             </div>
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard / Panel</a>
+            <a href="dashboard.html">Panel</a>
         </footer>
     </div>
     <script src="js/api.js"></script>
@@ -130,7 +125,7 @@
                 .then(r => r.json())
                 .then(student => {
                     document.getElementById('student-info').innerHTML = `
-                        <p><strong>${student.name || 'Student'}</strong> | Level: ${student.current_level || 'N/A'}</p>
+                        <p><strong>${student.name || 'Student'}</strong> | Poziom: ${student.current_level || 'N/A'}</p>
                     `;
                 })
                 .catch(() => {});

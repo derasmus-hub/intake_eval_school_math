@@ -2,7 +2,7 @@ var studentId = STATE.requireStudentId();
 
 let chatHistory = [];
 let currentScenario = null;
-let studentLevel = 'A1';
+let studentLevel = 'podstawowy';
 
 if (studentId) {
     loadScenarios();
@@ -16,7 +16,7 @@ async function loadScenarios() {
 
         const container = document.getElementById('scenarios-list');
         if (data.scenarios.length === 0) {
-            container.innerHTML = '<p>No scenarios available.</p>';
+            container.innerHTML = '<p>Brak dostepnych scenariuszy.</p>';
             return;
         }
 
@@ -27,11 +27,10 @@ async function loadScenarios() {
             </div>
         `).join('');
 
-        // Store scenarios for later use
         window._scenarios = data.scenarios;
     } catch (err) {
         document.getElementById('scenarios-list').innerHTML =
-            '<p>Error loading scenarios: ' + err.message + '</p>';
+            '<p>Blad ladowania scenariuszy: ' + err.message + '</p>';
     }
 }
 
@@ -46,7 +45,6 @@ function startScenario(index) {
     document.getElementById('chat-level-badge').textContent = studentLevel;
     document.getElementById('chat-messages').innerHTML = '';
 
-    // Add the opener as the first assistant message
     if (scenario.opener) {
         chatHistory.push({ role: 'assistant', content: scenario.opener });
         appendMessage('assistant', scenario.opener);
@@ -56,16 +54,16 @@ function startScenario(index) {
 }
 
 function startFreeChat() {
-    currentScenario = { title: 'Free Conversation', description: 'Free conversation practice.', opener: null };
+    currentScenario = { title: 'Swobodna sesja', description: 'Swobodna sesja rozwiazywania zadan.', opener: null };
     chatHistory = [];
 
     document.getElementById('scenario-select').classList.add('hidden');
     document.getElementById('chat-area').classList.remove('hidden');
-    document.getElementById('chat-scenario-title').textContent = 'Free Conversation';
+    document.getElementById('chat-scenario-title').textContent = 'Swobodna sesja';
     document.getElementById('chat-level-badge').textContent = studentLevel;
     document.getElementById('chat-messages').innerHTML = '';
 
-    appendMessage('system-info', 'Start typing to begin a free conversation. / Zacznij pisac aby rozpoczac rozmowe.');
+    appendMessage('system-info', 'Zacznij pisac aby rozpoczac sesje rozwiazywania zadan.');
     document.getElementById('chat-input').focus();
 }
 
@@ -88,7 +86,6 @@ async function sendMessage() {
     sendBtn.disabled = true;
     input.disabled = true;
 
-    // Add a placeholder for the assistant response
     const assistantDiv = appendMessage('assistant', '');
     assistantDiv.classList.add('streaming');
 
@@ -106,14 +103,13 @@ async function sendMessage() {
 
         if (!resp.ok) {
             const err = await resp.json();
-            assistantDiv.textContent = 'Error: ' + (err.detail || 'Unknown error');
+            assistantDiv.textContent = 'Blad: ' + (err.detail || 'Nieznany blad');
             assistantDiv.classList.remove('streaming');
             sendBtn.disabled = false;
             input.disabled = false;
             return;
         }
 
-        // Handle SSE stream
         const reader = resp.body.getReader();
         const decoder = new TextDecoder();
         let fullResponse = '';
@@ -145,15 +141,17 @@ async function sendMessage() {
 
         assistantDiv.classList.remove('streaming');
 
-        // Add to history
+        if (typeof renderMathInElement !== 'undefined') {
+            renderMathInElement(assistantDiv, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+        }
+
         chatHistory.push({ role: 'user', content: message });
         chatHistory.push({ role: 'assistant', content: fullResponse });
 
-        // Scroll to bottom
         const chatMessages = document.getElementById('chat-messages');
         chatMessages.scrollTop = chatMessages.scrollHeight;
     } catch (err) {
-        assistantDiv.textContent = 'Error: ' + err.message;
+        assistantDiv.textContent = 'Blad: ' + err.message;
         assistantDiv.classList.remove('streaming');
     }
 
@@ -170,9 +168,9 @@ function appendMessage(role, content) {
     if (role === 'system-info') {
         div.innerHTML = '<em>' + escapeHtml(content) + '</em>';
     } else if (role === 'user') {
-        div.innerHTML = '<strong>You:</strong> ' + escapeHtml(content);
+        div.innerHTML = '<strong>Ty:</strong> ' + escapeHtml(content);
     } else {
-        div.innerHTML = '<strong>Partner:</strong> ' + formatMessage(content);
+        div.innerHTML = '<strong>Tutor:</strong> ' + formatMessage(content);
     }
 
     chatMessages.appendChild(div);
@@ -183,16 +181,13 @@ function appendMessage(role, content) {
 function formatMessage(text) {
     if (!text) return '';
 
-    // Escape HTML first
     let html = escapeHtml(text);
 
-    // Highlight corrections: [correction: 'wrong' -> 'right']
     html = html.replace(
         /\[correction:\s*&#39;([^&]*)&#39;\s*-&gt;\s*&#39;([^&]*)&#39;\]/g,
         '<span class="correction"><s>$1</s> &rarr; <strong>$2</strong></span>'
     );
 
-    // Also handle without quotes
     html = html.replace(
         /\[correction:\s*([^[\]]*?)\s*-&gt;\s*([^[\]]*?)\]/g,
         '<span class="correction"><s>$1</s> &rarr; <strong>$2</strong></span>'

@@ -234,9 +234,9 @@ print("\n=== 4. Intake ===")
 code, data = api("POST", "/api/intake", {
     "name": "E2E IntakeStudent",
     "age": 25,
-    "current_level": "A2",
-    "goals": ["speaking", "grammar"],
-    "problem_areas": ["articles", "prepositions"],
+    "current_level": "gimnazjalny",
+    "goals": ["matura", "poprawa_ocen"],
+    "problem_areas": ["algebra", "geometria"],
     "filler": "student",
     "additional_notes": "E2E test student",
 })
@@ -458,8 +458,8 @@ check("Student /student_dashboard.html → served (200)", code == 200, f"code={c
 print("\n=== 10. Intake Data ===")
 
 # Create a new student via intake with goals and problem_areas
-intake_goals = ["conversational", "business"]
-intake_problems = ["articles", "tenses"]
+intake_goals = ["matura", "olimpiada"]
+intake_problems = ["algebra", "trygonometria"]
 intake_notes = "Test student for intake verification"
 
 code, data = api("POST", "/api/intake", {
@@ -508,9 +508,9 @@ print("\n=== 11. Session Notes ===")
 
 # Use the confirmed session from earlier tests (session_id from Section 6)
 # Teacher saves notes for the confirmed session
-test_teacher_notes = "Student needs more practice with articles"
-test_homework = "Complete exercises 1-5 on page 42"
-test_summary = "Covered present perfect tense today"
+test_teacher_notes = "Uczen potrzebuje wiecej praktyki z algebraa"
+test_homework = "Rozwiaz zadania 1-5 ze strony 42"
+test_summary = "Omowilismy rownania kwadratowe"
 
 code, data = api("POST", f"/api/teacher/sessions/{session_id}/notes", {
     "teacher_notes": test_teacher_notes,
@@ -654,8 +654,8 @@ if lesson_id_for_progress:
     code, data = api("POST", "/api/student/me/progress", {
         "lesson_id": lesson_id_for_progress,
         "score": 85.5,
-        "skill_tags": ["grammar", "vocabulary"],
-        "notes": "Good understanding of present perfect"
+        "skill_tags": ["algebra", "arytmetyka"],
+        "notes": "Dobre rozumienie rownan kwadratowych"
     }, token=student_token)
     check("Student submit progress returns 200", code == 200, f"status={code}")
     check("Progress response has correct score", data.get("score") == 85.5)
@@ -797,7 +797,7 @@ if confirmed_sessions:
 
             start = dt
             end = dt + datetime.timedelta(minutes=duration_min)
-            summary = "English Lesson / Lekcja angielskiego"
+            summary = "Lekcja matematyki"
 
             ics_content = "\r\n".join([
                 "BEGIN:VCALENDAR",

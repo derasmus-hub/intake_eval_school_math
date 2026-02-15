@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Dashboard - Moj panel</title>
+    <title>Moj Panel - MatEval</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="student_dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="student_dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="student_dashboard.html" class="active">Dashboard</a>
                 <a href="assessment.html">Assessment</a>
@@ -43,9 +43,8 @@
             <div class="sd-cta-card" id="schedule-toggle-wrap">
                 <div class="sd-cta-icon">+</div>
                 <div class="sd-cta-body">
-                    <strong>Schedule an English Class / Umow lekcje angielskiego</strong>
-                    <p>Pick a time, send a request, and your teacher will confirm it.<br>
-                       <em>Wybierz termin, wyslij prosbe, a nauczyciel ja potwierdzi.</em></p>
+                    <strong>Umow lekcje matematyki</strong>
+                    <p>Wybierz termin, wyslij prosbe, a nauczyciel ja potwierdzi.</p>
                 </div>
                 <button class="btn btn-primary" onclick="toggleScheduleForm()" type="button">
                     Request / Poproś
@@ -162,7 +161,7 @@
 
             <!-- ── Level & Assessment Summary ─────────────────── -->
             <div class="detail-panel" id="level-section">
-                <h2>Your Level / Twoj poziom</h2>
+                <h2>Twoj poziom</h2>
                 <div class="sd-level-row">
                     <div id="assessment-summary" class="sd-assessment-text">
                         <p id="assessment-info" class="meta">You haven't taken an assessment yet. Take one to see your level!</p>
@@ -177,41 +176,41 @@
 
             <!-- Skills Breakdown (shown after assessment) -->
             <div id="skills-section" class="detail-panel hidden">
-                <h2>Skills Breakdown / Umiejetnosci</h2>
+                <h2>Umiejetnosci</h2>
                 <div id="skills-grid" class="results-grid"></div>
             </div>
 
             <!-- Quick Actions -->
             <div class="detail-panel">
-                <h2>Quick Actions / Szybkie akcje</h2>
+                <h2>Szybkie akcje</h2>
                 <div class="sd-actions-grid">
                     <a id="session-link" href="session.html" class="sd-action-chip sd-action-primary">
-                        Start Lesson / Rozpocznij lekcje
+                        Rozpocznij lekcje
                     </a>
                     <a id="vocab-link" href="vocab.html" class="sd-action-chip">
-                        Vocabulary / Slownictwo
+                        Karty pojec
                     </a>
                     <a id="conversation-link" href="conversation.html" class="sd-action-chip">
-                        Conversation / Konwersacja
+                        Rozwiazywanie zadan
                     </a>
                     <a id="games-link" href="games.html" class="sd-action-chip">
-                        Games / Gry
+                        Gry
                     </a>
                     <a id="recall-link" href="recall.html" class="sd-action-chip sd-action-warm">
-                        Warm-Up Review / Rozgrzewka
+                        Rozgrzewka
                     </a>
                 </div>
             </div>
 
             <!-- Learning Path Summary -->
             <div id="path-section" class="detail-panel hidden">
-                <h2>Learning Path / Sciezka nauki</h2>
+                <h2>Sciezka nauki</h2>
                 <div id="path-content"></div>
             </div>
 
             <!-- Weak Areas / Recommendations -->
             <div id="recommendations-section" class="detail-panel hidden">
-                <h2>Areas to Improve / Obszary do poprawy</h2>
+                <h2>Obszary do poprawy</h2>
                 <ul id="recommendations-list" class="priority-list"></ul>
             </div>
 
@@ -276,7 +275,7 @@
 
                 // Update welcome
                 var name = student.name || localStorage.getItem('auth_student_name') || 'Student';
-                document.getElementById('welcome-title').textContent = 'Welcome, ' + name + '!';
+                document.getElementById('welcome-title').textContent = 'Witaj, ' + name + '!';
 
                 // Timestamp
                 var now = new Date();
@@ -825,7 +824,7 @@
                 return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
             };
 
-            var summary = 'English Lesson / Lekcja angielskiego';
+            var summary = 'Lekcja matematyki';
             var description = [
                 session.notes ? 'Notes: ' + session.notes : '',
                 session.teacher_name ? 'Teacher: ' + session.teacher_name : '',

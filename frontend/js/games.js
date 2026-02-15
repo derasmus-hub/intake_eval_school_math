@@ -1,6 +1,6 @@
 /**
- * Mini-Games JavaScript
- * Word Match, Sentence Builder, Error Hunt, Speed Translate
+ * Gry Matematyczne
+ * Dopasuj Pojecia, Uloz Rownanie, Znajdz Blad, Szybkie Liczenie
  */
 
 var studentId = STATE.requireStudentId();
@@ -14,7 +14,7 @@ let gameData = null;
 
 async function startGame(type) {
     const content = document.getElementById('game-content');
-    content.innerHTML = '<div class="loading">Generating game... / Generowanie gry...</div>';
+    content.innerHTML = '<div class="loading">Generowanie gry...</div>';
 
     document.getElementById('game-selection').classList.add('hidden');
     document.getElementById('game-area').classList.remove('hidden');
@@ -32,13 +32,13 @@ async function startGame(type) {
         startTimer(gameData.time_limit || 60);
 
         switch (type) {
-            case 'word-match': renderWordMatch(gameData); break;
-            case 'sentence-builder': renderSentenceBuilder(gameData); break;
+            case 'concept-match': renderConceptMatch(gameData); break;
+            case 'equation-builder': renderEquationBuilder(gameData); break;
             case 'error-hunt': renderErrorHunt(gameData); break;
-            case 'speed-translate': renderSpeedTranslate(gameData); break;
+            case 'speed-calc': renderSpeedCalc(gameData); break;
         }
     } catch (err) {
-        content.innerHTML = '<p>Error loading game: ' + err.message + '</p>';
+        content.innerHTML = '<p>Blad ladowania gry: ' + err.message + '</p>';
     }
 }
 
@@ -75,32 +75,31 @@ function updateScoreDisplay() {
     document.getElementById('game-score-live').textContent = `${gameCorrect} / ${gameTotal}`;
 }
 
-// ===== WORD MATCH =====
-function renderWordMatch(data) {
+// ===== DOPASUJ POJECIA =====
+function renderConceptMatch(data) {
     const content = document.getElementById('game-content');
     const pairs = data.pairs || [];
     gameTotal = pairs.length;
 
-    let selectedWord = null;
-    let selectedTrans = null;
-    let matched = new Set();
-
-    const words = pairs.map(p => p.word).sort(() => Math.random() - 0.5);
-    const translations = pairs.map(p => p.translation).sort(() => Math.random() - 0.5);
+    const concepts = pairs.map(p => p.concept).sort(() => Math.random() - 0.5);
+    const definitions = pairs.map(p => p.definition).sort(() => Math.random() - 0.5);
 
     content.innerHTML = `
         <div class="match-game">
-            <p class="game-instruction">Match each English word with its Polish translation.<br><em>Dopasuj kazde angielskie slowo do jego polskiego tlumaczenia.</em></p>
+            <p class="game-instruction">Dopasuj pojecia do ich definicji.</p>
             <div class="match-columns">
                 <div class="match-col" id="words-col">
-                    ${words.map(w => `<div class="match-item match-word" data-word="${escapeHtml(w)}" onclick="selectMatchItem(this, 'word')">${escapeHtml(w)}</div>`).join('')}
+                    ${concepts.map(w => `<div class="match-item match-word" data-word="${escapeHtml(w)}" onclick="selectMatchItem(this, 'word')">${escapeHtml(w)}</div>`).join('')}
                 </div>
                 <div class="match-col" id="trans-col">
-                    ${translations.map(t => `<div class="match-item match-trans" data-trans="${escapeHtml(t)}" onclick="selectMatchItem(this, 'trans')">${escapeHtml(t)}</div>`).join('')}
+                    ${definitions.map(t => `<div class="match-item match-trans" data-trans="${escapeHtml(t)}" onclick="selectMatchItem(this, 'trans')">${escapeHtml(t)}</div>`).join('')}
                 </div>
             </div>
         </div>
     `;
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(content, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
 
     window._matchPairs = pairs;
     window._matchSelected = { word: null, trans: null };
@@ -110,17 +109,14 @@ function renderWordMatch(data) {
 function selectMatchItem(el, type) {
     if (el.classList.contains('matched')) return;
 
-    // Deselect others of same type
     document.querySelectorAll(`.match-${type}`).forEach(e => e.classList.remove('selected'));
     el.classList.add('selected');
 
     window._matchSelected[type] = type === 'word' ? el.dataset.word : el.dataset.trans;
 
-    // Check if we have both selected
     if (window._matchSelected.word && window._matchSelected.trans) {
-        const pair = window._matchPairs.find(p => p.word === window._matchSelected.word);
-        if (pair && pair.translation === window._matchSelected.trans) {
-            // Correct match
+        const pair = window._matchPairs.find(p => p.concept === window._matchSelected.word);
+        if (pair && pair.definition === window._matchSelected.trans) {
             gameCorrect++;
             document.querySelectorAll('.match-item.selected').forEach(e => {
                 e.classList.remove('selected');
@@ -128,7 +124,6 @@ function selectMatchItem(el, type) {
             });
             window._matchMatched.add(window._matchSelected.word);
         } else {
-            // Wrong match
             document.querySelectorAll('.match-item.selected').forEach(e => {
                 e.classList.add('wrong');
                 setTimeout(() => e.classList.remove('wrong', 'selected'), 600);
@@ -144,15 +139,15 @@ function selectMatchItem(el, type) {
     }
 }
 
-// ===== SENTENCE BUILDER =====
-function renderSentenceBuilder(data) {
+// ===== ULOZ ROWNANIE =====
+function renderEquationBuilder(data) {
     const content = document.getElementById('game-content');
     const sentences = data.sentences || [];
     gameTotal = sentences.length;
 
     content.innerHTML = `
         <div class="sentence-game">
-            <p class="game-instruction">Put the words in the correct order to form a sentence.<br><em>Uloz slowa w odpowiedniej kolejnosci, aby utworzyc zdanie.</em></p>
+            <p class="game-instruction">Uloz elementy w odpowiedniej kolejnosci, aby utworzyc poprawne rownanie.</p>
             <div id="sentence-items"></div>
         </div>
     `;
@@ -172,22 +167,25 @@ function renderNextSentence() {
     }
 
     const s = sentences[idx];
-    const words = s.sentence.split(' ').sort(() => Math.random() - 0.5);
+    const equation = s.equation || s.sentence || '';
+    const words = equation.split(' ').sort(() => Math.random() - 0.5);
     const container = document.getElementById('sentence-items');
 
     container.innerHTML = `
-        <div class="sb-progress">Sentence ${idx + 1} of ${sentences.length}</div>
-        ${s.translation_pl ? `<p class="sb-hint"><em>${escapeHtml(s.translation_pl)}</em></p>` : ''}
+        <div class="sb-progress">Rownanie ${idx + 1} z ${sentences.length}</div>
         ${s.hint ? `<p class="sb-hint">${escapeHtml(s.hint)}</p>` : ''}
         <div class="sb-answer-area" id="sb-answer"></div>
         <div class="sb-word-bank" id="sb-bank">
             ${words.map(w => `<span class="sb-word" onclick="addWord(this)">${escapeHtml(w)}</span>`).join('')}
         </div>
         <div class="sb-actions">
-            <button onclick="clearSentence()" class="btn btn-sm">Clear / Wyczysc</button>
-            <button onclick="checkSentence()" class="btn btn-sm btn-primary">Check / Sprawdz</button>
+            <button onclick="clearSentence()" class="btn btn-sm">Wyczysc</button>
+            <button onclick="checkSentence()" class="btn btn-sm btn-primary">Sprawdz</button>
         </div>
     `;
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(container, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
 }
 
 function addWord(el) {
@@ -212,7 +210,8 @@ function clearSentence() {
 function checkSentence() {
     const placed = Array.from(document.querySelectorAll('.sb-placed-word')).map(w => w.textContent);
     const answer = placed.join(' ');
-    const correct = window._sentences[window._sentenceIdx].sentence;
+    const s = window._sentences[window._sentenceIdx];
+    const correct = s.equation || s.sentence || '';
 
     if (answer.toLowerCase().trim() === correct.toLowerCase().trim()) {
         gameCorrect++;
@@ -223,7 +222,7 @@ function checkSentence() {
     renderNextSentence();
 }
 
-// ===== ERROR HUNT =====
+// ===== ZNAJDZ BLAD =====
 function renderErrorHunt(data) {
     const content = document.getElementById('game-content');
     const sentences = data.sentences || [];
@@ -231,7 +230,7 @@ function renderErrorHunt(data) {
 
     content.innerHTML = `
         <div class="error-hunt-game">
-            <p class="game-instruction">Is the sentence correct or does it have an error?<br><em>Czy zdanie jest poprawne, czy zawiera blad?</em></p>
+            <p class="game-instruction">Czy rozwiazanie jest poprawne, czy zawiera blad?</p>
             <div id="eh-items"></div>
         </div>
     `;
@@ -254,14 +253,17 @@ function renderNextError() {
     const container = document.getElementById('eh-items');
 
     container.innerHTML = `
-        <div class="sb-progress">Sentence ${idx + 1} of ${sentences.length}</div>
+        <div class="sb-progress">Zadanie ${idx + 1} z ${sentences.length}</div>
         <div class="eh-sentence">"${escapeHtml(s.sentence)}"</div>
         <div class="eh-actions">
-            <button onclick="ehAnswer(true)" class="btn btn-danger">Has Error / Ma blad</button>
-            <button onclick="ehAnswer(false)" class="btn btn-secondary">Correct / Poprawne</button>
+            <button onclick="ehAnswer(true)" class="btn btn-danger">Ma blad</button>
+            <button onclick="ehAnswer(false)" class="btn btn-secondary">Poprawne</button>
         </div>
         <div id="eh-feedback" class="hidden"></div>
     `;
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(container, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
 }
 
 function ehAnswer(saidError) {
@@ -277,13 +279,16 @@ function ehAnswer(saidError) {
 
     if (s.has_error) {
         fb.innerHTML = `
-            <p>${correct ? 'Correct!' : 'Wrong!'} This sentence has an error.</p>
-            <p>Corrected: <strong>${escapeHtml(s.corrected || '')}</strong></p>
+            <p>${correct ? 'Dobrze!' : 'Zle!'} To rozwiazanie zawiera blad.</p>
+            <p>Poprawnie: <strong>${escapeHtml(s.corrected || '')}</strong></p>
             <p>${escapeHtml(s.explanation || '')}</p>
-            ${s.explanation_pl ? `<p><em>${escapeHtml(s.explanation_pl)}</em></p>` : ''}
         `;
     } else {
-        fb.innerHTML = `<p>${correct ? 'Correct!' : 'Wrong!'} This sentence is correct.</p>`;
+        fb.innerHTML = `<p>${correct ? 'Dobrze!' : 'Zle!'} To rozwiazanie jest poprawne.</p>`;
+    }
+
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(fb, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
     }
 
     setTimeout(() => {
@@ -292,25 +297,25 @@ function ehAnswer(saidError) {
     }, 2000);
 }
 
-// ===== SPEED TRANSLATE =====
-function renderSpeedTranslate(data) {
+// ===== SZYBKIE LICZENIE =====
+function renderSpeedCalc(data) {
     const content = document.getElementById('game-content');
     const phrases = data.phrases || [];
     gameTotal = phrases.length;
 
     content.innerHTML = `
-        <div class="speed-translate-game">
-            <p class="game-instruction">Translate the Polish phrase into English as fast as you can!<br><em>Przetlumacz polskie zdanie na angielski jak najszybciej!</em></p>
+        <div class="speed-calc-game">
+            <p class="game-instruction">Oblicz jak najszybciej!</p>
             <div id="st-items"></div>
         </div>
     `;
 
     window._stIdx = 0;
     window._stPhrases = phrases;
-    renderNextTranslation();
+    renderNextCalc();
 }
 
-function renderNextTranslation() {
+function renderNextCalc() {
     const idx = window._stIdx;
     const phrases = window._stPhrases;
 
@@ -323,27 +328,30 @@ function renderNextTranslation() {
     const container = document.getElementById('st-items');
 
     container.innerHTML = `
-        <div class="sb-progress">Phrase ${idx + 1} of ${phrases.length}</div>
-        <div class="st-polish">${escapeHtml(p.polish)}</div>
-        ${p.hint ? `<div class="st-hint">Hint: ${escapeHtml(p.hint)}</div>` : ''}
-        <input type="text" id="st-input" class="fill-blank-input" placeholder="Type English translation..."
-               onkeydown="if(event.key==='Enter')checkTranslation()">
-        <button onclick="checkTranslation()" class="btn btn-sm btn-primary" style="margin-top:0.5rem;">Check / Sprawdz</button>
+        <div class="sb-progress">Zadanie ${idx + 1} z ${phrases.length}</div>
+        <div class="st-polish">${escapeHtml(p.problem)}</div>
+        ${p.hint ? `<div class="st-hint">Podpowiedz: ${escapeHtml(p.hint)}</div>` : ''}
+        <input type="text" id="st-input" class="fill-blank-input" placeholder="Wpisz odpowiedz..."
+               onkeydown="if(event.key==='Enter')checkCalc()">
+        <button onclick="checkCalc()" class="btn btn-sm btn-primary" style="margin-top:0.5rem;">Sprawdz</button>
         <div id="st-feedback" class="hidden"></div>
     `;
+
+    if (typeof renderMathInElement !== 'undefined') {
+        renderMathInElement(container, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});
+    }
 
     document.getElementById('st-input').focus();
 }
 
-function checkTranslation() {
+function checkCalc() {
     const input = document.getElementById('st-input').value.trim().toLowerCase();
     const p = window._stPhrases[window._stIdx];
-    const correct = p.english.toLowerCase().trim();
+    const correct = String(p.answer).toLowerCase().trim();
 
-    // Simple similarity check
     const isCorrect = input === correct ||
-        input.replace(/[?.!,]/g, '') === correct.replace(/[?.!,]/g, '') ||
-        levenshtein(input, correct) <= 2;
+        input.replace(/\s/g, '') === correct.replace(/\s/g, '') ||
+        levenshtein(input, correct) <= 1;
 
     if (isCorrect) gameCorrect++;
     updateScoreDisplay();
@@ -352,13 +360,13 @@ function checkTranslation() {
     fb.classList.remove('hidden');
     fb.className = `eh-feedback ${isCorrect ? 'correct' : 'wrong'}`;
     fb.innerHTML = `
-        <p>${isCorrect ? 'Correct!' : 'Not quite.'}</p>
-        <p>Answer: <strong>${escapeHtml(p.english)}</strong></p>
+        <p>${isCorrect ? 'Dobrze!' : 'Nie tym razem.'}</p>
+        <p>Odpowiedz: <strong>${escapeHtml(String(p.answer))}</strong></p>
     `;
 
     setTimeout(() => {
         window._stIdx++;
-        renderNextTranslation();
+        renderNextCalc();
     }, 1500);
 }
 
@@ -376,7 +384,7 @@ function levenshtein(a, b) {
     return dp[m][n];
 }
 
-// ===== END GAME =====
+// ===== KONIEC GRY =====
 async function endGame() {
     clearInterval(gameTimer);
 
@@ -386,7 +394,6 @@ async function endGame() {
     document.getElementById('game-results').classList.remove('hidden');
     document.getElementById('final-score').textContent = score + '%';
 
-    // Submit score
     try {
         const resp = await apiFetch(`/api/games/${studentId}/submit`, {
             method: 'POST',
@@ -409,31 +416,30 @@ async function endGame() {
             }
         }
 
-        // Show feedback
         const fb = document.getElementById('game-feedback');
         let msg = '';
-        if (score >= 90) msg = 'Excellent! / Doskonale!';
-        else if (score >= 70) msg = 'Great job! / Swietna robota!';
-        else if (score >= 50) msg = 'Good effort! / Dobra proba!';
-        else msg = 'Keep practicing! / Cwicz dalej!';
+        if (score >= 90) msg = 'Doskonale!';
+        else if (score >= 70) msg = 'Swietna robota!';
+        else if (score >= 50) msg = 'Dobra proba!';
+        else msg = 'Cwicz dalej!';
 
         fb.innerHTML = `<p style="text-align:center;font-size:1.1rem;margin:1rem 0;">${msg}</p>
             <p style="text-align:center;color:#7f8c8d;">
-                ${gameCorrect}/${gameTotal} correct in ${gameSeconds}s
+                ${gameCorrect}/${gameTotal} poprawnie w ${gameSeconds}s
             </p>`;
     } catch (err) {
-        console.error('Error submitting score:', err);
+        console.error('Blad wysylania wyniku:', err);
     }
 }
 
-// ===== HISTORY =====
+// ===== HISTORIA =====
 async function loadHistory() {
     try {
         const resp = await apiFetch(`/api/games/${studentId}/history`);
         const data = await resp.json();
         renderHistory(data);
     } catch (err) {
-        document.getElementById('history-content').innerHTML = '<p>No game history yet.</p>';
+        document.getElementById('history-content').innerHTML = '<p>Brak historii gier.</p>';
     }
 }
 
@@ -442,11 +448,10 @@ function renderHistory(data) {
     const recent = data.recent || [];
 
     if (recent.length === 0) {
-        container.innerHTML = '<p>No games played yet. Pick a game above!<br><em>Brak rozegranych gier. Wybierz gre powyzej!</em></p>';
+        container.innerHTML = '<p>Brak rozegranych gier. Wybierz gre powyzej!</p>';
         return;
     }
 
-    // Best scores
     const best = data.best_scores || {};
     let bestHtml = '<div class="game-best-scores">';
     for (const [type, info] of Object.entries(best)) {

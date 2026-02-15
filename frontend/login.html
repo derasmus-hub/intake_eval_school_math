@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Logowanie</title>
+    <title>Logowanie</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="login.html" class="nav-brand">IntakeEval</a>
+            <a href="login.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
-                <a href="login.html" class="active">Login</a>
-                <a href="register.html">Register</a>
+                <a href="login.html" class="active">Logowanie</a>
+                <a href="register.html">Rejestracja</a>
             </div>
         </nav>
 
         <div class="form-section" style="max-width:400px;margin:2rem auto;">
-            <h2>Login / Logowanie</h2>
-            <p class="section-desc">Sign in to your account. / Zaloguj sie na swoje konto.</p>
+            <h2>Logowanie</h2>
+            <p class="section-desc">Zaloguj się na swoje konto.</p>
 
             <div id="error-message" class="error-banner hidden"></div>
 
@@ -28,22 +28,22 @@
                     <input type="email" id="email" required placeholder="your@email.com">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password / Haslo</label>
-                    <input type="password" id="password" required placeholder="Enter password">
+                    <label for="password">Hasło</label>
+                    <input type="password" id="password" required placeholder="Wpisz hasło">
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="login-btn">Login / Zaloguj</button>
+                    <button type="submit" class="btn btn-primary" id="login-btn">Zaloguj</button>
                 </div>
             </form>
 
             <p style="text-align:center;margin-top:1rem;">
-                No account? / Nie masz konta?
-                <a href="register.html">Register / Zarejestruj sie</a>
+                Nie masz konta?
+                <a href="register.html">Zarejestruj się</a>
             </p>
         </div>
 
         <footer>
-            <a href="index.html">Intake Form</a> | <a href="dashboard.html">Dashboard</a>
+            <a href="index.html">Formularz</a> | <a href="dashboard.html">Panel</a>
         </footer>
     </div>
 
@@ -78,7 +78,7 @@
             const btn = document.getElementById('login-btn');
             const errEl = document.getElementById('error-message');
             btn.disabled = true;
-            btn.textContent = 'Logging in...';
+            btn.textContent = 'Logowanie...';
             errEl.classList.add('hidden');
 
             try {
@@ -96,7 +96,7 @@
                     errEl.textContent = err.detail || 'Login failed';
                     errEl.classList.remove('hidden');
                     btn.disabled = false;
-                    btn.textContent = 'Login / Zaloguj';
+                    btn.textContent = 'Zaloguj';
                     return;
                 }
 
@@ -113,7 +113,7 @@
                 errEl.textContent = 'Network error: ' + err.message;
                 errEl.classList.remove('hidden');
                 btn.disabled = false;
-                btn.textContent = 'Login / Zaloguj';
+                btn.textContent = 'Zaloguj';
             }
         });
     </script>

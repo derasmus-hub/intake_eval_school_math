@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - Tablica wynikow</title>
+    <title>Ranking</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <nav class="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
-                <a href="dashboard.html">Dashboard</a>
-                <a href="games.html">Games</a>
-                <a href="leaderboard.html" class="active">Leaderboard</a>
-                <a href="profile.html">Profile</a>
+                <a href="dashboard.html">Panel</a>
+                <a href="games.html">Gry</a>
+                <a href="leaderboard.html" class="active">Ranking</a>
+                <a href="profile.html">Profil</a>
             </div>
         </nav>
 
         <header>
-            <h1>Leaderboard</h1>
-            <p class="subtitle">Tablica wynikow</p>
+            <h1>Ranking</h1>
+            <p class="subtitle">Tablica wyników</p>
         </header>
 
         <div class="leaderboard-tabs">
-            <button class="tab active" onclick="switchBoard('weekly')">This Week / Ten tydzien</button>
-            <button class="tab" onclick="switchBoard('alltime')">All Time / Caly czas</button>
-            <button class="tab" onclick="switchBoard('streak')">Streaks / Serie</button>
+            <button class="tab active" onclick="switchBoard('weekly')">Ten tydzień</button>
+            <button class="tab" onclick="switchBoard('alltime')">Cały czas</button>
+            <button class="tab" onclick="switchBoard('streak')">Serie</button>
         </div>
 
         <div id="leaderboard-content" class="form-section">
@@ -34,9 +34,9 @@
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard</a> &middot;
-            <a href="games.html">Games / Gry</a> &middot;
-            <a href="profile.html">Profile / Profil</a>
+            <a href="dashboard.html">Panel</a> &middot;
+            <a href="games.html">Gry</a> &middot;
+            <a href="profile.html">Profil</a>
         </footer>
     </div>
     <script src="js/api.js"></script>
@@ -71,7 +71,7 @@
             const entries = data.entries || [];
 
             if (entries.length === 0) {
-                container.innerHTML = '<p style="text-align:center;padding:2rem;">No data yet. Start learning to appear here!<br><em>Brak danych. Zacznij sie uczyc, aby sie tu pojawic!</em></p>';
+                container.innerHTML = '<p style="text-align:center;padding:2rem;">Brak danych. Zacznij się uczyć, aby się tu pojawić!</p>';
                 return;
             }
 
@@ -92,7 +92,7 @@
                             </div>
                             <div class="lb-score">
                                 <span class="lb-value">${isStreak ? e.streak : e.xp}</span>
-                                <span class="lb-label">${isStreak ? 'days' : 'XP'}</span>
+                                <span class="lb-label">${isStreak ? 'dni' : 'XP'}</span>
                             </div>
                         </div>
                     `).join('')}

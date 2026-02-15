@@ -16,8 +16,8 @@ async def submit_intake(intake: StudentIntake):
         level_value = intake.current_level.value if intake.current_level else "pending"
 
         cursor = await db.execute(
-            """INSERT INTO students (name, age, current_level, goals, problem_areas, intake_data, filler, additional_notes)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            """INSERT INTO students (name, age, current_level, goals, problem_areas, intake_data, filler, additional_notes, exam_target)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 intake.name,
                 intake.age,
@@ -27,6 +27,7 @@ async def submit_intake(intake: StudentIntake):
                 json.dumps(intake.model_dump()),
                 intake.filler,
                 intake.additional_notes,
+                intake.exam_target,
             ),
         )
         await db.commit()
@@ -115,6 +116,7 @@ async def get_intake(student_id: int):
             current_level=row["current_level"],
             goals=json.loads(row["goals"]) if row["goals"] else [],
             problem_areas=json.loads(row["problem_areas"]) if row["problem_areas"] else [],
+            exam_target=row["exam_target"] if "exam_target" in row.keys() else None,
             filler=row["filler"] or "student",
             additional_notes=row["additional_notes"],
             created_at=row["created_at"],
@@ -137,6 +139,7 @@ async def list_students():
                 current_level=row["current_level"],
                 goals=json.loads(row["goals"]) if row["goals"] else [],
                 problem_areas=json.loads(row["problem_areas"]) if row["problem_areas"] else [],
+                exam_target=row["exam_target"] if "exam_target" in row.keys() else None,
                 filler=row["filler"] or "student",
                 additional_notes=row["additional_notes"],
                 created_at=row["created_at"],

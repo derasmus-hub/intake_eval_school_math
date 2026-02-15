@@ -45,8 +45,9 @@ async def start_assessment(request: StartAssessmentRequest):
             "questions": [
                 {
                     "id": q.id,
-                    "sentence": q.sentence,
+                    "problem": q.problem,
                     "difficulty": q.difficulty,
+                    "math_domain": q.math_domain,
                 }
                 for q in questions
             ],
@@ -115,8 +116,9 @@ async def submit_placement(submission: PlacementSubmission):
                     "type": q.type.value,
                     "question": q.question,
                     "options": q.options,
-                    "passage": q.passage,
                     "skill": q.skill,
+                    "topic": q.topic,
+                    "hint": q.hint,
                 }
                 for q in diagnostic_questions
             ],
@@ -127,7 +129,7 @@ async def submit_placement(submission: PlacementSubmission):
 
 @router.post("/diagnostic")
 async def submit_diagnostic(submission: DiagnosticSubmission):
-    """Auto-score diagnostic + AI analysis, return CEFR level + breakdown."""
+    """Auto-score diagnostic + AI analysis, return math level + breakdown."""
     db = await get_db()
     try:
         # Verify assessment
@@ -169,42 +171,42 @@ async def submit_diagnostic(submission: DiagnosticSubmission):
         from app.models.assessment import DiagnosticQuestion, QuestionType
 
         all_questions = []
-        for q in bracket_data["grammar"]:
+        for q in bracket_data["arytmetyka"]:
             all_questions.append(
                 DiagnosticQuestion(
                     id=q["id"],
-                    type=QuestionType.GRAMMAR_MCQ,
+                    type=QuestionType.ARITHMETIC,
                     bracket=bracket,
                     question=q["question"],
                     options=q.get("options"),
                     correct_answer=q["correct_answer"],
-                    skill="grammar",
+                    skill="arytmetyka",
                     topic=q["topic"],
                 )
             )
-        for q in bracket_data["vocabulary"]:
+        for q in bracket_data["algebra"]:
             all_questions.append(
                 DiagnosticQuestion(
                     id=q["id"],
-                    type=QuestionType.VOCABULARY_FILL,
-                    bracket=bracket,
-                    question=q["question"],
-                    correct_answer=q["correct_answer"],
-                    skill="vocabulary",
-                    topic=q["topic"],
-                )
-            )
-        for q in bracket_data["reading"]:
-            all_questions.append(
-                DiagnosticQuestion(
-                    id=q["id"],
-                    type=QuestionType.READING_COMPREHENSION,
+                    type=QuestionType.ALGEBRA,
                     bracket=bracket,
                     question=q["question"],
                     options=q.get("options"),
                     correct_answer=q["correct_answer"],
-                    passage=q.get("passage"),
-                    skill="reading",
+                    skill="algebra",
+                    topic=q["topic"],
+                )
+            )
+        for q in bracket_data["geometria"]:
+            all_questions.append(
+                DiagnosticQuestion(
+                    id=q["id"],
+                    type=QuestionType.GEOMETRY,
+                    bracket=bracket,
+                    question=q["question"],
+                    options=q.get("options"),
+                    correct_answer=q["correct_answer"],
+                    skill="geometria",
                     topic=q["topic"],
                 )
             )
@@ -239,58 +241,52 @@ async def submit_diagnostic(submission: DiagnosticSubmission):
             traceback.print_exc()
             ai_error = str(exc)[:200]
 
-            bracket_to_cefr = {
-                "beginner": "A1",
-                "intermediate": "B1",
-                "advanced": "C1",
+            bracket_to_level = {
+                "beginner": "podstawowy",
+                "intermediate": "gimnazjalny",
+                "advanced": "licealny",
             }
             overall = diagnostic_scores["overall_score"]
-            base_cefr = bracket_to_cefr.get(bracket.value, "A1")
-            if overall >= 80:
-                level_suffix = "+"
-            elif overall < 40:
-                level_suffix = "-"
-            else:
-                level_suffix = ""
+            base_level = bracket_to_level.get(bracket.value, "podstawowy")
 
             weak_areas_list = [
                 skill
-                for skill in ("grammar", "vocabulary", "reading")
+                for skill in ("arytmetyka", "algebra", "geometria")
                 if diagnostic_scores[skill]["score"] < 60
             ]
 
             ai_result = {
-                "determined_level": f"{base_cefr}{level_suffix}",
+                "determined_level": base_level,
                 "confidence_score": 0.5,
                 "sub_skill_breakdown": [
                     {
-                        "skill": "Grammar",
-                        "score": diagnostic_scores["grammar"]["score"],
-                        "level": base_cefr,
-                        "details": "Score from diagnostic test (AI analysis unavailable)",
+                        "skill": "Arytmetyka",
+                        "score": diagnostic_scores["arytmetyka"]["score"],
+                        "level": base_level,
+                        "details": "Wynik z testu diagnostycznego (analiza AI niedostepna)",
                     },
                     {
-                        "skill": "Vocabulary",
-                        "score": diagnostic_scores["vocabulary"]["score"],
-                        "level": base_cefr,
-                        "details": "Score from diagnostic test (AI analysis unavailable)",
+                        "skill": "Algebra",
+                        "score": diagnostic_scores["algebra"]["score"],
+                        "level": base_level,
+                        "details": "Wynik z testu diagnostycznego (analiza AI niedostepna)",
                     },
                     {
-                        "skill": "Reading",
-                        "score": diagnostic_scores["reading"]["score"],
-                        "level": base_cefr,
-                        "details": "Score from diagnostic test (AI analysis unavailable)",
+                        "skill": "Geometria",
+                        "score": diagnostic_scores["geometria"]["score"],
+                        "level": base_level,
+                        "details": "Wynik z testu diagnostycznego (analiza AI niedostepna)",
                     },
                 ],
                 "weak_areas": weak_areas_list,
-                "l1_interference": [],
+                "common_misconceptions": [],
                 "summary": (
-                    f"AI analysis was unavailable ({ai_error}). "
-                    f"Your diagnostic scores are shown below. Overall: {overall}%."
+                    f"Analiza AI byla niedostepna ({ai_error}). "
+                    f"Wyniki testu diagnostycznego sa ponizej. Ogolny wynik: {overall}%."
                 ),
                 "recommendations": [
-                    "Review areas where you scored below 60%.",
-                    "Try the assessment again when AI analysis is available for a detailed breakdown.",
+                    "Przejrzyj obszary, w ktorych uzyskales wynik ponizej 60%.",
+                    "Sprobuj ponownie, gdy analiza AI bedzie dostepna, aby uzyskac szczegolowe podsumowanie.",
                 ],
             }
 
@@ -298,15 +294,15 @@ async def submit_diagnostic(submission: DiagnosticSubmission):
         diagnostic_data = {
             "answers": [a.model_dump() for a in submission.answers],
             "scores": {
-                "grammar": diagnostic_scores["grammar"]["score"],
-                "vocabulary": diagnostic_scores["vocabulary"]["score"],
-                "reading": diagnostic_scores["reading"]["score"],
+                "arytmetyka": diagnostic_scores["arytmetyka"]["score"],
+                "algebra": diagnostic_scores["algebra"]["score"],
+                "geometria": diagnostic_scores["geometria"]["score"],
                 "overall": diagnostic_scores["overall_score"],
             },
             "details": {
-                "grammar": diagnostic_scores["grammar"]["details"],
-                "vocabulary": diagnostic_scores["vocabulary"]["details"],
-                "reading": diagnostic_scores["reading"]["details"],
+                "arytmetyka": diagnostic_scores["arytmetyka"]["details"],
+                "algebra": diagnostic_scores["algebra"]["details"],
+                "geometria": diagnostic_scores["geometria"]["details"],
             },
         }
 
@@ -356,13 +352,13 @@ async def submit_diagnostic(submission: DiagnosticSubmission):
             "confidence_score": ai_result.get("confidence_score"),
             "sub_skill_breakdown": sub_skill_breakdown,
             "weak_areas": weak_areas,
-            "l1_interference": ai_result.get("l1_interference", []),
+            "common_misconceptions": ai_result.get("common_misconceptions", []),
             "summary": ai_result.get("summary", ""),
             "recommendations": ai_result.get("recommendations", []),
             "scores": {
-                "grammar": diagnostic_scores["grammar"]["score"],
-                "vocabulary": diagnostic_scores["vocabulary"]["score"],
-                "reading": diagnostic_scores["reading"]["score"],
+                "arytmetyka": diagnostic_scores["arytmetyka"]["score"],
+                "algebra": diagnostic_scores["algebra"]["score"],
+                "geometria": diagnostic_scores["geometria"]["score"],
                 "overall": diagnostic_scores["overall_score"],
             },
         }

@@ -33,7 +33,7 @@ function renderAnalytics(skills, timeline, achievements, streak) {
     const hasData = timeline.entries && timeline.entries.length > 0;
 
     if (!hasData) {
-        container.innerHTML = '<p>No analytics data yet. Complete some lessons first. / Brak danych. Najpierw ukończ kilka lekcji.</p>';
+        container.innerHTML = '<p>Brak danych analitycznych. Najpierw ukoncz kilka lekcji.</p>';
         return;
     }
 
@@ -41,12 +41,12 @@ function renderAnalytics(skills, timeline, achievements, streak) {
         <div class="analytics-grid">
             <div class="analytics-card streak-card">
                 <div class="streak-number">${streak.current_streak}</div>
-                <div class="streak-label">Day Streak / Seria dni</div>
-                <div class="streak-meta">${streak.total_lessons} lessons | ${streak.study_days} study days</div>
+                <div class="streak-label">Seria dni</div>
+                <div class="streak-meta">${streak.total_lessons} lekcji | ${streak.study_days} dni nauki</div>
             </div>
 
             <div class="analytics-card">
-                <h3>Achievements / Osiągnięcia</h3>
+                <h3>Osiagniecia</h3>
                 <div class="achievements-grid">
                     ${achievements.achievements.length > 0
                         ? achievements.achievements.map(a => `
@@ -56,7 +56,7 @@ function renderAnalytics(skills, timeline, achievements, streak) {
                                 <span class="achievement-desc">${escapeHtml(a.description)}</span>
                             </div>
                         `).join('')
-                        : '<p class="meta">No achievements yet. Keep studying!</p>'
+                        : '<p class="meta">Brak osiagniec. Ucz sie dalej!</p>'
                     }
                 </div>
             </div>
@@ -64,12 +64,12 @@ function renderAnalytics(skills, timeline, achievements, streak) {
 
         <div class="analytics-grid charts-grid">
             <div class="analytics-card">
-                <h3>Skills Overview / Przegląd umiejętności</h3>
+                <h3>Przeglad umiejetnosci</h3>
                 <canvas id="skills-radar-chart" width="400" height="300"></canvas>
             </div>
 
             <div class="analytics-card">
-                <h3>Score Timeline / Wyniki w czasie</h3>
+                <h3>Wyniki w czasie</h3>
                 <canvas id="timeline-chart" width="400" height="300"></canvas>
             </div>
         </div>
@@ -87,7 +87,7 @@ function renderSkillsChart(skills) {
     const data = labels.map(l => skills.skills[l].average);
 
     if (labels.length === 0) {
-        canvas.parentElement.innerHTML += '<p class="meta">Not enough skill data yet.</p>';
+        canvas.parentElement.innerHTML += '<p class="meta">Za malo danych o umiejetnosciach.</p>';
         return;
     }
 
@@ -98,7 +98,7 @@ function renderSkillsChart(skills) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Skill Level',
+                label: 'Poziom umiejetnosci',
                 data: data,
                 backgroundColor: 'rgba(52, 152, 219, 0.2)',
                 borderColor: 'rgba(52, 152, 219, 1)',
@@ -138,7 +138,7 @@ function renderTimelineChart(timeline) {
             labels: labels,
             datasets: [
                 {
-                    label: 'Score',
+                    label: 'Wynik',
                     data: scores,
                     borderColor: 'rgba(52, 152, 219, 1)',
                     backgroundColor: 'rgba(52, 152, 219, 0.1)',
@@ -146,7 +146,7 @@ function renderTimelineChart(timeline) {
                     tension: 0.3,
                 },
                 {
-                    label: 'Moving Avg',
+                    label: 'Srednia kroczaca',
                     data: movingAvg,
                     borderColor: 'rgba(231, 76, 60, 0.8)',
                     borderDash: [5, 5],
@@ -162,7 +162,7 @@ function renderTimelineChart(timeline) {
                 y: {
                     beginAtZero: true,
                     max: 100,
-                    title: { display: true, text: 'Score %' },
+                    title: { display: true, text: 'Wynik %' },
                 },
             },
         },

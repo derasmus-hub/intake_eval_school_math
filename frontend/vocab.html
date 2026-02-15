@@ -1,30 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocabulary - Slownictwo</title>
+    <title>Pojęcia Matematyczne</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="site-nav" id="site-nav">
-            <a href="dashboard.html" class="nav-brand">IntakeEval</a>
+            <a href="dashboard.html" class="nav-brand">MatEval</a>
             <div class="nav-links">
                 <a href="dashboard.html">Dashboard</a>
-                <a href="#" class="active" id="nav-vocab">Vocabulary</a>
-                <a href="#" id="nav-conversation">Conversation</a>
-                <a href="#" id="nav-session">Session</a>
+                <a href="#" class="active" id="nav-vocab">Pojęcia</a>
+                <a href="#" id="nav-conversation">Zadania</a>
+                <a href="#" id="nav-session">Sesja</a>
             </div>
             <span class="nav-student" id="nav-student-name"></span>
         </nav>
 
         <div class="dashboard-header">
             <div>
-                <h1>Vocabulary Cards</h1>
-                <p class="subtitle">Karty slownictwa</p>
+                <h1>Karty Pojęć Matematycznych</h1>
+                <p class="subtitle">Karty pojęć matematycznych</p>
             </div>
-            <a href="dashboard.html" class="btn btn-sm">Back to Dashboard / Powrot</a>
+            <a href="dashboard.html" class="btn btn-sm">Powrót do panelu</a>
         </div>
 
         <div id="vocab-stats" class="vocab-stats-bar">
@@ -32,9 +35,9 @@
         </div>
 
         <div class="vocab-tabs">
-            <button class="tab active" onclick="showVocabSection('review')">Review / Powtorka</button>
-            <button class="tab" onclick="showVocabSection('add')">Add Card / Dodaj</button>
-            <button class="tab" onclick="showVocabSection('all')">All Cards / Wszystkie</button>
+            <button class="tab active" onclick="showVocabSection('review')">Powtórka</button>
+            <button class="tab" onclick="showVocabSection('add')">Dodaj</button>
+            <button class="tab" onclick="showVocabSection('all')">Wszystkie</button>
         </div>
 
         <div id="section-review" class="vocab-section active">
@@ -45,21 +48,37 @@
 
         <div id="section-add" class="vocab-section" style="display:none;">
             <div class="detail-panel">
-                <h3>Add New Card / Dodaj nowa karte</h3>
+                <h3>Dodaj nowe pojęcie</h3>
                 <form id="add-card-form" onsubmit="addCard(event)">
                     <div class="form-group">
-                        <label for="card-word">Word / Slowo:</label>
-                        <input type="text" id="card-word" required placeholder="e.g. however">
+                        <label for="card-concept">Pojęcie:</label>
+                        <input type="text" id="card-concept" required placeholder="np. twierdzenie Pitagorasa">
                     </div>
                     <div class="form-group">
-                        <label for="card-translation">Translation / Tlumaczenie:</label>
-                        <input type="text" id="card-translation" required placeholder="e.g. jednak, jednakze">
+                        <label for="card-formula">Wzór:</label>
+                        <input type="text" id="card-formula" placeholder="np. a² + b² = c²">
                     </div>
                     <div class="form-group">
-                        <label for="card-example">Example / Przyklad:</label>
-                        <input type="text" id="card-example" placeholder="e.g. However, I think we should try.">
+                        <label for="card-explanation">Wyjaśnienie:</label>
+                        <input type="text" id="card-explanation" required placeholder="np. W trójkącie prostokątnym suma kwadratów...">
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Card / Dodaj karte</button>
+                    <div class="form-group">
+                        <label for="card-example">Przykład:</label>
+                        <input type="text" id="card-example" placeholder="np. Oblicz przeciwprostokątną trójkąta o bokach 3 i 4">
+                    </div>
+                    <div class="form-group">
+                        <label for="card-domain">Dziedzina:</label>
+                        <select id="card-domain">
+                            <option value="arytmetyka">arytmetyka</option>
+                            <option value="algebra">algebra</option>
+                            <option value="geometria">geometria</option>
+                            <option value="trygonometria">trygonometria</option>
+                            <option value="analiza_matematyczna">analiza_matematyczna</option>
+                            <option value="statystyka">statystyka</option>
+                            <option value="logika">logika</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Dodaj pojęcie</button>
                 </form>
                 <div id="add-card-message"></div>
             </div>
@@ -72,8 +91,8 @@
         </div>
 
         <footer>
-            <a href="dashboard.html">Dashboard / Panel</a> |
-            <a href="index.html">Intake Form / Formularz</a>
+            <a href="dashboard.html">Panel</a> |
+            <a href="index.html">Formularz</a>
         </footer>
     </div>
     <script src="js/api.js"></script>

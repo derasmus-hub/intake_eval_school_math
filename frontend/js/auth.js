@@ -49,7 +49,7 @@ const AUTH = {
 
         if (this.isLoggedIn()) {
             const name = this.getStudentName() || '';
-            navStudentEl.innerHTML = `<strong>${name}</strong> | <a href="#" onclick="AUTH.logout();return false;" style="color:rgba(255,255,255,0.8);">Logout</a>`;
+            navStudentEl.innerHTML = `<strong>${name}</strong> | <a href="#" onclick="AUTH.logout();return false;" style="color:rgba(255,255,255,0.8);">Wyloguj</a>`;
         }
     },
 
@@ -62,19 +62,18 @@ const AUTH = {
             // Add logout link
             const link = document.createElement('a');
             link.href = '#';
-            link.textContent = 'Logout';
+            link.textContent = 'Wyloguj';
             link.onclick = (e) => { e.preventDefault(); AUTH.logout(); };
             navLinks.appendChild(link);
         } else {
-            // Add login/register links
             const login = document.createElement('a');
             login.href = 'login.html';
-            login.textContent = 'Login';
+            login.textContent = 'Logowanie';
             navLinks.appendChild(login);
 
             const reg = document.createElement('a');
             reg.href = 'register.html';
-            reg.textContent = 'Register';
+            reg.textContent = 'Rejestracja';
             navLinks.appendChild(reg);
         }
     },

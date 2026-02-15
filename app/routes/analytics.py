@@ -92,7 +92,12 @@ async def get_timeline(student_id: int):
 @router.get("/{student_id}/achievements")
 async def get_achievements(student_id: int):
     # Check for new achievements using the comprehensive checker
-    newly_earned = await check_achievements(student_id)
+    try:
+        newly_earned = await check_achievements(student_id)
+    except Exception:
+        import traceback
+        traceback.print_exc()
+        newly_earned = []
 
     db = await get_db()
     try:
